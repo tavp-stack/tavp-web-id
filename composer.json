@@ -1,0 +1,24 @@
+{
+    "name": "tavp/web-id",
+    "description": "tavp.web.id — the official TAVP website, built on TAVP CMS (dogfooding).",
+    "type": "project",
+    "license": "MIT",
+    "repositories": [
+        { "type": "path", "url": "../tavp-stack/tavp-cms", "options": { "symlink": false } }
+    ],
+    "require": {
+        "php": ">=8.3",
+        "tavp/core": "^1.1",
+        "tavp/cms": "@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {}
+    }
+}
