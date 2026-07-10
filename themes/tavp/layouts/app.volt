@@ -59,7 +59,15 @@
   .performance-grid-pattern { background-image: radial-gradient(#4A5568 0.5px, transparent 0.5px); background-size: 24px 24px; }
   .hard-shadow { box-shadow: 4px 4px 0px 0px #000000; }
   .hard-shadow:active { box-shadow: 1px 1px 0px 0px #000000; transform: translate(3px, 3px); }
+  .code-glow { box-shadow: 0 0 20px rgba(236, 201, 75, 0.05); }
+  .step-number { font-family: 'JetBrains Mono'; -webkit-text-stroke: 1px #e6c446; color: transparent; }
+  pre { background-color: #0d131f !important; border: 1px solid #45474c; }
+  .token-keyword { color: #e6c446; }
+  .token-string { color: #95a0b5; }
+  .token-function { color: #f6ad55; }
+  .token-comment { color: #45474c; font-style: italic; }
 </style>
+{% block head %}{% endblock %}
 </head>
 <body class="bg-background text-on-background font-body-md selection:bg-secondary selection:text-on-secondary">
 
@@ -70,9 +78,9 @@
       <span class="font-headline-lg text-headline-lg font-bold text-on-surface">TAVP Stack</span>
     </a>
     <div class="hidden md:flex gap-8 items-center">
-      <a class="font-body-md text-on-surface-variant hover:text-secondary transition-colors duration-200" href="https://docs.tavp.web.id">Docs</a>
+      <a class="font-body-md text-on-surface-variant hover:text-secondary transition-colors duration-200" href="/documentation">Docs</a>
       <a class="font-body-md text-on-surface-variant hover:text-secondary transition-colors duration-200" href="/performance">Performance</a>
-      <a class="font-body-md text-on-surface-variant hover:text-secondary transition-colors duration-200" href="/showcase">Showcase</a>
+      <a class="font-body-md text-on-surface-variant hover:text-secondary transition-colors duration-200" href="/get-started">Get Started</a>
       <a class="font-body-md text-on-surface-variant hover:text-secondary transition-colors duration-200" href="/blog">Blog</a>
     </div>
     <div class="flex items-center gap-4">
@@ -126,5 +134,6 @@
     });
   });
 </script>
+{% block scripts %}{% endblock %}
 </body>
 </html>

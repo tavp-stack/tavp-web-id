@@ -17,6 +17,11 @@ use Tavp\Cms\Bread\BreadManager;
 // Home — bespoke landing template
 $router->get('/', fn () => view('home'));
 
+// Static marketing pages (bespoke templates)
+$router->get('/get-started', fn () => view('get-started'));
+$router->get('/performance', fn () => view('performance'));
+$router->get('/documentation', fn () => view('documentation'));
+
 // Blog index
 $router->get('/blog', function () {
     $bread = app()->getService(BreadManager::class);
