@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use App\AppServiceProvider;
 use Phalcon\Db\Adapter\Pdo\Mysql as MysqlAdapter;
 use Phalcon\Db\Adapter\Pdo\Sqlite as SqliteAdapter;
 use Tavp\Cms\CmsServiceProvider;
@@ -58,6 +59,10 @@ $app->bind('view', fn () => new ViewFactory(
 $cms = new CmsServiceProvider();
 $cms->register();
 $cms->boot();
+
+// Register local modules (taxonomy, revisions, search, api, webhooks, etc.)
+$appProvider = new AppServiceProvider();
+$appProvider->register();
 
 // Site routes (front-end + CMS catch-all). $router is in scope here.
 require_once $app->getBasePath() . '/routes/web.php';
