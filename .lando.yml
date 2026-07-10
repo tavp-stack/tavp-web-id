@@ -1,0 +1,28 @@
+name: tavp-web-id
+recipe: lamp
+config:
+  php: '8.3'
+  webroot: public
+  xdebug: false
+  database: none
+
+services:
+  # Mailpit dev mail catcher. Web UI is exposed on a NON-default host port
+  # (8026) to avoid clashing with other Lando/Mailpit projects on this machine.
+  # The app talks to it internally at mailpit:1025.
+  mailpit:
+    type: lando
+    services:
+      image: axllent/mailpit
+      command: /mailpit
+      ports:
+        - '8026:8025'
+
+tooling:
+  tavp:
+    service: appserver
+    cmd: php /app/vendor/bin/tavp
+  phalcon:
+    service: appserver
+    cmd: php /app/vendor/bin/tavp phalcon:install
+    description: Install the Phalcon C-extension in the container

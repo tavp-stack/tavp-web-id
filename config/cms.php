@@ -25,6 +25,18 @@ return [
         'route_prefix' => env('CMS_ADMIN_PREFIX', 'admin'),
         'brand' => 'TAVP',
         'auth_guard' => 'tavpid',
+        'otp_ttl_minutes' => (int) env('CMS_OTP_TTL', 10),
+        // Only these e-mails may sign in to the admin (comma-separated in .env).
+        'emails' => array_filter(array_map('trim', explode(',', (string) env('CMS_ADMIN_EMAILS', '')))),
+    ],
+
+    'mail' => [
+        'driver' => env('MAIL_DRIVER', 'smtp'),
+        'host' => env('MAIL_HOST', '127.0.0.1'),
+        'port' => (int) env('MAIL_PORT', 1025),
+        'username' => env('MAIL_USERNAME', ''),
+        'password' => env('MAIL_PASSWORD', ''),
+        'from' => env('MAIL_FROM', 'noreply@tavp.web.id'),
     ],
 
     'media' => [
@@ -40,6 +52,19 @@ return [
     ],
 
     'content_types' => [
+        'home' => [
+            'label' => 'Home Page',
+            'singular' => 'Home',
+            'route' => '/',
+            'fields' => [
+                ['name' => 'hero_badge', 'type' => 'text'],
+                ['name' => 'hero_title', 'type' => 'text', 'required' => true],
+                ['name' => 'hero_subtitle', 'type' => 'textarea'],
+                ['name' => 'cta_primary', 'type' => 'text'],
+                ['name' => 'cta_secondary', 'type' => 'text'],
+                ['name' => 'slug', 'type' => 'slug', 'from' => 'hero_title'],
+            ],
+        ],
         'page' => [
             'label' => 'Pages',
             'singular' => 'Page',

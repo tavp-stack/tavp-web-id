@@ -8,23 +8,23 @@
   <div class="relative z-10 max-w-4xl mx-auto space-y-8">
     <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-container-low border border-outline-variant mb-6">
       <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
-      <span class="font-label-caps text-label-caps text-on-tertiary-container uppercase tracking-widest">Stack v1.0 · Stable</span>
+      <span class="font-label-caps text-label-caps text-on-tertiary-container uppercase tracking-widest">{{ content['hero_badge']|default('Stack v1.0 · Stable') }}</span>
     </div>
     <div class="flex justify-center mb-8">
       <img alt="TAVP Stack" class="w-32 h-32 md:w-48 md:h-48 object-contain drop-shadow-[0_0_30px_rgba(230,196,70,0.3)]" src="/assets/logo.png"/>
     </div>
     <h1 class="font-headline-xl text-headline-xl md:text-6xl text-on-surface tracking-tighter leading-tight">
-      The <span class="text-secondary italic">Lean, Mean,</span> PHP Machine.
+      {{ content['hero_title']|default('The Lean, Mean, PHP Machine.') }}
     </h1>
     <p class="font-body-md text-body-md md:text-xl text-on-tertiary-container max-w-2xl mx-auto">
-      Build blazingly fast systems with Tailwind, Alpine, Volt, and Phalcon. Thin, light, and engineered for the sub-millisecond era.
+      {{ content['hero_subtitle']|default('Build blazingly fast systems with Tailwind, Alpine, Volt, and Phalcon. Thin, light, and engineered for the sub-millisecond era.') }}
     </p>
     <div class="flex flex-col sm:flex-row items-center justify-center gap-6 pt-4">
       <a href="https://docs.tavp.web.id/guide/what-is-tavp" class="w-full sm:w-auto px-8 py-4 bg-secondary text-on-secondary font-bold font-headline-lg text-lg hard-shadow transition-all">
-        Get Started
+        {{ content['cta_primary']|default('Get Started') }}
       </a>
       <a href="/performance" class="w-full sm:w-auto px-8 py-4 bg-surface-container border border-outline-variant text-on-surface font-bold font-headline-lg text-lg hover:border-secondary transition-colors">
-        View Benchmarks
+        {{ content['cta_secondary']|default('View Benchmarks') }}
       </a>
     </div>
   </div>

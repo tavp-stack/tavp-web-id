@@ -2,20 +2,29 @@
 
 declare(strict_types=1);
 
+use Tavp\Cms\Admin\AdminModule;
 use Tavp\Cms\Bread\BreadManager;
 
 /**
  * tavp.web.id routes.
  *
- * The home page and blog index are explicit; everything else falls through
- * to the CMS, which resolves the path to a published page/post via the
- * active storage driver and renders it with the active theme.
+ * Route closures receive the matched path parameters as a single array.
+ * The CMS admin panel registers its own routes under /admin.
  *
  * @var \Tavp\Core\Routing\Router $router
  */
 
-// Home — bespoke landing template
-$router->get('/', fn () => view('home'));
+// --- CMS admin panel -----------------------------------------------------
+AdminModule::routes($router);
+
+// --- Front-end -----------------------------------------------------------
+
+// Home — content-driven landing template
+$router->get('/', function () {
+    $home = app()->getService(BreadManager::class)->readBySlug('home', 'home');
+
+    return view('home', ['content' => $home ?? []]);
+});
 
 // Static marketing pages (bespoke templates)
 $router->get('/get-started', fn () => view('get-started'));
@@ -24,31 +33,28 @@ $router->get('/documentation', fn () => view('documentation'));
 
 // Blog index
 $router->get('/blog', function () {
-    $bread = app()->getService(BreadManager::class);
-    $posts = $bread->browse('post', ['status' => 'published']);
+    $posts = app()->getService(BreadManager::class)->browse('post', ['status' => 'published']);
 
     return view('blog', ['posts' => $posts]);
 });
 
 // Blog post
-$router->get('/blog/{slug}', function (string $slug) {
-    $bread = app()->getService(BreadManager::class);
-    $post = $bread->readBySlug('post', $slug);
+$router->get('/blog/{slug}', function (array $params) {
+    $post = app()->getService(BreadManager::class)->readBySlug('post', $params['slug'] ?? '');
 
     if ($post === null || ($post['status'] ?? 'draft') !== 'published') {
-        return response()->notFound();
+        return response('404 — Not found', 404);
     }
 
     return view('post', ['content' => $post]);
 });
 
 // Page catch-all (keep last)
-$router->get('/{slug}', function (string $slug) {
-    $bread = app()->getService(BreadManager::class);
-    $page = $bread->readBySlug('page', $slug);
+$router->get('/{slug}', function (array $params) {
+    $page = app()->getService(BreadManager::class)->readBySlug('page', $params['slug'] ?? '');
 
     if ($page === null || ($page['status'] ?? 'draft') !== 'published') {
-        return response()->notFound();
+        return response('404 — Not found', 404);
     }
 
     return view('page', ['content' => $page]);
