@@ -51,6 +51,56 @@ return [
         'path' => base_path('themes'),
     ],
 
+    'cache' => [
+        'enabled' => true,
+        'driver' => 'file',
+        'path' => storage_path('cms/cache'),
+        'ttl' => 300,
+    ],
+
+    'taxonomy' => [
+        'enabled' => true,
+        'types' => ['category', 'tag'],
+        'hierarchical' => ['category'],
+    ],
+
+    'revisions' => [
+        'enabled' => true,
+        'limit' => 50,
+        'path' => storage_path('cms/revisions'),
+    ],
+
+    'search' => [
+        'enabled' => true,
+        'fields' => ['title', 'body', 'excerpt', 'slug'],
+    ],
+
+    'api' => [
+        'enabled' => true,
+        'prefix' => 'api/cms',
+        'tokens' => array_filter(array_map('trim', explode(',', (string) env('CMS_API_TOKENS', '')))),
+        'tokens_file' => storage_path('cms/api_tokens.json'),
+        'per_page' => 15,
+        'max_per_page' => 100,
+    ],
+
+    'webhooks' => [
+        'enabled' => false,
+        'timeout' => 5,
+        'events' => ['content.created', 'content.updated', 'content.deleted'],
+    ],
+
+    'seo' => [
+        'enabled' => true,
+        'sitemap_path' => '/sitemap.xml',
+        'default_title_suffix' => '',
+    ],
+
+    'publishing' => [
+        'enabled' => false,
+        'sleep_until_field' => 'published_at',
+    ],
+
     'content_types' => [
         'home' => [
             'label' => 'Home Page',
