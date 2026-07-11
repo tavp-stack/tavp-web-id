@@ -58,7 +58,10 @@ $router->get('/contact', function () {
     $_SESSION['captcha_answer'] = $a + $b;
     $hash = hash('sha256', (string) ($a + $b));
 
+    $records = app()->getService(BreadManager::class)->browse('contact');
+
     return view('contact', [
+        'content' => $records[0] ?? [],
         'captcha_question' => "What is {$a} + {$b}?",
         'captcha_hash' => $hash,
     ]);
@@ -67,6 +70,8 @@ $router->get('/contact', function () {
 // Contact form handler
 $router->post('/contact', function () {
     session_start();
+    $contactRecords = app()->getService(BreadManager::class)->browse('contact');
+    $contactContent = $contactRecords[0] ?? [];
     $name = $_POST['name'] ?? '';
     $email = $_POST['email'] ?? '';
     $subject = $_POST['subject'] ?? '';
@@ -77,7 +82,7 @@ $router->post('/contact', function () {
 
     // Honeypot check
     if ($website !== '') {
-        return view('contact', ['success' => false, 'error' => 'Spam detected.']);
+        return view('contact', ['content' => $contactContent, 'success' => false, 'error' => 'Spam detected.']);
     }
 
     // Captcha check
@@ -89,6 +94,7 @@ $router->post('/contact', function () {
         $hash = hash('sha256', (string) ($a + $b));
 
         return view('contact', [
+            'content' => $contactContent,
             'success' => false,
             'error' => 'Invalid captcha. Please try again.',
             'captcha_question' => "What is {$a} + {$b}?",
@@ -105,6 +111,7 @@ $router->post('/contact', function () {
     $hash = hash('sha256', (string) ($a + $b));
 
     return view('contact', [
+        'content' => $contactContent,
         'success' => true,
         'message' => "Thank you {$name}! We'll get back to you soon.",
         'captcha_question' => "What is {$a} + {$b}?",

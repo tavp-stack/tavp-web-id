@@ -150,5 +150,22 @@ return [
                 ['name' => 'published_at', 'type' => 'datetime'],
             ],
         ],
+        'contact' => [
+            'label' => 'Contact Page',
+            'singular' => 'Contact',
+            'route' => '/contact',
+            'fields' => [
+                ['name' => 'page_title', 'type' => 'text', 'required' => true],
+                ['name' => 'intro', 'type' => 'textarea'],
+                ['name' => 'github_title', 'type' => 'text'],
+                ['name' => 'github_desc', 'type' => 'text'],
+                ['name' => 'github_url', 'type' => 'text'],
+                ['name' => 'email_title', 'type' => 'text'],
+                ['name' => 'email_desc', 'type' => 'text'],
+                ['name' => 'email_address', 'type' => 'text'],
+                ['name' => 'form_button', 'type' => 'text'],
+                ['name' => 'slug', 'type' => 'slug', 'from' => 'page_title'],
+            ],
+        ],
     ],
 ];

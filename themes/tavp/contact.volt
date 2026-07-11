@@ -7,25 +7,25 @@
     {# Left: Info #}
     <div class="space-y-8">
       <div class="space-y-4">
-        <h1 class="font-headline-xl text-headline-xl text-on-surface">Contact</h1>
-        <p class="text-on-tertiary-container text-lg">Have a question, suggestion, or want to contribute? We'd love to hear from you.</p>
+        <h1 class="font-headline-xl text-headline-xl text-on-surface">{{ content['page_title']|default('Contact') }}</h1>
+        <p class="text-on-tertiary-container text-lg">{{ content['intro']|default("Have a question, suggestion, or want to contribute? We'd love to hear from you.") }}</p>
       </div>
 
       <div class="space-y-6">
         <div class="flex items-start gap-4">
           <span class="material-symbols-outlined text-secondary text-2xl mt-1">code</span>
           <div>
-            <h3 class="font-headline-lg text-headline-lg text-on-surface">GitHub</h3>
-            <p class="text-on-tertiary-container">Open an issue or start a discussion.</p>
-            <a href="https://github.com/tavp-stack" class="font-code-sm text-secondary hover:underline mt-2 inline-block">github.com/tavp-stack</a>
+            <h3 class="font-headline-lg text-headline-lg text-on-surface">{{ content['github_title']|default('GitHub') }}</h3>
+            <p class="text-on-tertiary-container">{{ content['github_desc']|default('Open an issue or start a discussion.') }}</p>
+            <a href="https://{{ content['github_url']|default('github.com/tavp-stack') }}" class="font-code-sm text-secondary hover:underline mt-2 inline-block">{{ content['github_url']|default('github.com/tavp-stack') }}</a>
           </div>
         </div>
 
         <div class="flex items-start gap-4" x-data="{ revealed: false, answer: '' }">
           <span class="material-symbols-outlined text-secondary text-2xl mt-1">mail</span>
           <div>
-            <h3 class="font-headline-lg text-headline-lg text-on-surface">Email</h3>
-            <p class="text-on-tertiary-container">For business inquiries or partnerships.</p>
+            <h3 class="font-headline-lg text-headline-lg text-on-surface">{{ content['email_title']|default('Email') }}</h3>
+            <p class="text-on-tertiary-container">{{ content['email_desc']|default('For business inquiries or partnerships.') }}</p>
             <template x-if="!revealed">
               <div class="mt-2">
                 <p class="font-code-sm text-on-surface-variant text-sm mb-2">Solve to reveal email:</p>
@@ -37,7 +37,7 @@
               </div>
             </template>
             <template x-if="revealed">
-              <a href="mailto:hello@tavp.web.id" class="font-code-sm text-secondary mt-2 inline-block hover:underline">hello@tavp.web.id</a>
+              <a href="mailto:{{ content['email_address']|default('hello@tavp.web.id') }}" class="font-code-sm text-secondary mt-2 inline-block hover:underline">{{ content['email_address']|default('hello@tavp.web.id') }}</a>
             </template>
           </div>
         </div>
@@ -77,7 +77,7 @@
           <input type="hidden" name="captcha_hash" value="{{ captcha_hash }}">
         </div>
         <button type="submit" class="w-full bg-secondary text-on-secondary font-bold py-4 hard-shadow hover:translate-y-[-2px] transition-all">
-          Send Message
+          {{ content['form_button']|default('Send Message') }}
         </button>
       </form>
     </div>
