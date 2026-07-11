@@ -67,23 +67,23 @@
 
       {# Step 3 #}
       <section class="relative pl-12 border-l border-outline-variant">
-        <div class="absolute -left-6 top-0 w-12 h-12 bg-surface-container border border-outline-variant flex items-center justify-center font-headline-lg text-headline-lg text-headline-lg step-number">3</div>
+        <div class="absolute -left-6 top-0 w-12 h-12 bg-surface-container border border-outline-variant flex items-center justify-center font-headline-lg text-headline-lg step-number">3</div>
         <div class="mb-6">
-          <h2 class="font-headline-lg text-headline-lg text-headline-lg text-on-surface mb-2">Tailwind &amp; Alpine</h2>
-          <p class="text-on-tertiary-container">Utility-first styling and lightweight reactivity. Use the CDN for rapid development, or compile with Vite for production.</p>
+          <h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">TAVPblocks — UI Components</h2>
+          <p class="text-on-tertiary-container">No need to install Tailwind or Alpine manually. TAVPblocks includes 40+ pre-built UI components (buttons, modals, forms, cards, charts, etc.) that work out of the box with Tailwind CSS and Alpine.js.</p>
         </div>
         <div class="rounded-lg overflow-hidden border border-outline-variant code-glow">
           <div class="bg-surface-container px-4 py-2 flex justify-between items-center border-b border-outline-variant">
-            <span class="font-label-caps text-label-caps text-label-caps text-on-tertiary-container">NPM</span>
+            <span class="font-label-caps text-label-caps text-on-tertiary-container">TERMINAL</span>
             <span class="material-symbols-outlined text-on-tertiary-container text-sm">content_copy</span>
           </div>
-          <div class="p-4 font-code-sm text-code-sm text-code-sm bg-background">
+          <div class="p-4 font-code-sm text-code-sm bg-background">
             <code class="block">
-              <span class="token-comment"># Install UI dependencies</span><br/>
-              npm install -D tailwindcss postcss autoprefixer<br/>
-              npm install alpinejs<br/><br/>
-              <span class="token-comment"># Initialize Tailwind config</span><br/>
-              npx tailwindcss init
+              <span class="token-comment"># TAVPblocks is included via composer</span><br/>
+              composer require tavp/tavpblocks<br/><br/>
+              <span class="token-comment"># Components available out of the box:</span><br/>
+              Button, Input, Select, Modal, Card,<br/>
+              Chart, Datatable, Form, Pagination...
             </code>
           </div>
         </div>
