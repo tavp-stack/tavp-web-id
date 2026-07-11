@@ -123,6 +123,38 @@ return [
                 ['name' => 'hero_subtitle', 'type' => 'textarea'],
                 ['name' => 'cta_primary', 'type' => 'text'],
                 ['name' => 'cta_secondary', 'type' => 'text'],
+
+                // Feature bento grid
+                ['name' => 'feature_1_title', 'type' => 'text'],
+                ['name' => 'feature_1_desc', 'type' => 'textarea'],
+                ['name' => 'feature_2_title', 'type' => 'text'],
+                ['name' => 'feature_2_desc', 'type' => 'textarea'],
+                ['name' => 'feature_3_title', 'type' => 'text'],
+                ['name' => 'feature_3_desc', 'type' => 'textarea'],
+                ['name' => 'feature_4_title', 'type' => 'text'],
+                ['name' => 'feature_4_desc', 'type' => 'textarea'],
+
+                // "Runs Where You Do" section
+                ['name' => 'platforms_title', 'type' => 'text'],
+                ['name' => 'platforms_subtitle', 'type' => 'textarea'],
+
+                // Stats
+                ['name' => 'stat_1_label', 'type' => 'text'],
+                ['name' => 'stat_1_value', 'type' => 'text'],
+                ['name' => 'stat_1_desc', 'type' => 'text'],
+                ['name' => 'stat_2_label', 'type' => 'text'],
+                ['name' => 'stat_2_value', 'type' => 'text'],
+                ['name' => 'stat_2_desc', 'type' => 'text'],
+                ['name' => 'stat_3_label', 'type' => 'text'],
+                ['name' => 'stat_3_value', 'type' => 'text'],
+                ['name' => 'stat_3_desc', 'type' => 'text'],
+
+                // Final CTA
+                ['name' => 'cta_title', 'type' => 'text'],
+                ['name' => 'cta_highlight', 'type' => 'text'],
+                ['name' => 'cta_final_1_text', 'type' => 'text'],
+                ['name' => 'cta_final_2_text', 'type' => 'text'],
+
                 ['name' => 'slug', 'type' => 'slug', 'from' => 'hero_title'],
             ],
         ],

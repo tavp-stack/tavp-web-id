@@ -38,8 +38,8 @@
       <div class="absolute top-0 left-0 w-full h-[2px] bg-secondary opacity-50"></div>
       <div class="space-y-4 relative z-10">
         <span class="material-symbols-outlined text-secondary text-4xl">architecture</span>
-        <h3 class="font-headline-lg text-headline-lg text-headline-lg text-on-surface">Lean Architecture</h3>
-        <p class="text-on-tertiary-container max-w-md">A C-extension core runs your code close to the metal, while a Laravel-style ergonomic layer keeps development a joy.</p>
+        <h3 class="font-headline-lg text-headline-lg text-headline-lg text-on-surface">{{ content['feature_1_title']|default('Lean Architecture') }}</h3>
+        <p class="text-on-tertiary-container max-w-md">{{ content['feature_1_desc']|default('A C-extension core runs your code close to the metal, while a Laravel-style ergonomic layer keeps development a joy.') }}</p>
       </div>
       <div class="mt-8 bg-background border border-outline-variant p-4 font-code-sm text-code-sm text-code-sm rounded shadow-inner">
         <div class="flex gap-2 mb-2">
@@ -55,8 +55,8 @@
     <div class="md:col-span-4 bg-surface-container-low border border-outline-variant p-8 flex flex-col justify-between hover:border-secondary transition-colors group">
       <div class="space-y-4">
         <span class="material-symbols-outlined text-secondary text-4xl">memory</span>
-        <h3 class="font-headline-lg text-headline-lg text-headline-lg text-on-surface">Thin Core</h3>
-        <p class="text-on-tertiary-container">Modular by design. Load exactly what your application needs — nothing more.</p>
+        <h3 class="font-headline-lg text-headline-lg text-headline-lg text-on-surface">{{ content['feature_2_title']|default('Thin Core') }}</h3>
+        <p class="text-on-tertiary-container">{{ content['feature_2_desc']|default('Modular by design. Load exactly what your application needs — nothing more.') }}</p>
       </div>
       <a href="https://docs.tavp.web.id/index.html" class="pt-6 font-code-sm text-code-sm text-secondary group-hover:translate-x-2 transition-transform cursor-pointer flex items-center gap-2">
         Read the Docs <span class="material-symbols-outlined text-sm">arrow_forward</span>
@@ -66,8 +66,8 @@
     <div class="md:col-span-4 bg-surface-container-low border border-outline-variant p-8 flex flex-col justify-between hover:border-secondary transition-colors group">
       <div class="space-y-4">
         <span class="material-symbols-outlined text-secondary text-4xl">speed</span>
-        <h3 class="font-headline-lg text-headline-lg text-headline-lg text-on-surface">High Throughput</h3>
-        <p class="text-on-tertiary-container">Thousands of requests per second on a modest 2-core VPS. Up to 12,000+ with the Coil runtime.</p>
+        <h3 class="font-headline-lg text-headline-lg text-headline-lg text-on-surface">{{ content['feature_3_title']|default('High Throughput') }}</h3>
+        <p class="text-on-tertiary-container">{{ content['feature_3_desc']|default('Thousands of requests per second on a modest 2-core VPS. Up to 12,000+ with the Coil runtime.') }}</p>
       </div>
     </div>
 
@@ -78,8 +78,8 @@
       <div class="flex flex-col md:flex-row gap-8 items-center h-full">
         <div class="flex-1 space-y-4">
           <span class="material-symbols-outlined text-secondary text-4xl">database</span>
-          <h3 class="font-headline-lg text-headline-lg text-headline-lg text-on-surface">Low RAM Footprint</h3>
-          <p class="text-on-tertiary-container">Peak performance in under 15MB per worker — efficient enough for edge, containers, and modest boxes alike.</p>
+          <h3 class="font-headline-lg text-headline-lg text-headline-lg text-on-surface">{{ content['feature_4_title']|default('Low RAM Footprint') }}</h3>
+          <p class="text-on-tertiary-container">{{ content['feature_4_desc']|default('Peak performance in under 15MB per worker — efficient enough for edge, containers, and modest boxes alike.') }}</p>
         </div>
         <div class="flex-shrink-0 w-full md:w-1/3">
           <div class="flex items-end justify-between gap-1 h-32">
@@ -101,8 +101,8 @@
 <section class="bg-surface-container-lowest py-24 border-y border-outline-variant">
   <div class="max-w-[1280px] mx-auto px-gutter text-center space-y-12">
     <div class="space-y-4">
-      <h2 class="font-headline-xl text-headline-xl text-headline-xl text-on-surface tracking-tight">Runs Where You Do</h2>
-      <p class="text-on-tertiary-container max-w-2xl mx-auto">From the $5/mo VPS you already own to Docker and managed panels — TAVP feels right at home everywhere.</p>
+      <h2 class="font-headline-xl text-headline-xl text-headline-xl text-on-surface tracking-tight">{{ content['platforms_title']|default('Runs Where You Do') }}</h2>
+      <p class="text-on-tertiary-container max-w-2xl mx-auto">{{ content['platforms_subtitle']|default('From the $5/mo VPS you already own to Docker and managed panels — TAVP feels right at home everywhere.') }}</p>
     </div>
     <div class="flex flex-wrap justify-center gap-8 items-center opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
       <div class="flex items-center gap-3"><span class="material-symbols-outlined text-4xl">dns</span><span class="font-label-caps text-label-caps text-xl">Any VPS</span></div>
@@ -110,23 +110,23 @@
       <div class="flex items-center gap-3"><span class="material-symbols-outlined text-4xl">dashboard</span><span class="font-label-caps text-label-caps text-xl">HestiaCP</span></div>
       <div class="flex items-center gap-3"><span class="material-symbols-outlined text-4xl">dns</span><span class="font-label-caps text-label-caps text-xl">Shared Hosting</span></div>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-12">
-      <div class="p-6 bg-background border border-outline-variant text-left space-y-4">
-        <div class="text-secondary font-code-sm text-code-sm uppercase tracking-tighter">Response Time</div>
-        <div class="text-4xl font-headline-xl text-headline-xl text-on-surface">&lt;5ms</div>
-        <div class="text-on-tertiary-container text-sm">P95 latency on a 2-core VPS with PHP-FPM.</div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-12">
+        <div class="p-6 bg-background border border-outline-variant text-left space-y-4">
+          <div class="text-secondary font-code-sm text-code-sm uppercase tracking-tighter">{{ content['stat_1_label']|default('Response Time') }}</div>
+          <div class="text-4xl font-headline-xl text-headline-xl text-on-surface">{{ content['stat_1_value']|default('<5ms') }}</div>
+          <div class="text-on-tertiary-container text-sm">{{ content['stat_1_desc']|default('P95 latency on a 2-core VPS with PHP-FPM.') }}</div>
+        </div>
+        <div class="p-6 bg-background border border-outline-variant text-left space-y-4">
+          <div class="text-secondary font-code-sm text-code-sm uppercase tracking-tighter">{{ content['stat_2_label']|default('Throughput') }}</div>
+          <div class="text-4xl font-headline-xl text-headline-xl text-on-surface">{{ content['stat_2_value']|default('12,000+') }}</div>
+          <div class="text-on-tertiary-container text-sm">{{ content['stat_2_desc']|default('Requests per second with the Coil (Swoole) runtime.') }}</div>
+        </div>
+        <div class="p-6 bg-background border border-outline-variant text-left space-y-4">
+          <div class="text-secondary font-code-sm text-code-sm uppercase tracking-tighter">{{ content['stat_3_label']|default('Memory') }}</div>
+          <div class="text-4xl font-headline-xl text-headline-xl text-on-surface">{{ content['stat_3_value']|default('<15MB') }}</div>
+          <div class="text-on-tertiary-container text-sm">{{ content['stat_3_desc']|default('Per worker, at peak performance.') }}</div>
+        </div>
       </div>
-      <div class="p-6 bg-background border border-outline-variant text-left space-y-4">
-        <div class="text-secondary font-code-sm text-code-sm uppercase tracking-tighter">Throughput</div>
-        <div class="text-4xl font-headline-xl text-headline-xl text-on-surface">12,000+</div>
-        <div class="text-on-tertiary-container text-sm">Requests per second with the Coil (Swoole) runtime.</div>
-      </div>
-      <div class="p-6 bg-background border border-outline-variant text-left space-y-4">
-        <div class="text-secondary font-code-sm text-code-sm uppercase tracking-tighter">Memory</div>
-        <div class="text-4xl font-headline-xl text-headline-xl text-on-surface">&lt;15MB</div>
-        <div class="text-on-tertiary-container text-sm">Per worker, at peak performance.</div>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -134,13 +134,13 @@
 <section class="py-32 bg-background relative overflow-hidden">
   <div class="absolute inset-0 performance-grid-pattern opacity-20"></div>
   <div class="max-w-[1280px] mx-auto px-gutter text-center relative z-10 space-y-10">
-    <h2 class="font-headline-xl text-headline-xl text-headline-xl md:text-5xl text-on-surface">Less config, more craft.<br/><span class="text-secondary">Start building your product.</span></h2>
+    <h2 class="font-headline-xl text-headline-xl text-headline-xl md:text-5xl text-on-surface">{{ content['cta_title']|default('Less config, more craft.') }}<br/><span class="text-secondary">{{ content['cta_highlight']|default('Start building your product.') }}</span></h2>
     <div class="flex flex-col md:flex-row justify-center gap-4">
       <a href="https://docs.tavp.web.id/guide/installation.html" class="px-12 py-5 bg-secondary text-on-secondary font-bold font-headline-lg text-headline-lg text-xl hard-shadow">
-        Get Started
+        {{ content['cta_final_1_text']|default('Get Started') }}
       </a>
       <a href="https://docs.tavp.web.id/index.html" class="px-12 py-5 bg-surface-container border border-outline-variant text-on-surface font-bold font-headline-lg text-headline-lg text-xl hover:bg-surface-container-high transition-colors">
-        Documentation
+        {{ content['cta_final_2_text']|default('Documentation') }}
       </a>
     </div>
   </div>
