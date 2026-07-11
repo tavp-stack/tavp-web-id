@@ -4,39 +4,55 @@ declare(strict_types=1);
 
 namespace App;
 
+use Tavp\Cms\Auth\CmsUserProvider;
+use Tavp\Core\Auth\OtpService;
+use Tavp\Core\Auth\TokenService;
 use Tavp\Core\Module\ServiceProvider;
+use Tavp\Tavpid\Rbac\AccessControl;
 
 /**
- * Local service provider — minimal overrides for tavp.web.id.
- *
- * The vendor CmsServiceProvider handles all core module registration.
- * This provider only adds project-specific customizations.
+ * Local service provider — registers auth + project-specific services.
  */
 class AppServiceProvider implements ServiceProvider
 {
     public function register(): void
     {
-        // All CMS modules are registered by the vendor CmsServiceProvider.
-        // Add project-specific bindings here if needed.
+        $app = app();
+
+        // --- User Provider (CMS) -------------------------------------------
+        $app->bind('tavpid.user_provider', fn () => new CmsUserProvider());
+
+        // --- OTP Service (core, database-backed) ---------------------------
+        $app->bind('tavpid.otp', fn () => new OtpService(
+            (int) config('cms.admin.otp_ttl_minutes', 10),
+        ));
+
+        // --- Token Service (JWT) -------------------------------------------
+        $app->bind('tavpid.token', fn () => new TokenService(
+            secret: (string) env('JWT_SECRET', 'tavp-default-secret'),
+            accessTtlMinutes: 15,
+            refreshTtlDays: 30,
+        ));
+
+        // --- RBAC (config-based) -------------------------------------------
+        $app->bind('tavpid.rbac', function () {
+            $roles = config('cms.admin.roles', []);
+            $permissions = config('cms.admin.permissions', []);
+
+            $rbac = new AccessControl();
+            foreach ($permissions as $role => $perms) {
+                $rbac->defineRole($role, $perms);
+            }
+
+            return $rbac;
+        });
     }
 
-    public function boot(): void
-    {
-        // Nothing to boot.
-    }
+    public function boot(): void {}
 
-    public function loadRoutes(): void
-    {
-        // Routes are loaded directly in routes/web.php.
-    }
+    public function loadRoutes(): void {}
 
-    public function loadMigrations(): void
-    {
-        // Migrations are discovered from database/migrations/.
-    }
+    public function loadMigrations(): void {}
 
-    public function loadViews(): void
-    {
-        // Views are managed by the ThemeManager.
-    }
+    public function loadViews(): void {}
 }

@@ -27,6 +27,11 @@ $router->get('/sitemap.xml', function () {
     return $sitemap();
 });
 
+// --- Analytics Dashboard -------------------------------------------------
+$router->get('/analytics', function () {
+    return view('analytics::dashboard.index');
+});
+
 // --- Front-end -----------------------------------------------------------
 
 // Home — content-driven landing template
