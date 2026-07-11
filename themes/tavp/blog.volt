@@ -27,10 +27,8 @@
               {% if post['excerpt'] is defined and post['excerpt'] %}
                 <p class="text-sm text-on-tertiary-container line-clamp-3">{{ post['excerpt'] }}</p>
               {% endif %}
-              <div class="flex items-center gap-2 text-xs text-on-tertiary-container">
-                {% if post['published_at'] is defined and post['published_at'] %}
-                  <span class="font-code-sm text-code-sm">{{ post['published_at'] | date('d M Y') }}</span>
-                {% endif %}
+              <div class="flex items-center gap-2 text-xs text-on-surface-variant">
+                <span class="font-code-sm text-code-sm">{{ post['slug'] }}</span>
               </div>
             </div>
           </a>

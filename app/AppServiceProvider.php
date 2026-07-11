@@ -34,7 +34,9 @@ class AppServiceProvider implements ServiceProvider
             refreshTtlDays: 30,
         ));
 
-        // --- RBAC (config-based) -------------------------------------------
+        // --- RBAC (config + database) --------------------------------------
+        // Roles come from config (built-in admins) as a base, then from the
+        // users table so accounts created in the admin panel take effect.
         $app->bind('tavpid.rbac', function () {
             $roles = (array) config('cms.admin.roles', []);
             $permissions = (array) config('cms.admin.permissions', []);
@@ -45,6 +47,21 @@ class AppServiceProvider implements ServiceProvider
             }
             foreach ($roles as $email => $role) {
                 $rbac->setUserRole($email, $role);
+            }
+
+            // Database-managed users override the config defaults.
+            try {
+                $rows = app('db')->fetchAll(
+                    'SELECT email, role FROM users WHERE role IS NOT NULL AND role <> ""',
+                    \PDO::FETCH_ASSOC
+                );
+                foreach ($rows as $row) {
+                    if (!empty($row['email']) && !empty($row['role'])) {
+                        $rbac->setUserRole((string) $row['email'], (string) $row['role']);
+                    }
+                }
+            } catch (\Throwable) {
+                // Users table not migrated yet — config roles still apply.
             }
 
             return $rbac;

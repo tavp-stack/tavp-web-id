@@ -57,4 +57,17 @@ $app->bind('view', fn () => new ViewFactory(
     storage_path('compiled/volt')
 ));
 
+// --- Phalcon DI Setup (required for Phalcon models) ------------------------
+$di = new \Phalcon\Di\Di();
+$di->setShared('db', function () use ($app) {
+    return $app->getService('db');
+});
+$di->setShared('modelsManager', function () {
+    return new \Phalcon\Mvc\Model\Manager();
+});
+$di->setShared('modelsMetadata', function () {
+    return new \Phalcon\Mvc\Model\Metadata\Memory();
+});
+\Phalcon\Di\Di::setDefault($di);
+
 return $app;

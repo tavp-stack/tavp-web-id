@@ -13,7 +13,7 @@ use Tavp\Core\Database\Migrations\TableDefinition;
  */
 return new class extends Migration
 {
-    public function up(SchemaBuilder $schema): void
+    public function up($schema): void
     {
         $schema->createTable('content_taxonomy', function (TableDefinition $table) use ($schema) {
             $table->add($schema->column('id', 'bigInteger', ['identity' => true, 'primary' => true]));
@@ -28,7 +28,7 @@ return new class extends Migration
         $schema->addIndex('content_taxonomy', ['term_id'], 'idx_content_taxonomy_term_id');
     }
 
-    public function down(SchemaBuilder $schema): void
+    public function down($schema): void
     {
         $schema->dropTable('content_taxonomy');
     }

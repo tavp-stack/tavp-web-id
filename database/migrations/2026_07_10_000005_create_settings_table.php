@@ -11,7 +11,7 @@ use Tavp\Core\Database\Migrations\TableDefinition;
  */
 return new class extends Migration
 {
-    public function up(SchemaBuilder $schema): void
+    public function up($schema): void
     {
         $schema->createTable('settings', function (TableDefinition $table) use ($schema) {
             $table->add($schema->column('id', 'bigInteger', ['identity' => true, 'primary' => true]));
@@ -24,7 +24,7 @@ return new class extends Migration
         });
     }
 
-    public function down(SchemaBuilder $schema): void
+    public function down($schema): void
     {
         $schema->dropTable('settings');
     }
