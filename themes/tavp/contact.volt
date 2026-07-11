@@ -57,10 +57,19 @@
           <input type="text" name="subject" required class="w-full bg-surface-container-low border border-outline-variant rounded px-4 py-3 text-on-surface focus:border-secondary focus:outline-none transition-colors" placeholder="What's this about?">
         </div>
         <div>
-          <label class="block text-xs font-semibold uppercase tracking-widest text-label-caps text-on-tertiary-container mb-2 uppercase tracking-widest">Message</label>
+          <label class="block text-xs font-semibold uppercase tracking-widest text-on-tertiary-container mb-2">Message</label>
           <textarea name="message" rows="5" required class="w-full bg-surface-container-low border border-outline-variant rounded px-4 py-3 text-on-surface focus:border-secondary focus:outline-none transition-colors resize-none" placeholder="Your message..."></textarea>
         </div>
-        <button type="submit" class="w-full bg-secondary text-on-secondary font-bold text-2xl font-semibold py-4 hard-shadow hover:translate-y-[-2px] transition-all">
+        {# Honeypot — hidden field, bots will fill this #}
+        <div class="absolute -left-[9999px]" aria-hidden="true">
+          <input type="text" name="website" tabindex="-1" autocomplete="off">
+        </div>
+        {# Simple math captcha #}
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-widest text-on-tertiary-container mb-2">Verify: What is 3 + 4? (anti-spam)</label>
+          <input type="number" name="captcha" required class="w-full bg-surface-container-low border border-outline-variant rounded px-4 py-3 text-on-surface focus:border-secondary focus:outline-none transition-colors" placeholder="7">
+        </div>
+        <button type="submit" class="w-full bg-secondary text-on-secondary font-bold py-4 hard-shadow hover:translate-y-[-2px] transition-all">
           Send Message
         </button>
       </form>
