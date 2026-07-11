@@ -4,15 +4,18 @@
     "type": "project",
     "license": "MIT",
     "repositories": [
-        { "type": "path", "url": "../tavp-stack/tavp-cms", "options": { "symlink": false } }
+        { "type": "path", "url": "../tavp-stack/tavp-cms", "options": { "symlink": false } },
+        { "type": "path", "url": "../tavp-stack/tavp-cli", "options": { "symlink": false } }
     ],
     "require": {
         "php": ">=8.3",
         "tavp/core": "^1.1",
-        "tavp/cms": "@dev"
+        "tavp/cms": "@dev",
+        "tavp/tavpid": "^1.0",
+        "tavp/tavphub": "^1.1"
     },
     "require-dev": {
-        "tavp/cli": "^1.0"
+        "tavp/cli": "@dev"
     },
     "autoload": {
         "psr-4": {
