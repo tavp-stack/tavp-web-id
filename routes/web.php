@@ -126,7 +126,8 @@ $router->get('/{slug}', function (array $params) {
     $page = app()->getService(BreadManager::class)->readBySlug('page', $params['slug'] ?? '');
 
     if ($page === null || ($page['status'] ?? 'draft') !== 'published') {
-        return response('404 — Not found', 404);
+        http_response_code(404);
+        return view('404');
     }
 
     return view('page', ['content' => $page]);
