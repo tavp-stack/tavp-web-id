@@ -13,17 +13,17 @@
     <div class="flex justify-center mb-8">
       <img alt="TAVP Stack" class="w-32 h-32 md:w-48 md:h-48 object-contain drop-shadow-[0_0_30px_rgba(230,196,70,0.3)]" src="/assets/logo.png"/>
     </div>
-    <h1 class="text-4xl font-bold text-headline-xl md:text-6xl text-on-surface tracking-tighter leading-tight">
+    <h1 class="text-4xl font-bold font-display text-headline-xl md:text-6xl text-on-surface tracking-tighter leading-tight">
       {{ content['hero_title']|default('The Lean, Mean, PHP Machine.') }}
     </h1>
     <p class="font-body-md text-body-md md:text-xl text-on-tertiary-container max-w-2xl mx-auto">
       {{ content['hero_subtitle']|default('Build blazingly fast systems with Tailwind, Alpine, Volt, and Phalcon. Thin, light, and engineered for the sub-millisecond era.') }}
     </p>
     <div class="flex flex-col sm:flex-row items-center justify-center gap-6 pt-4">
-      <a href="https://docs.tavp.web.id/guide/what-is-tavp.html" class="w-full sm:w-auto px-8 py-4 bg-secondary text-on-secondary font-bold text-2xl font-semibold text-lg hard-shadow transition-all">
+      <a href="https://docs.tavp.web.id/guide/what-is-tavp.html" class="w-full sm:w-auto px-8 py-4 bg-secondary text-on-secondary font-bold text-2xl font-semibold font-display text-lg hard-shadow transition-all">
         {{ content['cta_primary']|default('Get Started') }}
       </a>
-      <a href="/performance" class="w-full sm:w-auto px-8 py-4 bg-surface-container border border-outline-variant text-on-surface font-bold text-2xl font-semibold text-lg hover:border-secondary transition-colors">
+      <a href="/performance" class="w-full sm:w-auto px-8 py-4 bg-surface-container border border-outline-variant text-on-surface font-bold text-2xl font-semibold font-display text-lg hover:border-secondary transition-colors">
         {{ content['cta_secondary']|default('View Benchmarks') }}
       </a>
     </div>
@@ -38,7 +38,7 @@
       <div class="absolute top-0 left-0 w-full h-[2px] bg-secondary opacity-50"></div>
       <div class="space-y-4 relative z-10">
         <span class="material-symbols-outlined text-secondary text-4xl">architecture</span>
-        <h3 class="text-2xl font-semibold text-headline-lg text-on-surface">Lean Architecture</h3>
+        <h3 class="text-2xl font-semibold font-display text-headline-lg text-on-surface">Lean Architecture</h3>
         <p class="text-on-tertiary-container max-w-md">A C-extension core runs your code close to the metal, while a Laravel-style ergonomic layer keeps development a joy.</p>
       </div>
       <div class="mt-8 bg-background border border-outline-variant p-4 font-mono text-sm text-code-sm rounded shadow-inner">
@@ -55,7 +55,7 @@
     <div class="md:col-span-4 bg-surface-container-low border border-outline-variant p-8 flex flex-col justify-between hover:border-secondary transition-colors group">
       <div class="space-y-4">
         <span class="material-symbols-outlined text-secondary text-4xl">memory</span>
-        <h3 class="text-2xl font-semibold text-headline-lg text-on-surface">Thin Core</h3>
+        <h3 class="text-2xl font-semibold font-display text-headline-lg text-on-surface">Thin Core</h3>
         <p class="text-on-tertiary-container">Modular by design. Load exactly what your application needs — nothing more.</p>
       </div>
       <a href="https://docs.tavp.web.id/index.html" class="pt-6 font-mono text-sm text-secondary group-hover:translate-x-2 transition-transform cursor-pointer flex items-center gap-2">
@@ -66,7 +66,7 @@
     <div class="md:col-span-4 bg-surface-container-low border border-outline-variant p-8 flex flex-col justify-between hover:border-secondary transition-colors group">
       <div class="space-y-4">
         <span class="material-symbols-outlined text-secondary text-4xl">speed</span>
-        <h3 class="text-2xl font-semibold text-headline-lg text-on-surface">High Throughput</h3>
+        <h3 class="text-2xl font-semibold font-display text-headline-lg text-on-surface">High Throughput</h3>
         <p class="text-on-tertiary-container">Thousands of requests per second on a modest 2-core VPS. Up to 12,000+ with the Coil runtime.</p>
       </div>
     </div>
@@ -78,7 +78,7 @@
       <div class="flex flex-col md:flex-row gap-8 items-center h-full">
         <div class="flex-1 space-y-4">
           <span class="material-symbols-outlined text-secondary text-4xl">database</span>
-          <h3 class="text-2xl font-semibold text-headline-lg text-on-surface">Low RAM Footprint</h3>
+          <h3 class="text-2xl font-semibold font-display text-headline-lg text-on-surface">Low RAM Footprint</h3>
           <p class="text-on-tertiary-container">Peak performance in under 15MB per worker — efficient enough for edge, containers, and modest boxes alike.</p>
         </div>
         <div class="flex-shrink-0 w-full md:w-1/3">
@@ -101,7 +101,7 @@
 <section class="bg-surface-container-lowest py-24 border-y border-outline-variant">
   <div class="max-w-[1280px] mx-auto px-gutter text-center space-y-12">
     <div class="space-y-4">
-      <h2 class="text-4xl font-bold text-headline-xl text-on-surface tracking-tight">Runs Where You Do</h2>
+      <h2 class="text-4xl font-bold font-display text-headline-xl text-on-surface tracking-tight">Runs Where You Do</h2>
       <p class="text-on-tertiary-container max-w-2xl mx-auto">From the $5/mo VPS you already own to Docker and managed panels — TAVP feels right at home everywhere.</p>
     </div>
     <div class="flex flex-wrap justify-center gap-8 items-center opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
@@ -113,17 +113,17 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-12">
       <div class="p-6 bg-background border border-outline-variant text-left space-y-4">
         <div class="text-secondary font-mono text-sm uppercase tracking-tighter">Response Time</div>
-        <div class="text-4xl text-4xl font-bold text-on-surface">&lt;5ms</div>
+        <div class="text-4xl text-4xl font-bold font-display text-on-surface">&lt;5ms</div>
         <div class="text-on-tertiary-container text-sm">P95 latency on a 2-core VPS with PHP-FPM.</div>
       </div>
       <div class="p-6 bg-background border border-outline-variant text-left space-y-4">
         <div class="text-secondary font-mono text-sm uppercase tracking-tighter">Throughput</div>
-        <div class="text-4xl text-4xl font-bold text-on-surface">12,000+</div>
+        <div class="text-4xl text-4xl font-bold font-display text-on-surface">12,000+</div>
         <div class="text-on-tertiary-container text-sm">Requests per second with the Coil (Swoole) runtime.</div>
       </div>
       <div class="p-6 bg-background border border-outline-variant text-left space-y-4">
         <div class="text-secondary font-mono text-sm uppercase tracking-tighter">Memory</div>
-        <div class="text-4xl text-4xl font-bold text-on-surface">&lt;15MB</div>
+        <div class="text-4xl text-4xl font-bold font-display text-on-surface">&lt;15MB</div>
         <div class="text-on-tertiary-container text-sm">Per worker, at peak performance.</div>
       </div>
     </div>
@@ -134,12 +134,12 @@
 <section class="py-32 bg-background relative overflow-hidden">
   <div class="absolute inset-0 performance-grid-pattern opacity-20"></div>
   <div class="max-w-[1280px] mx-auto px-gutter text-center relative z-10 space-y-10">
-    <h2 class="text-4xl font-bold text-headline-xl md:text-5xl text-on-surface">Less config, more craft.<br/><span class="text-secondary">Start building your product.</span></h2>
+    <h2 class="text-4xl font-bold font-display text-headline-xl md:text-5xl text-on-surface">Less config, more craft.<br/><span class="text-secondary">Start building your product.</span></h2>
     <div class="flex flex-col md:flex-row justify-center gap-4">
-      <a href="https://docs.tavp.web.id/guide/installation.html" class="px-12 py-5 bg-secondary text-on-secondary font-bold text-2xl font-semibold text-xl hard-shadow">
+      <a href="https://docs.tavp.web.id/guide/installation.html" class="px-12 py-5 bg-secondary text-on-secondary font-bold text-2xl font-semibold font-display text-xl hard-shadow">
         Get Started
       </a>
-      <a href="https://docs.tavp.web.id/index.html" class="px-12 py-5 bg-surface-container border border-outline-variant text-on-surface font-bold text-2xl font-semibold text-xl hover:bg-surface-container-high transition-colors">
+      <a href="https://docs.tavp.web.id/index.html" class="px-12 py-5 bg-surface-container border border-outline-variant text-on-surface font-bold text-2xl font-semibold font-display text-xl hover:bg-surface-container-high transition-colors">
         Documentation
       </a>
     </div>

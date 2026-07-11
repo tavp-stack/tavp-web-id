@@ -51,7 +51,7 @@
 
       <header class="mb-12 relative overflow-hidden p-8 bg-surface-container rounded-xl border border-outline-variant">
         <div class="relative z-10">
-          <h1 class="text-4xl font-bold text-headline-xl mb-4">Introduction to the <span class="text-secondary">TAVP</span> Stack</h1>
+          <h1 class="text-4xl font-bold font-display text-headline-xl mb-4">Introduction to the <span class="text-secondary">TAVP</span> Stack</h1>
           <p class="text-body-md text-on-surface-variant max-w-2xl leading-relaxed">
             TAVP is a lean, high-performance stack for modern web applications. It pairs the speed of C-extension PHP with utility-first CSS and lightweight reactive JS — thin by default, powerful when you need it.
           </p>
@@ -60,25 +60,25 @@
 
       {# Core components #}
       <section class="mb-16">
-        <h2 class="text-2xl font-semibold text-headline-lg mb-8 border-b-2 border-surface-variant pb-2">Core Components</h2>
+        <h2 class="text-2xl font-semibold font-display text-headline-lg mb-8 border-b-2 border-surface-variant pb-2">Core Components</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="performance-card bg-surface-container p-6 rounded-xl border border-outline-variant border-t-2 border-t-secondary">
-            <div class="flex items-center gap-3 mb-4"><span class="w-10 h-10 flex items-center justify-center bg-secondary-container text-on-secondary rounded font-bold font-mono text-sm">T</span><h3 class="text-2xl font-semibold text-xl">Tailwind CSS</h3></div>
+            <div class="flex items-center gap-3 mb-4"><span class="w-10 h-10 flex items-center justify-center bg-secondary-container text-on-secondary rounded font-bold font-mono text-sm">T</span><h3 class="text-2xl font-semibold font-display text-xl">Tailwind CSS</h3></div>
             <p class="text-body-md text-on-tertiary-container mb-4">Utility-first styling that keeps bundles small and design consistent.</p>
             <div class="code-block p-3 rounded font-mono text-sm text-code-sm text-on-tertiary-container"><span class="text-secondary">class</span>=<span class="text-on-surface">"flex gap-4 items-center"</span></div>
           </div>
           <div class="performance-card bg-surface-container p-6 rounded-xl border border-outline-variant border-t-2 border-t-secondary">
-            <div class="flex items-center gap-3 mb-4"><span class="w-10 h-10 flex items-center justify-center bg-secondary-container text-on-secondary rounded font-bold font-mono text-sm">A</span><h3 class="text-2xl font-semibold text-xl">Alpine.js</h3></div>
+            <div class="flex items-center gap-3 mb-4"><span class="w-10 h-10 flex items-center justify-center bg-secondary-container text-on-secondary rounded font-bold font-mono text-sm">A</span><h3 class="text-2xl font-semibold font-display text-xl">Alpine.js</h3></div>
             <p class="text-body-md text-on-tertiary-container mb-4">Lightweight reactivity right in your HTML. Minimal footprint, declarative power.</p>
             <div class="code-block p-3 rounded font-mono text-sm text-code-sm text-on-tertiary-container"><span class="text-secondary">x-data</span>=<span class="text-on-surface">"{ open: false }"</span></div>
           </div>
           <div class="performance-card bg-surface-container p-6 rounded-xl border border-outline-variant border-t-2 border-t-secondary">
-            <div class="flex items-center gap-3 mb-4"><span class="w-10 h-10 flex items-center justify-center bg-secondary-container text-on-secondary rounded font-bold font-mono text-sm">V</span><h3 class="text-2xl font-semibold text-xl">Volt Templates</h3></div>
+            <div class="flex items-center gap-3 mb-4"><span class="w-10 h-10 flex items-center justify-center bg-secondary-container text-on-secondary rounded font-bold font-mono text-sm">V</span><h3 class="text-2xl font-semibold font-display text-xl">Volt Templates</h3></div>
             <p class="text-body-md text-on-tertiary-container mb-4">A template engine compiled to plain PHP for fast, zero-delay rendering.</p>
             <div class="code-block p-3 rounded font-mono text-sm text-code-sm text-on-tertiary-container">&#123;&#123; <span class="text-secondary">content()</span> &#125;&#125;</div>
           </div>
           <div class="performance-card bg-surface-container p-6 rounded-xl border border-outline-variant border-t-2 border-t-secondary">
-            <div class="flex items-center gap-3 mb-4"><span class="w-10 h-10 flex items-center justify-center bg-secondary-container text-on-secondary rounded font-bold font-mono text-sm">P</span><h3 class="text-2xl font-semibold text-xl">Phalcon PHP</h3></div>
+            <div class="flex items-center gap-3 mb-4"><span class="w-10 h-10 flex items-center justify-center bg-secondary-container text-on-secondary rounded font-bold font-mono text-sm">P</span><h3 class="text-2xl font-semibold font-display text-xl">Phalcon PHP</h3></div>
             <p class="text-body-md text-on-tertiary-container mb-4">A C-extension PHP framework: high-speed routing, ORM, and DI container.</p>
             <div class="code-block p-3 rounded font-mono text-sm text-code-sm text-on-tertiary-container"><span class="text-secondary">$app</span>-&gt;<span class="text-on-surface">handle()</span>;</div>
           </div>
@@ -87,11 +87,11 @@
 
       {# Lean philosophy #}
       <section class="mb-16">
-        <h2 class="text-2xl font-semibold text-headline-lg mb-8 border-b-2 border-surface-variant pb-2">The 'Lean' Philosophy</h2>
+        <h2 class="text-2xl font-semibold font-display text-headline-lg mb-8 border-b-2 border-surface-variant pb-2">The 'Lean' Philosophy</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="space-y-4"><span class="material-symbols-outlined text-secondary text-4xl">speed</span><h4 class="text-2xl font-semibold text-lg">Maximum Speed</h4><p class="text-body-md text-on-tertiary-container">Phalcon's C-extension keeps backend response times low and predictable.</p></div>
-          <div class="space-y-4"><span class="material-symbols-outlined text-secondary text-4xl">layers_clear</span><h4 class="text-2xl font-semibold text-lg">Zero Bloat</h4><p class="text-body-md text-on-tertiary-container">Ship only what the page needs. Lightweight by default, no heavy runtime.</p></div>
-          <div class="space-y-4"><span class="material-symbols-outlined text-secondary text-4xl">developer_mode</span><h4 class="text-2xl font-semibold text-lg">Tooling Unity</h4><p class="text-body-md text-on-tertiary-container">One coherent stack for styling, behavior, and logic — productive end to end.</p></div>
+          <div class="space-y-4"><span class="material-symbols-outlined text-secondary text-4xl">speed</span><h4 class="text-2xl font-semibold font-display text-lg">Maximum Speed</h4><p class="text-body-md text-on-tertiary-container">Phalcon's C-extension keeps backend response times low and predictable.</p></div>
+          <div class="space-y-4"><span class="material-symbols-outlined text-secondary text-4xl">layers_clear</span><h4 class="text-2xl font-semibold font-display text-lg">Zero Bloat</h4><p class="text-body-md text-on-tertiary-container">Ship only what the page needs. Lightweight by default, no heavy runtime.</p></div>
+          <div class="space-y-4"><span class="material-symbols-outlined text-secondary text-4xl">developer_mode</span><h4 class="text-2xl font-semibold font-display text-lg">Tooling Unity</h4><p class="text-body-md text-on-tertiary-container">One coherent stack for styling, behavior, and logic — productive end to end.</p></div>
         </div>
       </section>
 
@@ -101,7 +101,7 @@
           <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-secondary/10 rounded-full blur-[80px]"></div>
           <div class="relative z-10">
             <p class="text-xs font-semibold uppercase tracking-widest text-label-caps text-secondary mb-1">Four runtimes, one codebase</p>
-            <h3 class="text-2xl font-semibold text-2xl mb-3">Pick the road that fits your deploy.</h3>
+            <h3 class="text-2xl font-semibold font-display text-2xl mb-3">Pick the road that fits your deploy.</h3>
             <p class="text-on-surface-variant max-w-2xl">PHP-FPM for shared hosting, Coil (Swoole) and Relay (RoadRunner) for high traffic, Weave (PHP Fibers) for parallel I/O — the same app, no rewrite.</p>
           </div>
         </div>
@@ -112,7 +112,7 @@
         <div class="flex items-start gap-4">
           <span class="material-symbols-outlined text-secondary">verified_user</span>
           <div>
-            <h2 class="text-2xl font-semibold text-2xl mb-4">Open Source License</h2>
+            <h2 class="text-2xl font-semibold font-display text-2xl mb-4">Open Source License</h2>
             <p class="text-body-md text-on-surface-variant leading-relaxed mb-4">TAVP is released under the <strong>MIT License</strong> — free for personal and commercial use. Fork it, modify it, and contribute back to the ecosystem.</p>
             <div class="flex gap-4">
               <a href="https://github.com/tavp-stack" class="px-6 py-2 bg-secondary text-on-secondary rounded-lg font-bold hover:bg-secondary-fixed transition-colors">View on GitHub</a>

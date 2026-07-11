@@ -4,7 +4,7 @@
 <section class="py-24 max-w-[1280px] mx-auto px-gutter">
   <div class="space-y-8">
     <div class="space-y-4">
-      <h1 class="text-4xl font-bold text-headline-xl text-on-surface">Blog</h1>
+      <h1 class="text-4xl font-bold font-display text-headline-xl text-on-surface">Blog</h1>
       <p class="text-on-tertiary-container">Latest posts from the TAVP Stack.</p>
     </div>
 
@@ -23,7 +23,7 @@
               </div>
             {% endif %}
             <div class="space-y-3">
-              <h2 class="text-2xl font-semibold text-lg text-on-surface group-hover:text-secondary transition-colors">{{ post['title'] }}</h2>
+              <h2 class="text-2xl font-semibold font-display text-lg text-on-surface group-hover:text-secondary transition-colors">{{ post['title'] }}</h2>
               {% if post['excerpt'] is defined and post['excerpt'] %}
                 <p class="text-sm text-on-tertiary-container line-clamp-3">{{ post['excerpt'] }}</p>
               {% endif %}
