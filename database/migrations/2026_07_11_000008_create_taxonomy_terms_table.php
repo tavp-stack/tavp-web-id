@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Tavp\Core\Database\Migrations\Migration;
 use Tavp\Core\Database\Migrations\SchemaBuilder;
+use Tavp\Core\Database\Migrations\TableDefinition;
 
 /**
  * Create the taxonomy_terms table.
@@ -14,7 +15,7 @@ return new class extends Migration
 {
     public function up(SchemaBuilder $schema): void
     {
-        $schema->createTable('taxonomy_terms', function (SchemaBuilder\TableDefinition $table) use ($schema) {
+        $schema->createTable('taxonomy_terms', function (TableDefinition $table) use ($schema) {
             $table->add($schema->column('id', 'bigInteger', ['identity' => true, 'primary' => true]));
             $table->add($schema->column('type', 'string', ['size' => 32]));
             $table->add($schema->column('name', 'string', ['size' => 128]));

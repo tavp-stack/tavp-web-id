@@ -1,0 +1,48 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Local TAVP CLI entry point.
+ *
+ * Loads the bootstrap (which registers db, config, etc.) before
+ * dispatching to commands. Overrides vendor commands where needed.
+ */
+
+$base = dirname(__DIR__);
+
+require_once $base . '/vendor/autoload.php';
+require_once $base . '/bootstrap/app.php';
+
+// Determine the sub-command.
+$name = $argv[1] ?? 'help';
+$args = array_slice($argv, 2);
+
+// Map of local command overrides.
+$localCommands = [
+    'migrate' => \App\Console\MigrateCommand::class,
+    'deploy' => \App\Console\DeployCommand::class,
+    'queue:work' => \App\Console\QueueWorkCommand::class,
+    'schedule:run' => \App\Console\ScheduleRunCommand::class,
+];
+
+if ($name === 'help' || $name === '--help' || $name === '-h') {
+    echo "TAVP — Tailwind + Alpine + Volt + Phalcon\n\n";
+    echo "Available commands:\n";
+    foreach (array_keys($localCommands) as $cmd) {
+        echo "  tavp {$cmd}\n";
+    }
+    echo "  tavp help\n";
+    exit(0);
+}
+
+if (isset($localCommands[$name])) {
+    $handler = new $localCommands[$name]();
+    $handler->handle($args);
+    exit(0);
+}
+
+// Fall through to vendor TavpCommand for unknown commands.
+$command = new \Tavp\Core\Console\TavpCommand();
+$command->run($argv);

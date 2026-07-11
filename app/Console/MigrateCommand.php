@@ -142,7 +142,8 @@ class MigrateCommand
 
     private function runMigration(string $file, string $direction): void
     {
-        $path = $this->migrationsPath . '/' . $file;
+        // glob() returns full paths, so use $file directly.
+        $path = is_file($file) ? $file : $this->migrationsPath . '/' . $file;
 
         if (!is_file($path)) {
             echo "  Migration file not found: {$file}\n";

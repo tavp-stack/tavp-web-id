@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Tavp\Core\Database\Migrations\Migration;
 use Tavp\Core\Database\Migrations\SchemaBuilder;
+use Tavp\Core\Database\Migrations\TableDefinition;
 
 /**
  * Create the roles table.
@@ -12,7 +13,7 @@ return new class extends Migration
 {
     public function up(SchemaBuilder $schema): void
     {
-        $schema->createTable('roles', function (SchemaBuilder\TableDefinition $table) use ($schema) {
+        $schema->createTable('roles', function (TableDefinition $table) use ($schema) {
             $table->add($schema->column('id', 'bigInteger', ['identity' => true, 'primary' => true]));
             $table->add($schema->column('name', 'string', ['size' => 64]));
             $table->add($schema->column('label', 'string', ['size' => 128]));
