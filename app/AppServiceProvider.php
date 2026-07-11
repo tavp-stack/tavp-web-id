@@ -15,9 +15,7 @@ use Tavp\Cms\Search\SearchEngine;
 use Tavp\Cms\Seo\SitemapController;
 use Tavp\Cms\Settings\Settings;
 use Tavp\Cms\Storage\ContentStore;
-use Tavp\Cms\Taxonomy\DatabaseTaxonomyFactory;
 use Tavp\Cms\Taxonomy\TaxonomyManager;
-use Tavp\Cms\Webhooks\DatabaseWebhookFactory;
 use Tavp\Cms\Webhooks\WebhookManager;
 use Tavp\Core\Module\ServiceProvider;
 
@@ -50,13 +48,13 @@ class AppServiceProvider implements ServiceProvider
         // --- Taxonomy ---
         $app->bind(TaxonomyManager::class, function () {
             $db = app('db');
-            return DatabaseTaxonomyFactory\buildDatabaseTaxonomy($db);
+            return \Tavp\Cms\Taxonomy\buildDatabaseTaxonomy($db);
         });
 
         // --- Webhooks ---
         $app->bind(WebhookManager::class, function () {
             $db = app('db');
-            return DatabaseWebhookFactory\buildDatabaseWebhooks(
+            return \Tavp\Cms\Webhooks\buildDatabaseWebhooks(
                 $db,
                 (int) config('cms.webhooks.timeout', 5),
             );
