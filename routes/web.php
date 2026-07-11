@@ -45,10 +45,19 @@ $router->get('/', function () {
     return view('home', ['content' => $home ?? []]);
 });
 
-// Static marketing pages (bespoke templates)
-$router->get('/get-started', fn () => view('get-started'));
-$router->get('/performance', fn () => view('performance'));
-$router->get('/documentation', fn () => view('documentation'));
+// Marketing pages (design templates, editable text via CMS)
+$router->get('/get-started', function () {
+    $records = app()->getService(BreadManager::class)->browse('get_started');
+    return view('get-started', ['content' => $records[0] ?? []]);
+});
+$router->get('/performance', function () {
+    $records = app()->getService(BreadManager::class)->browse('performance');
+    return view('performance', ['content' => $records[0] ?? []]);
+});
+$router->get('/documentation', function () {
+    $records = app()->getService(BreadManager::class)->browse('documentation');
+    return view('documentation', ['content' => $records[0] ?? []]);
+});
 
 // Contact page with dynamic captcha
 $router->get('/contact', function () {

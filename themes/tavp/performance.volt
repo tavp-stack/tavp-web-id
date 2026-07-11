@@ -15,13 +15,13 @@
 <section class="relative py-24 overflow-hidden border-b border-outline-variant">
   <div class="max-w-[1280px] mx-auto px-gutter relative z-10">
     <div class="max-w-3xl">
-      <h1 class="font-headline-xl text-headline-xl font-display text-headline-xl text-on-surface mb-6">Built for Bare Metal Speed.</h1>
+      <h1 class="font-headline-xl text-headline-xl font-display text-headline-xl text-on-surface mb-6">{{ content['hero_title']|default('Built for Bare Metal Speed.') }}</h1>
       <p class="text-on-surface-variant text-lg mb-8 leading-relaxed">
-        There are many roads to building great software. TAVP is the path for those who want bare-metal speed with modern ergonomics. Because Phalcon lives in memory as a C-extension, the same app runs comfortably on a tiny box or scales out to serve millions.
+        {{ content['hero_intro']|default('There are many roads to building great software. TAVP is the path for those who want bare-metal speed with modern ergonomics. Because Phalcon lives in memory as a C-extension, the same app runs comfortably on a tiny box or scales out to serve millions.') }}
       </p>
       <div class="flex gap-4">
-        <a href="https://docs.tavp.web.id/runtimes/overview.html" class="px-6 py-3 bg-secondary text-on-secondary font-bold rounded-lg hard-step-shadow hover:translate-y-[-2px] transition-all">Explore Runtimes</a>
-        <a href="https://docs.tavp.web.id/reference/performance.html" class="px-6 py-3 border border-outline text-on-surface font-bold rounded-lg hover:bg-surface-container transition-all">Methodology</a>
+        <a href="{{ content['cta1_url']|default('https://docs.tavp.web.id/runtimes/overview.html') }}" class="px-6 py-3 bg-secondary text-on-secondary font-bold rounded-lg hard-step-shadow hover:translate-y-[-2px] transition-all">{{ content['cta1_label']|default('Explore Runtimes') }}</a>
+        <a href="{{ content['cta2_url']|default('https://docs.tavp.web.id/reference/performance.html') }}" class="px-6 py-3 border border-outline text-on-surface font-bold rounded-lg hover:bg-surface-container transition-all">{{ content['cta2_label']|default('Methodology') }}</a>
       </div>
     </div>
   </div>
@@ -65,8 +65,8 @@
       {# Low-End Box #}
       <div class="lg:col-span-5 bg-primary-container p-8 rounded-xl border border-secondary/30 relative overflow-hidden group">
         <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><span class="material-symbols-outlined text-[120px]">memory</span></div>
-        <h3 class="font-headline-lg text-headline-lg font-display text-secondary mb-4">The "Low-End Box" Test</h3>
-        <p class="text-on-surface mb-8">We ran TAVP on a modest VPS to show how far efficient architecture goes.</p>
+        <h3 class="font-headline-lg text-headline-lg font-display text-secondary mb-4">{{ content['lowend_title']|default('The "Low-End Box" Test') }}</h3>
+        <p class="text-on-surface mb-8">{{ content['lowend_desc']|default('We ran TAVP on a modest VPS to show how far efficient architecture goes.') }}</p>
         <div class="flex items-end gap-2 mb-2"><span class="font-headline-xl text-headline-xl font-display text-secondary">&lt;5ms</span><span class="font-label-caps text-label-caps text-on-surface-variant pb-2">P95 LATENCY</span></div>
         <p class="font-code-sm text-code-sm text-on-tertiary-container mb-10">Response time under typical concurrent load.</p>
         <div class="space-y-4">
@@ -87,7 +87,7 @@
           <p class="mt-6 text-on-surface-variant">Phalcon's C-compiled kernel keeps PHP-level memory overhead low.</p>
         </div>
         <div class="bg-surface-container-high p-8 rounded-xl border border-outline-variant flex flex-col justify-center">
-          <h4 class="font-headline-lg text-headline-lg font-display text-on-surface mb-6">Why It's Fast</h4>
+          <h4 class="font-headline-lg text-headline-lg font-display text-on-surface mb-6">{{ content['why_title']|default('Why It\'s Fast') }}</h4>
           <ul class="space-y-4">
             <li class="flex gap-4"><span class="material-symbols-outlined text-secondary">check_circle</span><div><p class="font-bold text-on-surface">Memory Resident</p><p class="text-on-surface-variant text-sm">The framework is compiled into the PHP process — parsed once at start, not per request.</p></div></li>
             <li class="flex gap-4"><span class="material-symbols-outlined text-secondary">check_circle</span><div><p class="font-bold text-on-surface">Compiled Templates</p><p class="text-on-surface-variant text-sm">Volt compiles to plain PHP, so rendering has no interpretation delay.</p></div></li>
@@ -105,11 +105,11 @@
     <div>
       <div class="inline-flex items-center px-3 py-1 bg-secondary/10 border border-secondary/30 rounded-full mb-6">
         <span class="material-symbols-outlined text-secondary text-sm mr-2" style="font-variation-settings: 'FILL' 1;">electric_bolt</span>
-        <span class="font-label-caps text-label-caps text-secondary">Architecture Focus</span>
+        <span class="font-label-caps text-label-caps text-secondary">{{ content['arch_badge']|default('Architecture Focus') }}</span>
       </div>
-      <h2 class="font-headline-xl text-headline-xl font-display text-on-surface mb-6">Leaner Internals,<br/>Faster Deployment.</h2>
+      <h2 class="font-headline-xl text-headline-xl font-display text-on-surface mb-6">{{ content['arch_title']|default('Leaner Internals, Faster Deployment.') }}</h2>
       <p class="text-on-surface-variant mb-8 leading-relaxed">
-        With Phalcon's shared-memory model, the framework is parsed once when the server starts — not on every request. That efficiency is why a full app can run happily on hardware that would otherwise feel cramped.
+        {{ content['arch_intro']|default('With Phalcon\'s shared-memory model, the framework is parsed once when the server starts — not on every request. That efficiency is why a full app can run happily on hardware that would otherwise feel cramped.') }}
       </p>
       <div class="p-6 bg-background rounded-lg border border-outline-variant font-code-sm text-code-sm">
         <div class="flex gap-2 mb-4"><div class="w-3 h-3 rounded-full bg-error/40"></div><div class="w-3 h-3 rounded-full bg-secondary/40"></div><div class="w-3 h-3 rounded-full bg-primary/40"></div></div>

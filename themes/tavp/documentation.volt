@@ -51,16 +51,16 @@
 
       <header class="mb-12 relative overflow-hidden p-8 bg-surface-container rounded-xl border border-outline-variant">
         <div class="relative z-10">
-          <h1 class="font-headline-xl text-headline-xl text-headline-xl mb-4">Introduction to the <span class="text-secondary">TAVP</span> Stack</h1>
+          <h1 class="font-headline-xl text-headline-xl text-headline-xl mb-4">{{ content['hero_title']|default('Introduction to the TAVP Stack') }}</h1>
           <p class="text-body-md text-on-surface-variant max-w-2xl leading-relaxed">
-            TAVP is a lean, high-performance stack for modern web applications. It pairs the speed of C-extension PHP with utility-first CSS and lightweight reactive JS — thin by default, powerful when you need it.
+            {{ content['intro']|default('TAVP is a lean, high-performance stack for modern web applications. It pairs the speed of C-extension PHP with utility-first CSS and lightweight reactive JS — thin by default, powerful when you need it.') }}
           </p>
         </div>
       </header>
 
       {# Core components #}
       <section class="mb-16">
-        <h2 class="font-headline-lg text-headline-lg text-headline-lg mb-8 border-b-2 border-surface-variant pb-2">Core Components</h2>
+        <h2 class="font-headline-lg text-headline-lg text-headline-lg mb-8 border-b-2 border-surface-variant pb-2">{{ content['core_heading']|default('Core Components') }}</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="performance-card bg-surface-container p-6 rounded-xl border border-outline-variant border-t-2 border-t-secondary">
             <div class="flex items-center gap-3 mb-4"><span class="w-10 h-10 flex items-center justify-center bg-secondary-container text-on-secondary rounded font-bold font-code-sm text-code-sm">T</span><h3 class="font-headline-lg text-headline-lg text-xl">Tailwind CSS</h3></div>
@@ -87,7 +87,7 @@
 
       {# Lean philosophy #}
       <section class="mb-16">
-        <h2 class="font-headline-lg text-headline-lg text-headline-lg mb-8 border-b-2 border-surface-variant pb-2">The 'Lean' Philosophy</h2>
+        <h2 class="font-headline-lg text-headline-lg text-headline-lg mb-8 border-b-2 border-surface-variant pb-2">{{ content['philosophy_heading']|default('The \'Lean\' Philosophy') }}</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div class="space-y-4"><span class="material-symbols-outlined text-secondary text-4xl">speed</span><h4 class="font-headline-lg text-headline-lg text-lg">Maximum Speed</h4><p class="text-body-md text-on-tertiary-container">Phalcon's C-extension keeps backend response times low and predictable.</p></div>
           <div class="space-y-4"><span class="material-symbols-outlined text-secondary text-4xl">layers_clear</span><h4 class="font-headline-lg text-headline-lg text-lg">Zero Bloat</h4><p class="text-body-md text-on-tertiary-container">Ship only what the page needs. Lightweight by default, no heavy runtime.</p></div>
@@ -100,9 +100,9 @@
         <div class="relative rounded-xl overflow-hidden border border-outline-variant p-10 bg-surface-container-low">
           <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-secondary/10 rounded-full blur-[80px]"></div>
           <div class="relative z-10">
-            <p class="font-label-caps text-label-caps text-label-caps text-secondary mb-1">Four runtimes, one codebase</p>
-            <h3 class="font-headline-lg text-headline-lg text-2xl mb-3">Pick the road that fits your deploy.</h3>
-            <p class="text-on-surface-variant max-w-2xl">PHP-FPM for shared hosting, Coil (Swoole) and Relay (RoadRunner) for high traffic, Weave (PHP Fibers) for parallel I/O — the same app, no rewrite.</p>
+            <p class="font-label-caps text-label-caps text-label-caps text-secondary mb-1">{{ content['runtimes_badge']|default('Four runtimes, one codebase') }}</p>
+            <h3 class="font-headline-lg text-headline-lg text-2xl mb-3">{{ content['runtimes_title']|default('Pick the road that fits your deploy.') }}</h3>
+            <p class="text-on-surface-variant max-w-2xl">{{ content['runtimes_desc']|default('PHP-FPM for shared hosting, Coil (Swoole) and Relay (RoadRunner) for high traffic, Weave (PHP Fibers) for parallel I/O — the same app, no rewrite.') }}</p>
           </div>
         </div>
       </section>
@@ -112,11 +112,11 @@
         <div class="flex items-start gap-4">
           <span class="material-symbols-outlined text-secondary">verified_user</span>
           <div>
-            <h2 class="font-headline-lg text-headline-lg text-2xl mb-4">Open Source License</h2>
-            <p class="text-body-md text-on-surface-variant leading-relaxed mb-4">TAVP is released under the <strong>MIT License</strong> — free for personal and commercial use. Fork it, modify it, and contribute back to the ecosystem.</p>
+            <h2 class="font-headline-lg text-headline-lg text-2xl mb-4">{{ content['license_title']|default('Open Source License') }}</h2>
+            <p class="text-body-md text-on-surface-variant leading-relaxed mb-4">{{ content['license_desc']|default('TAVP is released under the MIT License — free for personal and commercial use. Fork it, modify it, and contribute back to the ecosystem.') }}</p>
             <div class="flex gap-4">
-              <a href="https://github.com/tavp-stack" class="px-6 py-2 bg-secondary text-on-secondary rounded-lg font-bold hover:bg-secondary-fixed transition-colors">View on GitHub</a>
-              <a href="https://docs.tavp.web.id/index.html" class="px-6 py-2 border border-outline-variant text-on-surface rounded-lg font-bold hover:bg-surface-container-high transition-colors">Read the Docs</a>
+              <a href="{{ content['license_btn1_url']|default('https://github.com/tavp-stack') }}" class="px-6 py-2 bg-secondary text-on-secondary rounded-lg font-bold hover:bg-secondary-fixed transition-colors">{{ content['license_btn1_label']|default('View on GitHub') }}</a>
+              <a href="{{ content['license_btn2_url']|default('https://docs.tavp.web.id/index.html') }}" class="px-6 py-2 border border-outline-variant text-on-surface rounded-lg font-bold hover:bg-surface-container-high transition-colors">{{ content['license_btn2_label']|default('Read the Docs') }}</a>
             </div>
           </div>
         </div>
