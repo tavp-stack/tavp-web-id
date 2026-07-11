@@ -25,6 +25,7 @@ $localCommands = [
     'deploy' => \App\Console\DeployCommand::class,
     'queue:work' => \App\Console\QueueWorkCommand::class,
     'schedule:run' => \App\Console\ScheduleRunCommand::class,
+    'cache:clear' => \App\Console\CacheClearCommand::class,
 ];
 
 if ($name === 'help' || $name === '--help' || $name === '-h') {
