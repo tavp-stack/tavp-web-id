@@ -20,7 +20,7 @@
       {{ content['hero_subtitle']|default('Build blazingly fast systems with Tailwind, Alpine, Volt, and Phalcon. Thin, light, and engineered for the sub-millisecond era.') }}
     </p>
     <div class="flex flex-col sm:flex-row items-center justify-center gap-6 pt-4">
-      <a href="https://docs.tavp.web.id/guide/what-is-tavp" class="w-full sm:w-auto px-8 py-4 bg-secondary text-on-secondary font-bold font-headline-lg text-lg hard-shadow transition-all">
+      <a href="https://docs.tavp.web.id/guide/what-is-tavp.html" class="w-full sm:w-auto px-8 py-4 bg-secondary text-on-secondary font-bold font-headline-lg text-lg hard-shadow transition-all">
         {{ content['cta_primary']|default('Get Started') }}
       </a>
       <a href="/performance" class="w-full sm:w-auto px-8 py-4 bg-surface-container border border-outline-variant text-on-surface font-bold font-headline-lg text-lg hover:border-secondary transition-colors">
@@ -58,7 +58,7 @@
         <h3 class="font-headline-lg text-headline-lg text-on-surface">Thin Core</h3>
         <p class="text-on-tertiary-container">Modular by design. Load exactly what your application needs — nothing more.</p>
       </div>
-      <a href="https://docs.tavp.web.id" class="pt-6 font-code-sm text-secondary group-hover:translate-x-2 transition-transform cursor-pointer flex items-center gap-2">
+      <a href="https://docs.tavp.web.id/index.html" class="pt-6 font-code-sm text-secondary group-hover:translate-x-2 transition-transform cursor-pointer flex items-center gap-2">
         Read the Docs <span class="material-symbols-outlined text-sm">arrow_forward</span>
       </a>
     </div>
@@ -136,10 +136,10 @@
   <div class="max-w-[1280px] mx-auto px-gutter text-center relative z-10 space-y-10">
     <h2 class="font-headline-xl text-headline-xl md:text-5xl text-on-surface">Less config, more craft.<br/><span class="text-secondary">Start building your product.</span></h2>
     <div class="flex flex-col md:flex-row justify-center gap-4">
-      <a href="https://docs.tavp.web.id/guide/installation" class="px-12 py-5 bg-secondary text-on-secondary font-bold font-headline-lg text-xl hard-shadow">
+      <a href="https://docs.tavp.web.id/guide/installation.html" class="px-12 py-5 bg-secondary text-on-secondary font-bold font-headline-lg text-xl hard-shadow">
         Get Started
       </a>
-      <a href="https://docs.tavp.web.id" class="px-12 py-5 bg-surface-container border border-outline-variant text-on-surface font-bold font-headline-lg text-xl hover:bg-surface-container-high transition-colors">
+      <a href="https://docs.tavp.web.id/index.html" class="px-12 py-5 bg-surface-container border border-outline-variant text-on-surface font-bold font-headline-lg text-xl hover:bg-surface-container-high transition-colors">
         Documentation
       </a>
     </div>

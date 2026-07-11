@@ -154,7 +154,7 @@
           <div class="relative z-10">
             <h4 class="font-headline-lg text-[18px] mb-2">Need Help?</h4>
             <p class="text-sm text-on-tertiary-container mb-4">Read the full documentation or join the community.</p>
-            <a href="https://docs.tavp.web.id" class="block text-center w-full py-2 bg-on-surface text-background font-bold text-sm rounded hover:opacity-90 transition-all">Open the Docs</a>
+            <a href="https://docs.tavp.web.id/index.html" class="block text-center w-full py-2 bg-on-surface text-background font-bold text-sm rounded hover:opacity-90 transition-all">Open the Docs</a>
           </div>
           <span class="material-symbols-outlined absolute -bottom-4 -right-4 text-9xl opacity-5 select-none">forum</span>
         </div>

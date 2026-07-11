@@ -43,6 +43,7 @@ $router->get('/', function () {
 $router->get('/get-started', fn () => view('get-started'));
 $router->get('/performance', fn () => view('performance'));
 $router->get('/documentation', fn () => view('documentation'));
+$router->get('/contact', fn () => view('contact'));
 
 // Blog index
 $router->get('/blog', function () {

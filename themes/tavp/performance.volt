@@ -20,8 +20,8 @@
         There are many roads to building great software. TAVP is the path for those who want bare-metal speed with modern ergonomics. Because Phalcon lives in memory as a C-extension, the same app runs comfortably on a tiny box or scales out to serve millions.
       </p>
       <div class="flex gap-4">
-        <a href="https://docs.tavp.web.id/runtimes/overview" class="px-6 py-3 bg-secondary text-on-secondary font-bold rounded-lg hard-step-shadow hover:translate-y-[-2px] transition-all">Explore Runtimes</a>
-        <a href="https://docs.tavp.web.id/reference/performance" class="px-6 py-3 border border-outline text-on-surface font-bold rounded-lg hover:bg-surface-container transition-all">Methodology</a>
+        <a href="https://docs.tavp.web.id/runtimes/overview.html" class="px-6 py-3 bg-secondary text-on-secondary font-bold rounded-lg hard-step-shadow hover:translate-y-[-2px] transition-all">Explore Runtimes</a>
+        <a href="https://docs.tavp.web.id/reference/performance.html" class="px-6 py-3 border border-outline text-on-surface font-bold rounded-lg hover:bg-surface-container transition-all">Methodology</a>
       </div>
     </div>
   </div>

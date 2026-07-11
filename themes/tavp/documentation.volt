@@ -18,22 +18,22 @@
         <h5 class="font-label-caps text-label-caps text-on-tertiary-container mb-4 uppercase tracking-widest">Introduction</h5>
         <ul class="space-y-2">
           <li><a class="block text-secondary font-bold font-body-md" href="#">The TAVP Philosophy</a></li>
-          <li><a class="block text-on-surface-variant hover:text-secondary transition-colors" href="https://docs.tavp.web.id/guide/installation">Installation</a></li>
-          <li><a class="block text-on-surface-variant hover:text-secondary transition-colors" href="https://docs.tavp.web.id/guide/what-is-tavp">What is TAVP</a></li>
+          <li><a class="block text-on-surface-variant hover:text-secondary transition-colors" href="https://docs.tavp.web.id/guide/installation.html">Installation</a></li>
+          <li><a class="block text-on-surface-variant hover:text-secondary transition-colors" href="https://docs.tavp.web.id/guide/what-is-tavp.html">What is TAVP</a></li>
         </ul>
       </div>
       <div>
         <h5 class="font-label-caps text-label-caps text-on-tertiary-container mb-4 uppercase tracking-widest">Components</h5>
         <ul class="space-y-2">
-          <li><a class="block text-on-surface-variant hover:text-secondary transition-colors" href="https://docs.tavp.web.id">Tailwind &amp; Alpine</a></li>
-          <li><a class="block text-on-surface-variant hover:text-secondary transition-colors" href="https://docs.tavp.web.id">Volt Templates</a></li>
-          <li><a class="block text-on-surface-variant hover:text-secondary transition-colors" href="https://docs.tavp.web.id">Phalcon Core</a></li>
+          <li><a class="block text-on-surface-variant hover:text-secondary transition-colors" href="https://docs.tavp.web.id/index.html">Tailwind &amp; Alpine</a></li>
+          <li><a class="block text-on-surface-variant hover:text-secondary transition-colors" href="https://docs.tavp.web.id/index.html">Volt Templates</a></li>
+          <li><a class="block text-on-surface-variant hover:text-secondary transition-colors" href="https://docs.tavp.web.id/index.html">Phalcon Core</a></li>
         </ul>
       </div>
       <div>
         <h5 class="font-label-caps text-label-caps text-on-tertiary-container mb-4 uppercase tracking-widest">Advanced</h5>
         <ul class="space-y-2">
-          <li><a class="block text-on-surface-variant hover:text-secondary transition-colors" href="https://docs.tavp.web.id/runtimes/overview">Runtimes</a></li>
+          <li><a class="block text-on-surface-variant hover:text-secondary transition-colors" href="https://docs.tavp.web.id/runtimes/overview.html">Runtimes</a></li>
           <li><a class="block text-on-surface-variant hover:text-secondary transition-colors" href="/performance">Benchmarks</a></li>
         </ul>
       </div>
@@ -116,7 +116,7 @@
             <p class="text-body-md text-on-surface-variant leading-relaxed mb-4">TAVP is released under the <strong>MIT License</strong> — free for personal and commercial use. Fork it, modify it, and contribute back to the ecosystem.</p>
             <div class="flex gap-4">
               <a href="https://github.com/tavp-stack" class="px-6 py-2 bg-secondary text-on-secondary rounded-lg font-bold hover:bg-secondary-fixed transition-colors">View on GitHub</a>
-              <a href="https://docs.tavp.web.id" class="px-6 py-2 border border-outline-variant text-on-surface rounded-lg font-bold hover:bg-surface-container-high transition-colors">Read the Docs</a>
+              <a href="https://docs.tavp.web.id/index.html" class="px-6 py-2 border border-outline-variant text-on-surface rounded-lg font-bold hover:bg-surface-container-high transition-colors">Read the Docs</a>
             </div>
           </div>
         </div>

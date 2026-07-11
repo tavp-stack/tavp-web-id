@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link rel="icon" type="image/png" href="/favicon.png"/>
 <title>{{ page_title | default('TAVP Stack — The Lean, Mean, PHP Machine') }}</title>
 <meta name="description" content="{{ page_description | default('Tailwind + Alpine + Volt + Phalcon. A curated PHP tech stack — thin, light, and fast.') }}"/>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -82,6 +83,7 @@
       <a class="font-body-md text-on-surface-variant hover:text-secondary transition-colors duration-200" href="/performance">Performance</a>
       <a class="font-body-md text-on-surface-variant hover:text-secondary transition-colors duration-200" href="/get-started">Get Started</a>
       <a class="font-body-md text-on-surface-variant hover:text-secondary transition-colors duration-200" href="/blog">Blog</a>
+      <a class="font-body-md text-on-surface-variant hover:text-secondary transition-colors duration-200" href="/contact">Contact</a>
     </div>
     <div class="flex items-center gap-4">
       <a href="https://github.com/tavp-stack" class="p-2 text-on-surface hover:text-secondary transition-colors duration-200" aria-label="GitHub">
@@ -102,7 +104,7 @@
         <img alt="TAVP" class="w-8 h-8" src="/assets/logo.png"/>
         <span class="font-headline-lg text-headline-lg font-bold text-secondary">TAVP Stack</span>
       </div>
-      <p class="font-code-sm text-code-sm text-on-tertiary-container max-w-xs">
+      <p class="font-body-md text-body-md text-on-tertiary-container max-w-xs">
         &copy; {{ '2026' }} TAVP Stack. Released under the MIT License. A curated PHP tech stack for modern engineers.
       </p>
     </div>
@@ -110,7 +112,7 @@
       <div class="space-y-4">
         <h4 class="font-label-caps text-on-surface text-xs uppercase tracking-widest">Resources</h4>
         <ul class="space-y-2">
-          <li><a class="font-code-sm text-code-sm text-on-tertiary-container hover:text-on-surface underline transition-all" href="https://docs.tavp.web.id">Documentation</a></li>
+          <li><a class="font-code-sm text-code-sm text-on-tertiary-container hover:text-on-surface underline transition-all" href="https://docs.tavp.web.id/index.html">Documentation</a></li>
           <li><a class="font-code-sm text-code-sm text-on-tertiary-container hover:text-on-surface underline transition-all" href="/performance">Benchmarks</a></li>
         </ul>
       </div>
