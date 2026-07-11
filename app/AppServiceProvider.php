@@ -138,6 +138,21 @@ class AppServiceProvider implements ServiceProvider
         // Nothing to boot — modules are lazy-loaded via the container.
     }
 
+    public function loadRoutes(): void
+    {
+        // Routes are loaded directly in routes/web.php.
+    }
+
+    public function loadMigrations(): void
+    {
+        // Migrations are discovered from database/migrations/.
+    }
+
+    public function loadViews(): void
+    {
+        // Views are managed by the ThemeManager.
+    }
+
     private function makeStore(): ContentStore
     {
         $driver = (string) config('cms.storage', 'database');
