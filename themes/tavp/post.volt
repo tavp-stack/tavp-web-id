@@ -7,14 +7,14 @@
       <span class="material-symbols-outlined text-sm">arrow_back</span>
       Back to Blog
     </a>
-    <h1 class="font-headline-xl text-headline-xl text-on-surface">{{ content['title'] }}</h1>
+    <h1 class="text-4xl font-bold text-headline-xl text-on-surface">{{ content['title'] }}</h1>
     <div class="flex items-center gap-4 text-sm text-on-tertiary-container">
       {% if content['published_at'] is defined and content['published_at'] %}
-        <span class="font-code-sm">{{ content['published_at'] | date('d M Y') }}</span>
+        <span class="font-mono text-sm">{{ content['published_at'] | date('d M Y') }}</span>
       {% endif %}
       {% if content['categories'] is defined and content['categories'] %}
         {% for cat in content['categories'] %}
-          <span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary text-xs font-label-caps">{{ cat['name'] }}</span>
+          <span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary text-xs text-xs font-semibold uppercase tracking-widest">{{ cat['name'] }}</span>
         {% endfor %}
       {% endif %}
     </div>
