@@ -1,6 +1,9 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
+    # Redirect favicon.ico to favicon.png
+    RewriteRule ^favicon\.ico$ favicon.png [L]
+
     # Serve existing files and directories directly.
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d

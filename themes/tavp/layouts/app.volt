@@ -7,6 +7,7 @@
 <title>{{ page_title | default('TAVP Stack — The Lean, Mean, PHP Machine') }}</title>
 <meta name="description" content="{{ page_description | default('Tailwind + Alpine + Volt + Phalcon. A curated PHP tech stack — thin, light, and fast.') }}"/>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script>
   tailwind.config = {
