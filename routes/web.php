@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Tavp\Analytics\AnalyticsManager;
 use Tavp\Cms\Admin\AdminModule;
 use Tavp\Cms\Api\ApiModule;
 use Tavp\Cms\Bread\BreadManager;
@@ -15,6 +16,9 @@ use Tavp\Cms\Seo\SitemapController;
 
 // --- CMS admin panel -----------------------------------------------------
 AdminModule::routes($router);
+
+// --- Analytics -----------------------------------------------------------
+AnalyticsManager::register($router);
 
 // --- Headless REST API ---------------------------------------------------
 if (config('cms.api.enabled', true)) {
