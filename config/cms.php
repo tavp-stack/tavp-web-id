@@ -28,6 +28,17 @@ return [
         'otp_ttl_minutes' => (int) env('CMS_OTP_TTL', 10),
         // Only these e-mails may sign in to the admin (comma-separated in .env).
         'emails' => array_filter(array_map('trim', explode(',', (string) env('CMS_ADMIN_EMAILS', '')))),
+
+        // RBAC-lite: map an allowed e-mail to a role. Unknown e-mails default
+        // to "editor".
+        'roles' => [
+            'admin@tavp.web.id' => 'admin',
+            'editor@tavp.web.id' => 'editor',
+        ],
+        'permissions' => [
+            'admin' => ['content.*', 'taxonomy.*', 'media.*', 'menu.*', 'settings.*', 'webhook.*', 'api.*', 'bread.*', 'users.*'],
+            'editor' => ['content.*', 'taxonomy.*', 'media.*'],
+        ],
     ],
 
     'mail' => [

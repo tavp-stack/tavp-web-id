@@ -36,12 +36,15 @@ class AppServiceProvider implements ServiceProvider
 
         // --- RBAC (config-based) -------------------------------------------
         $app->bind('tavpid.rbac', function () {
-            $roles = config('cms.admin.roles', []);
-            $permissions = config('cms.admin.permissions', []);
+            $roles = (array) config('cms.admin.roles', []);
+            $permissions = (array) config('cms.admin.permissions', []);
 
             $rbac = new AccessControl();
             foreach ($permissions as $role => $perms) {
                 $rbac->defineRole($role, $perms);
+            }
+            foreach ($roles as $email => $role) {
+                $rbac->setUserRole($email, $role);
             }
 
             return $rbac;
