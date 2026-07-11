@@ -131,8 +131,10 @@ $router->get('/blog/{slug}', function (array $params) {
     $post = app()->getService(BreadManager::class)->readBySlug('post', $params['slug'] ?? '');
 
     if ($post === null || ($post['status'] ?? 'draft') !== 'published') {
-        return response('404 — Not found', 404);
+        return response('404 �?" Not found', 404);
     }
+
+    $post['body'] = \App\Support\Markdown::toHtml($post['body'] ?? '');
 
     return view('post', ['content' => $post]);
 });
@@ -145,6 +147,8 @@ $router->get('/{slug}', function (array $params) {
         http_response_code(404);
         return view('404');
     }
+
+    $page['body'] = \App\Support\Markdown::toHtml($page['body'] ?? '');
 
     return view('page', ['content' => $page]);
 });

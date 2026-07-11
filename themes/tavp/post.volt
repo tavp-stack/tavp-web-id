@@ -10,7 +10,7 @@
     <h1 class="font-headline-xl text-headline-xl text-headline-xl text-on-surface">{{ content['title'] }}</h1>
     <div class="flex items-center gap-4 text-sm text-on-tertiary-container">
       {% if content['published_at'] is defined and content['published_at'] %}
-        <span class="font-code-sm text-code-sm">{{ content['published_at'] | date('d M Y') }}</span>
+        <span class="font-code-sm text-code-sm">{{ content['published_at'] }}</span>
       {% endif %}
       {% if content['categories'] is defined and content['categories'] %}
         {% for cat in content['categories'] %}
@@ -30,7 +30,7 @@
   {% endif %}
 
   <div class="prose prose-invert max-w-none">
-    {{ content['body'] }}
+    {% autoescape false %}{{ content['body'] }}{% endautoescape %}
   </div>
 
   {% if content['tags'] is defined and content['tags'] %}
