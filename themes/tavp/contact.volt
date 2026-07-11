@@ -21,12 +21,24 @@
           </div>
         </div>
 
-        <div class="flex items-start gap-4">
+        <div class="flex items-start gap-4" x-data="{ revealed: false, answer: '' }">
           <span class="material-symbols-outlined text-secondary text-2xl mt-1">mail</span>
           <div>
             <h3 class="font-headline-lg text-headline-lg text-on-surface">Email</h3>
             <p class="text-on-tertiary-container">For business inquiries or partnerships.</p>
-            <p class="font-code-sm text-secondary mt-2 inline-block">hello@tavp.web.id</p>
+            <template x-if="!revealed">
+              <div class="mt-2">
+                <p class="font-code-sm text-on-surface-variant text-sm mb-2">Solve to reveal email:</p>
+                <div class="flex items-center gap-2">
+                  <span class="font-code-sm text-secondary" x-text="'What is 2 × 3?'"></span>
+                  <input type="number" x-model="answer" class="w-20 bg-surface-container-low border border-outline-variant rounded px-2 py-1 text-on-surface text-sm focus:border-secondary outline-none" placeholder="?">
+                  <button @click="if(answer == '6') revealed = true" class="text-secondary font-label-caps text-label-caps hover:underline">Reveal</button>
+                </div>
+              </div>
+            </template>
+            <template x-if="revealed">
+              <a href="mailto:hello@tavp.web.id" class="font-code-sm text-secondary mt-2 inline-block hover:underline">hello@tavp.web.id</a>
+            </template>
           </div>
         </div>
       </div>
