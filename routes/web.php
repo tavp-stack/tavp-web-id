@@ -3,7 +3,9 @@
 declare(strict_types=1);
 
 use Tavp\Cms\Admin\AdminModule;
+use Tavp\Cms\Api\ApiModule;
 use Tavp\Cms\Bread\BreadManager;
+use Tavp\Cms\Seo\SitemapController;
 
 /**
  * tavp.web.id routes.
@@ -16,6 +18,17 @@ use Tavp\Cms\Bread\BreadManager;
 
 // --- CMS admin panel -----------------------------------------------------
 AdminModule::routes($router);
+
+// --- Headless REST API ---------------------------------------------------
+if (config('cms.api.enabled', true)) {
+    ApiModule::routes($router);
+}
+
+// --- SEO: sitemap.xml ----------------------------------------------------
+$router->get('/sitemap.xml', function () {
+    $sitemap = new SitemapController(app()->getService(BreadManager::class));
+    return $sitemap();
+});
 
 // --- Front-end -----------------------------------------------------------
 

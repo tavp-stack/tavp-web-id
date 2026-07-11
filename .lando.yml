@@ -6,6 +6,15 @@ config:
   xdebug: false
 
 services:
+  # MariaDB database (included in LAMP recipe).
+  database:
+    type: mariadb:10.11
+    portforward: 33306
+    creds:
+      user: tavp
+      password: tavp
+      database: tavp
+
   # Mailpit dev mail catcher. Web UI is exposed on a NON-default host port
   # (8026) to avoid clashing with other Lando/Mailpit projects on this machine.
   # The app talks to it internally at mailpit:1025.
@@ -25,3 +34,11 @@ tooling:
     service: appserver
     cmd: php /app/vendor/bin/tavp phalcon:install
     description: Install the Phalcon C-extension in the container
+  migrate:
+    service: appserver
+    cmd: php /app/vendor/bin/tavp migrate
+    description: Run database migrations
+  seed:
+    service: appserver
+    cmd: php /app/vendor/bin/tavp seed
+    description: Seed the database
