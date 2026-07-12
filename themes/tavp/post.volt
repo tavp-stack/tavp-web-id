@@ -111,9 +111,9 @@
   {% if content['tags'] is defined and content['tags'] %}
     <div class="mt-12 pt-8 border-t border-outline-variant">
       <div class="flex flex-wrap gap-2">
-        {% for tag in content['tags'] %}
-          <span class="px-3 py-1 rounded-full bg-surface-container-low border border-outline-variant text-sm text-on-tertiary-container">#{{ tag['name'] }}</span>
-        {% endfor %}
+                      {% for tag in content['tags'] %}
+                <a href="/blog/tag/{{ tag['name'] ?? tag }}" class="px-3 py-1 rounded-full bg-surface-container-low border border-outline-variant text-sm text-on-tertiary-container hover:border-secondary transition-colors">#{{ tag['name'] ?? tag }}</a>
+              {% endfor %}
       </div>
     </div>
   {% endif %}

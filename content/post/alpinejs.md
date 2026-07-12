@@ -2,7 +2,9 @@
 title: 'Alpine.js: Interaktivitas Tanpa Kompleksitas'
 slug: alpinejs
 excerpt: 'Alpine.js memberikan interaktivitas JavaScript tanpa perlu build step atau framework berat. Tulis langsung di HTML, hasilnya ringan dan cepat.'
-body: 'Alpine.js adalah JavaScript framework yang ringan dan deklaratif. Berbeda dengan React atau Vue, Alpine.js tidak butuh build step â€” cukup tulis atribut di HTML.'
+body: 'Alpine.js adalah JavaScript framework yang ringan dan deklaratif. Berbeda dengan React atau Vue, Alpine.js tidak butuh build step — cukup tulis atribut di HTML.'
+categories: [javascript, frontend]
+tags: [alpinejs, javascript, reactivity, lightweight]
 ---
 
 # Alpine.js: Interaktivitas Tanpa Kompleksitas

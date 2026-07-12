@@ -15,7 +15,8 @@
         "tavp/analytics": "@dev",
         "tavp/tavpid": "^1.0",
         "tavp/tavphub": "^1.1",
-        "league/commonmark": "^2.8"
+        "league/commonmark": "^2.8",
+        "tavp/tavpblocks": "1.0"
     },
     "require-dev": {
         "tavp/cli": "@dev"

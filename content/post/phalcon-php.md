@@ -2,9 +2,11 @@
 title: 'Mengenal Phalcon PHP: Framework C-Extension yang Memecahkan Standar Performa'
 slug: phalcon-php
 excerpt: 'Phalcon adalah PHP framework yang di-compile ke C-extension, bukan di-interpret setiap request. Hasilnya: performa yang jauh lebih cepat dari framework PHP lainnya.'
-body: 'Phalcon PHP adalah framework yang unik karena di-compile langsung ke C-extension, bukan ditulis murni dalam PHP. Artinya, Phalcon berjalan di memori sebagai bagian dari PHP itu sendiri â€” tidak perlu di-load ulang setiap request.'
+body: 'Phalcon PHP adalah framework yang unik karena di-compile langsung ke C-extension, bukan ditulis murni dalam PHP. Artinya, Phalcon berjalan di memori sebagai bagian dari PHP itu sendiri — tidak perlu di-load ulang setiap request.'
 status: published
 published_at: '2026-07-11'
+categories: [php, backend]
+tags: [phalcon, php, performance, framework]
 ---
 
 # Mengenal Phalcon PHP: Framework C-Extension yang Memecahkan Standar Performa

@@ -3,6 +3,8 @@ title: 'Tailwind CSS: Utility-First yang Mengubah Cara kita Menulis CSS'
 slug: tailwindcss
 excerpt: 'Tailwind CSS adalah CSS framework yang menggunakan pendekatan utility-first. Tulis CSS langsung di HTML tanpa perlu buat file CSS terpisah.'
 body: 'Tailwind CSS adalah CSS framework yang menggunakan pendekatan utility-first. Setiap class adalah satu property CSS yang bisa dikombinasikan sesuai kebutuhan.'
+categories: [css, frontend]
+tags: [tailwindcss, css, utility-first, frontend]
 ---
 
 # Tailwind CSS: Utility-First yang Mengubah Cara kita Menulis CSS

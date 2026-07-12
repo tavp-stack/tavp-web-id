@@ -27,9 +27,27 @@
               {% if post['excerpt'] is defined and post['excerpt'] %}
                 <p class="text-sm text-on-tertiary-container line-clamp-3">{{ post['excerpt'] }}</p>
               {% endif %}
-              <div class="flex items-center gap-2 text-xs text-on-surface-variant">
+                            <div class="flex items-center gap-2 text-xs text-on-surface-variant">
                 <span class="font-code-sm text-code-sm">{{ post['slug'] }}</span>
               </div>
+              {% if post['categories'] is defined and post['categories'] %}
+                <div class="flex flex-wrap gap-1 mt-2">
+                  {% for category in post['categories'] %}
+                    <a href="/blog/category/{{ category }}" class="px-2 py-1 text-xs rounded-full bg-surface-container-low border border-outline-variant text-on-tertiary-container hover:border-secondary transition-colors">
+                      {{ category }}
+                    </a>
+                  {% endfor %}
+                </div>
+              {% endif %}
+              {% if post['tags'] is defined and post['tags'] %}
+                <div class="flex flex-wrap gap-1 mt-1">
+                  {% for tag in post['tags'] %}
+                    <a href="/blog/tag/{{ tag }}" class="px-2 py-1 text-xs rounded-full bg-surface-container-low border border-outline-variant text-on-tertiary-container hover:border-secondary transition-colors">
+                      #{{ tag }}
+                    </a>
+                  {% endfor %}
+                </div>
+              {% endif %}
             </div>
           </a>
         {% endfor %}
