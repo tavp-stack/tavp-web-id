@@ -78,10 +78,11 @@
 <?php
 // Load site settings
 $settings = app()->getService('Tavp\Cms\Settings\Settings') ?? null;
-$siteName = $settings ? $settings->get('site.name', 'TAVP Stack') : 'TAVP Stack';
-$defaultTitle = $settings ? $settings->get('site.default_title', 'TAVP Stack — The Lean, Mean, PHP Machine') : 'TAVP Stack — The Lean, Mean, PHP Machine';
-$defaultDescription = $settings ? $settings->get('site.default_description', 'Tailwind + Alpine + Volt + Phalcon. A curated PHP tech stack — thin, light, and fast.') : 'Tailwind + Alpine + Volt + Phalcon. A curated PHP tech stack — thin, light, and fast.';
-$copyright = $settings ? $settings->get('site.copyright', '© 2026 TAVP Stack. Released under the MIT License.') : '© 2026 TAVP Stack. Released under the MIT License.';
+$siteName = $settings ? $settings->get('general.site_name', 'TAVP Stack') : 'TAVP Stack';
+$tagline = $settings ? $settings->get('general.tagline', 'The Lean, Mean, PHP Machine') : 'The Lean, Mean, PHP Machine';
+$defaultTitle = $siteName . ' — ' . $tagline;
+$defaultDescription = $settings ? $settings->get('general.description', 'Tailwind + Alpine + Volt + Phalcon. A curated PHP tech stack — thin, light, and fast.') : 'Tailwind + Alpine + Volt + Phalcon. A curated PHP tech stack — thin, light, and fast.';
+$copyright = $settings ? $settings->get('footer.copyright', '© 2026 TAVP Stack. Released under the MIT License.') : '© 2026 TAVP Stack. Released under the MIT License.';
 $logoUrl = $settings ? $settings->get('site.logo_url', '/assets/logo.png') : '/assets/logo.png';
 ?>
 
