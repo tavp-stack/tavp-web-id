@@ -4,16 +4,13 @@ config:
   php: '8.3'
   webroot: public
   xdebug: false
+  conf:
+    php: .lando.php.ini
   env:
     PHP_TIMEZONE: "Asia/Jakarta"
     PHP_DEFAULT_TIMEZONE: "Asia/Jakarta"
 
 services:
-  # Override appserver to install Phalcon via tavp-cli on rebuild
-  appserver:
-    build:
-      - php /app/vendor/bin/tavp phalcon install
-
   # MariaDB database (included in LAMP recipe).
   database:
     type: mariadb:10.11
@@ -23,9 +20,7 @@ services:
       password: tavp
       database: tavp
 
-  # Mailpit dev mail catcher. Web UI is exposed on a non-default host port
-  # (8026) to avoid clashing with other Lando/Mailpit projects on this machine.
-  # The app talks to it internally at mailpit:1025.
+  # Mailpit dev mail catcher.
   mailpit:
     type: lando
     services:
@@ -40,7 +35,7 @@ tooling:
     cmd: php /app/vendor/bin/tavp
   phalcon:
     service: appserver
-    cmd: php /app/vendor/bin/tavp phalcon:install
+    cmd: bash /app/scripts/install-phalcon.sh
     description: Install the Phalcon C-extension in the container
   migrate:
     service: appserver
