@@ -176,9 +176,10 @@ return [
             'fields' => [
                 ['name' => 'title', 'type' => 'text', 'required' => true],
                 ['name' => 'slug', 'type' => 'slug', 'from' => 'title'],
-                ['name' => 'excerpt', 'type' => 'textarea'],
-                ['name' => 'body', 'type' => 'richtext'],
-                ['name' => 'status', 'type' => 'select', 'options' => ['draft', 'published'], 'default' => 'draft'],
+                 ['name' => 'excerpt', 'type' => 'textarea'],
+                 ['name' => 'body', 'type' => 'richtext'],
+                 ['name' => 'author', 'type' => 'text'],
+                 ['name' => 'status', 'type' => 'select', 'options' => ['draft', 'published'], 'default' => 'draft'],
                 ['name' => 'published_at', 'type' => 'datetime'],
             ],
         ],

@@ -140,10 +140,17 @@ $router->get('/blog/{slug}', function (array $params) {
     $post = app()->getService(BreadManager::class)->readBySlug('post', $params['slug'] ?? '');
 
     if ($post === null || ($post['status'] ?? 'draft') !== 'published') {
-        return response('404 �?" Not found', 404);
+        return view('404', []);
     }
 
-    $post['body'] = \App\Support\Markdown::toHtml($post['body'] ?? '');
+    $body = $post['body'] ?? '';
+    // If content already contains HTML tags (from WYSIWYG editor), use as-is.
+    // Only convert Markdown if no HTML tags detected.
+    if (preg_match('/<[a-z][a-z0-9]*[\s>]/i', $body)) {
+        $post['body'] = $body;
+    } else {
+        $post['body'] = \App\Support\Markdown::toHtml($body);
+    }
 
     return view('post', ['content' => $post]);
 });
