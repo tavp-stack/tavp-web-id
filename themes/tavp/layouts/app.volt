@@ -4,8 +4,8 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <link rel="icon" type="image/png" href="/favicon.png"/>
-<title>{{ page_title | default('TAVP Stack — The Lean, Mean, PHP Machine') }}</title>
-<meta name="description" content="{{ page_description | default('Tailwind + Alpine + Volt + Phalcon. A curated PHP tech stack — thin, light, and fast.') }}"/>
+<title><?= htmlspecialchars($page_title ?? $defaultTitle) ?></title>
+<meta name="description" content="<?= htmlspecialchars($page_description ?? $defaultDescription) ?>"/>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -75,11 +75,21 @@
 </head>
 <body class="bg-background text-on-background font-body-md selection:bg-secondary selection:text-on-secondary" x-data="{ mobileMenu: false }">
 
+<?php
+// Load site settings
+$settings = app()->getService('Tavp\Cms\Settings\Settings') ?? null;
+$siteName = $settings ? $settings->get('site.name', 'TAVP Stack') : 'TAVP Stack';
+$defaultTitle = $settings ? $settings->get('site.default_title', 'TAVP Stack — The Lean, Mean, PHP Machine') : 'TAVP Stack — The Lean, Mean, PHP Machine';
+$defaultDescription = $settings ? $settings->get('site.default_description', 'Tailwind + Alpine + Volt + Phalcon. A curated PHP tech stack — thin, light, and fast.') : 'Tailwind + Alpine + Volt + Phalcon. A curated PHP tech stack — thin, light, and fast.';
+$copyright = $settings ? $settings->get('site.copyright', '© 2026 TAVP Stack. Released under the MIT License.') : '© 2026 TAVP Stack. Released under the MIT License.';
+$logoUrl = $settings ? $settings->get('site.logo_url', '/assets/logo.png') : '/assets/logo.png';
+?>
+
 <nav class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-outline-variant">
   <div class="max-w-[1280px] mx-auto px-gutter h-16 flex justify-between items-center">
     <a href="/" class="flex items-center gap-3">
-      <img alt="TAVP" class="w-8 h-8 object-contain" src="/assets/logo.png"/>
-      <span class="font-headline-lg text-headline-lg font-bold text-on-surface">TAVP Stack</span>
+      <img alt="TAVP" class="w-8 h-8 object-contain" src="<?= htmlspecialchars($logoUrl) ?>"/>
+      <span class="font-headline-lg text-headline-lg font-bold text-on-surface"><?= htmlspecialchars($siteName) ?></span>
     </a>
     <div class="flex items-center gap-6">
       <div class="hidden md:flex gap-6 items-center">
@@ -117,10 +127,10 @@
     <div class="space-y-4">
       <div class="flex items-center gap-2">
         <img alt="TAVP" class="w-8 h-8" src="/assets/logo.png"/>
-        <span class="font-headline-lg text-headline-lg font-bold text-secondary">TAVP Stack</span>
+        <span class="font-headline-lg text-headline-lg font-bold text-secondary"><?= htmlspecialchars($siteName) ?></span>
       </div>
       <p class="font-body-md text-body-md text-on-tertiary-container max-w-xs">
-        &copy; {{ '2026' }} TAVP Stack. Released under the MIT License. A curated PHP tech stack for modern engineers.
+        <?= htmlspecialchars($copyright) ?>
       </p>
     </div>
     <div class="grid grid-cols-2 sm:grid-cols-2 gap-12">

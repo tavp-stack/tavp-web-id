@@ -17,7 +17,23 @@ $cms = new CmsServiceProvider();
 $cms->register();
 $cms->boot();
 
-// Manually register TaxonomyManager (in case CmsServiceProvider didn't)
+// Manually register required CMS services (in case CmsServiceProvider didn't)
+// 1. ContentStore
+$app->bind('Tavp\Cms\Storage\ContentStore', function () use ($app) {
+    return new \Tavp\Cms\Storage\DatabaseStore(
+        connection: fn () => $app->getService('db'),
+    );
+});
+
+// 2. BreadManager
+$app->bind('Tavp\Cms\Bread\BreadManager', function () use ($app) {
+    $store = $app->getService('Tavp\Cms\Storage\ContentStore');
+    $manager = new \Tavp\Cms\Bread\BreadManager($store);
+    $manager->registerFromConfig((array) config('cms.content_types', []));
+    return $manager;
+});
+
+// 3. TaxonomyManager
 require_once __DIR__ . '/../vendor/tavp/cms/src/Taxonomy/DatabaseTaxonomyFactory.php';
 $app->bind('Tavp\Cms\Taxonomy\TaxonomyManager', function () use ($app) {
     return \Tavp\Cms\Taxonomy\buildDatabaseTaxonomy($app->getService('db'));
