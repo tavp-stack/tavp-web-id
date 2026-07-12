@@ -46,6 +46,7 @@
    <!-- Mermaid: convert <pre><code class="language-mermaid"> to <div class="mermaid"> -->
    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
    <script>
+     // Convert Mermaid code blocks
      document.querySelectorAll('pre code.language-mermaid').forEach(el => {
        const pre = el.closest('pre');
        if (pre) {
@@ -56,8 +57,50 @@
        }
      });
      if (window.mermaid) {
-       mermaid.initialize({ startOnLoad: false });
+       mermaid.initialize({ startOnLoad: false, theme: 'dark' });
        mermaid.run();
+     }
+
+     // Video embed: convert plain URLs to embedded iframes
+     document.querySelectorAll('.content-body a').forEach(el => {
+       const href = el.getAttribute('href') || '';
+       const text = el.textContent || '';
+       const isYouTube = href.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
+       const isVimeo = href.match(/vimeo\.com\/(\d+)/);
+
+       if (isYouTube || isVimeo) {
+         const wrapper = document.createElement('div');
+         wrapper.className = 'relative w-full';
+         wrapper.style.paddingBottom = '56.25%';
+         wrapper.style.height = '0';
+         wrapper.style.overflow = 'hidden';
+         wrapper.style.borderRadius = '8px';
+         wrapper.style.margin = '1em 0';
+
+         const iframe = document.createElement('iframe');
+         iframe.style.position = 'absolute';
+         iframe.style.top = '0';
+         iframe.style.left = '0';
+         iframe.style.width = '100%';
+         iframe.style.height = '100%';
+         iframe.setAttribute('frameborder', '0');
+         iframe.setAttribute('allowfullscreen', '');
+         iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+
+         if (isYouTube) {
+           iframe.src = 'https://www.youtube.com/embed/' + isYouTube[1];
+         } else if (isVimeo) {
+           iframe.src = 'https://player.vimeo.com/video/' + isVimeo[1];
+         }
+
+         wrapper.appendChild(iframe);
+         el.replaceWith(wrapper);
+       }
+     });
+
+     // Highlight code blocks with Prism.js
+     if (window.Prism) {
+       Prism.highlightAll();
      }
    </script>
 
