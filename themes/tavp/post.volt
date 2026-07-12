@@ -19,14 +19,13 @@
          $bodyText = strip_tags($content['body'] ?? '');
          $wordCount = str_word_count($bodyText);
          $readMin = max(1, ceil($wordCount / 200));
+         $author = $content['author'] ?? 'Jeremy Cheng';
          ?>
          <span class="font-code-sm text-code-sm"><?= $day ?> <?= $month ?> <?= $year ?></span>
          <span class="font-code-sm text-code-sm">·</span>
          <span class="font-code-sm text-code-sm"><?= $readMin ?> min read</span>
-       {% endif %}
-       {% if content['author'] is defined and content['author'] %}
          <span class="font-code-sm text-code-sm">·</span>
-         <span class="font-code-sm text-code-sm"><?= $this->e($content['author']) ?></span>
+         <span class="font-code-sm text-code-sm"><?= $this->e($author) ?></span>
        {% endif %}
      </div>
     {% if content['excerpt'] is defined and content['excerpt'] %}
@@ -44,9 +43,23 @@
      {% autoescape false %}{{ content['body'] }}{% endautoescape %}
    </div>
 
-   <!-- Mermaid -->
+   <!-- Mermaid: convert <pre><code class="language-mermaid"> to <div class="mermaid"> -->
    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-   <script>mermaid.initialize({ startOnLoad: true });</script>
+   <script>
+     document.querySelectorAll('pre code.language-mermaid').forEach(el => {
+       const pre = el.closest('pre');
+       if (pre) {
+         const div = document.createElement('div');
+         div.className = 'mermaid';
+         div.textContent = el.textContent;
+         pre.replaceWith(div);
+       }
+     });
+     if (window.mermaid) {
+       mermaid.initialize({ startOnLoad: false });
+       mermaid.run();
+     }
+   </script>
 
 <style>
 .content-body h1, .content-body h2, .content-body h3, .content-body h4 {
