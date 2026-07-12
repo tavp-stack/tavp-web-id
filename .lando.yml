@@ -11,7 +11,6 @@ config:
     PHP_DEFAULT_TIMEZONE: "Asia/Jakarta"
 
 services:
-  # MariaDB database (included in LAMP recipe).
   database:
     type: mariadb:10.11
     portforward: 33306
@@ -20,7 +19,6 @@ services:
       password: tavp
       database: tavp
 
-  # Mailpit dev mail catcher.
   mailpit:
     type: lando
     services:
@@ -35,7 +33,7 @@ tooling:
     cmd: php /app/vendor/bin/tavp
   phalcon:
     service: appserver
-    cmd: bash /app/scripts/install-phalcon.sh
+    cmd: /bin/bash /app/vendor/tavp/cli/scripts/install-phalcon.sh
     description: Install the Phalcon C-extension in the container
   migrate:
     service: appserver
