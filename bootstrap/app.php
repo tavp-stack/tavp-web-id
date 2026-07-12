@@ -9,6 +9,8 @@ declare(strict_types=1);
  * and CLI commands. It registers all core services.
  */
 
+date_default_timezone_set('Asia/Jakarta');
+
 use Phalcon\Db\Adapter\Pdo\Mysql as MysqlAdapter;
 use Phalcon\Db\Adapter\Pdo\Sqlite as SqliteAdapter;
 use Tavp\Core\Application;

@@ -25,7 +25,7 @@
          <span class="font-code-sm text-code-sm">·</span>
          <span class="font-code-sm text-code-sm"><?= $readMin ?> min read</span>
          <span class="font-code-sm text-code-sm">·</span>
-         <span class="font-code-sm text-code-sm"><?= $this->e($author) ?></span>
+          <span class="font-code-sm text-code-sm"><?= htmlspecialchars($author, ENT_QUOTES) ?></span>
        {% endif %}
      </div>
     {% if content['excerpt'] is defined and content['excerpt'] %}

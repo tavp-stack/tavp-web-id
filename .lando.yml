@@ -4,8 +4,17 @@ config:
   php: '8.3'
   webroot: public
   xdebug: false
+  env:
+    PHP_TIMEZONE: "Asia/Jakarta"
+    PHP_DEFAULT_TIMEZONE: "Asia/Jakarta"
 
 services:
+  # Override appserver to add Phalcon build step
+  appserver:
+    build_as_root:
+      - pecl install phalcon
+      - echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/99-phalcon.ini
+
   # MariaDB database (included in LAMP recipe).
   database:
     type: mariadb:10.11
@@ -15,7 +24,7 @@ services:
       password: tavp
       database: tavp
 
-  # Mailpit dev mail catcher. Web UI is exposed on a NON-default host port
+  # Mailpit dev mail catcher. Web UI is exposed on a non-default host port
   # (8026) to avoid clashing with other Lando/Mailpit projects on this machine.
   # The app talks to it internally at mailpit:1025.
   mailpit:
