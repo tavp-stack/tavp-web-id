@@ -40,6 +40,6 @@ tooling:
     cmd: php /app/vendor/bin/tavp migrate
     description: Run database migrations
   seed:
-    service: appserver
-    cmd: php /app/vendor/bin/tavp seed
+    service: database
+    cmd: mysql --skip-ssl -h database -u tavp -ptavp tavp < /app/seed_data.sql
     description: Seed the database
