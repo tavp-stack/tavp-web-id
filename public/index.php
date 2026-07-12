@@ -5,9 +5,6 @@ declare(strict_types=1);
 // Public entry point for tavp.web.id.
 // Every web request is routed through this file.
 
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../bootstrap/app.php';
 
@@ -19,6 +16,12 @@ use Tavp\Core\Kernel;
 $cms = new CmsServiceProvider();
 $cms->register();
 $cms->boot();
+
+// Manually register TaxonomyManager (in case CmsServiceProvider didn't)
+require_once __DIR__ . '/../vendor/tavp/cms/src/Taxonomy/DatabaseTaxonomyFactory.php';
+$app->bind('Tavp\Cms\Taxonomy\TaxonomyManager', function () use ($app) {
+    return \Tavp\Cms\Taxonomy\buildDatabaseTaxonomy($app->getService('db'));
+});
 
 // Register local modules (taxonomy, revisions, search, api, webhooks, etc.)
 $appProvider = new AppServiceProvider();
