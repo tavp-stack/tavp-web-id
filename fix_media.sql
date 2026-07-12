@@ -1,2 +1,0 @@
-ALTER TABLE media ADD COLUMN disk VARCHAR(50) DEFAULT 'public' AFTER path;
-DESC media;
