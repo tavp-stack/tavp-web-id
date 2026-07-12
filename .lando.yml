@@ -9,11 +9,10 @@ config:
     PHP_DEFAULT_TIMEZONE: "Asia/Jakarta"
 
 services:
-  # Override appserver to add Phalcon build step
+  # Override appserver to install Phalcon via tavp-cli on rebuild
   appserver:
-    build_as_root:
-      - pecl install phalcon
-      - echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/99-phalcon.ini
+    build:
+      - php /app/vendor/bin/tavp phalcon install
 
   # MariaDB database (included in LAMP recipe).
   database:
