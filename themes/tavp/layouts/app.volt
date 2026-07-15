@@ -1,3 +1,12 @@
+<?php
+$settings = app()->getService('Tavp\Cms\Settings\Settings') ?? null;
+$siteName = ($v = $settings?->get('general.site_name')) !== '' && $v !== null ? $v : 'TAVP Stack';
+$tagline = ($v = $settings?->get('general.tagline')) !== '' && $v !== null ? $v : 'The Lean, Mean, PHP Machine';
+$defaultTitle = $siteName . ' — ' . $tagline;
+$defaultDescription = ($v = $settings?->get('general.description')) !== '' && $v !== null ? $v : 'Tailwind + Alpine + Volt + Phalcon. A curated PHP tech stack — thin, light, and fast.';
+$copyright = ($v = $settings?->get('footer.copyright')) !== '' && $v !== null ? $v : '© 2026 TAVP Stack. Released under the MIT License.';
+$logoUrl = ($v = $settings?->get('site.logo_url')) !== '' && $v !== null ? $v : '/assets/logo.png';
+?>
 <!DOCTYPE html>
 <html class="dark" lang="id">
 <head>
@@ -82,17 +91,6 @@
 </head>
 <body class="bg-background text-on-background font-body-md selection:bg-secondary selection:text-on-secondary" x-data="{ mobileMenu: false }">
 
-<?php
-// Load site settings
-$settings = app()->getService('Tavp\Cms\Settings\Settings') ?? null;
-$siteName = $settings ? $settings->get('general.site_name', 'TAVP Stack') : 'TAVP Stack';
-$tagline = $settings ? $settings->get('general.tagline', 'The Lean, Mean, PHP Machine') : 'The Lean, Mean, PHP Machine';
-$defaultTitle = $siteName . ' — ' . $tagline;
-$defaultDescription = $settings ? $settings->get('general.description', 'Tailwind + Alpine + Volt + Phalcon. A curated PHP tech stack — thin, light, and fast.') : 'Tailwind + Alpine + Volt + Phalcon. A curated PHP tech stack — thin, light, and fast.';
-$copyright = $settings ? $settings->get('footer.copyright', '© 2026 TAVP Stack. Released under the MIT License.') : '© 2026 TAVP Stack. Released under the MIT License.';
-$logoUrl = $settings ? $settings->get('site.logo_url', '/assets/logo.png') : '/assets/logo.png';
-?>
-
 <nav class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-outline-variant">
   <div class="max-w-[1280px] mx-auto px-gutter h-16 flex justify-between items-center">
     <a href="/" class="flex items-center gap-3">
@@ -134,7 +132,7 @@ $logoUrl = $settings ? $settings->get('site.logo_url', '/assets/logo.png') : '/a
   <div class="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
     <div class="space-y-4">
       <div class="flex items-center gap-2">
-        <img alt="TAVP" class="w-8 h-8" src="/assets/logo.png"/>
+        <img alt="TAVP" class="w-8 h-8" src="<?= htmlspecialchars($logoUrl) ?>"/>
         <span class="font-headline-lg text-headline-lg font-bold text-secondary"><?= htmlspecialchars($siteName) ?></span>
       </div>
       <p class="font-body-md text-body-md text-on-tertiary-container max-w-xs">

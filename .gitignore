@@ -8,6 +8,11 @@ composer.lock
 .DS_Store
 Thumbs.db
 
+# Leftover / temp files
+index.nginx-debian.html
+pma
+run_migrations.php
+
 # Design source (mockups/exports) — kept local, not shipped in the repo.
 /docs/*/
 /docs/*.zip

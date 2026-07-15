@@ -17,7 +17,7 @@
       <div>
         <h5 class="font-label-caps text-label-caps text-label-caps text-on-tertiary-container mb-4 uppercase tracking-widest">Introduction</h5>
         <ul class="space-y-2">
-          <li><a class="block text-secondary font-bold font-body-md" href="#">The TAVP Philosophy</a></li>
+          <li><a class="block text-secondary font-bold font-body-md" href="/documentation">The TAVP Philosophy</a></li>
           <li><a class="block text-on-surface-variant hover:text-secondary transition-colors" href="https://docs.tavp.web.id/guide/installation.html">Installation</a></li>
           <li><a class="block text-on-surface-variant hover:text-secondary transition-colors" href="https://docs.tavp.web.id/guide/what-is-tavp.html">What is TAVP</a></li>
         </ul>
@@ -25,9 +25,9 @@
       <div>
         <h5 class="font-label-caps text-label-caps text-label-caps text-on-tertiary-container mb-4 uppercase tracking-widest">Components</h5>
         <ul class="space-y-2">
-          <li><a class="block text-on-surface-variant hover:text-secondary transition-colors" href="https://docs.tavp.web.id/index.html">Tailwind &amp; Alpine</a></li>
-          <li><a class="block text-on-surface-variant hover:text-secondary transition-colors" href="https://docs.tavp.web.id/index.html">Volt Templates</a></li>
-          <li><a class="block text-on-surface-variant hover:text-secondary transition-colors" href="https://docs.tavp.web.id/index.html">Phalcon Core</a></li>
+          <li><a class="block text-on-surface-variant hover:text-secondary transition-colors" href="https://docs.tavp.web.id/guide/what-is-tavp.html">Tailwind &amp; Alpine</a></li>
+          <li><a class="block text-on-surface-variant hover:text-secondary transition-colors" href="https://docs.tavp.web.id/guide/quick-start.html">Volt Templates</a></li>
+          <li><a class="block text-on-surface-variant hover:text-secondary transition-colors" href="https://docs.tavp.web.id/architecture/overview.html">Phalcon Core</a></li>
         </ul>
       </div>
       <div>

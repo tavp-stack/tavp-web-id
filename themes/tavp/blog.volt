@@ -27,8 +27,18 @@
               {% if post['excerpt'] is defined and post['excerpt'] %}
                 <p class="text-sm text-on-tertiary-container line-clamp-3">{{ post['excerpt'] }}</p>
               {% endif %}
-                            <div class="flex items-center gap-2 text-xs text-on-surface-variant">
-                <span class="font-code-sm text-code-sm">{{ post['slug'] }}</span>
+              <div class="flex items-center gap-3 text-xs text-on-surface-variant">
+                {% if post['published_at'] is defined and post['published_at'] %}
+                  <?php
+                  $dt = new \DateTime($post['published_at']);
+                  $idMonths = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
+                  ?>
+                  <span class="font-code-sm text-code-sm"><?= $dt->format('j') ?> <?= $idMonths[(int)$dt->format('n') - 1] ?> <?= $dt->format('Y') ?></span>
+                  <span class="font-code-sm text-code-sm">·</span>
+                {% endif %}
+                {% if post['author'] is defined and post['author'] %}
+                  <span class="font-code-sm text-code-sm">{{ post['author'] }}</span>
+                {% endif %}
               </div>
               {% if post['categories'] is defined and post['categories'] %}
                 <div class="flex flex-wrap gap-1 mt-2">
