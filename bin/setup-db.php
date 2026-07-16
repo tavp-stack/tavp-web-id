@@ -139,17 +139,17 @@ echo "  ✓ error_500\n";
 echo "\n[5/5] Fixing permissions...\n";
 
 $dirs = [
-    '/var/www/html/public/uploads',
-    '/tmp/storage',
-    '/tmp/storage/compiled/volt',
-    '/tmp/storage/cms/cache',
-    '/tmp/storage/cms/revisions',
+    '/var/www/html/public/uploads' => 0775,
+    '/tmp/storage' => 0777,
+    '/tmp/storage/compiled/volt' => 0777,
+    '/tmp/storage/cms/cache' => 0777,
+    '/tmp/storage/cms/revisions' => 0777,
 ];
-foreach ($dirs as $dir) {
+foreach ($dirs as $dir => $mode) {
     if (!is_dir($dir)) {
-        mkdir($dir, 0755, true);
+        mkdir($dir, $mode, true);
     }
-    chmod($dir, 0775);
+    chmod($dir, $mode);
 }
 echo "  ✓ Storage & upload permissions set\n";
 
