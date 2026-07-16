@@ -75,6 +75,7 @@ $settings = [
     ['general', 'tagline', 'The Lean, Mean, PHP Machine'],
     ['general', 'description', 'Tailwind + Alpine + Volt + Phalcon. A curated PHP tech stack — thin, light, and fast.'],
     ['general', 'timezone', 'Asia/Jakarta'],
+    ['admin', 'route_prefix', 'admin'],
     ['contact', 'email', 'hello@tavp.web.id'],
     ['contact', 'phone', ''],
     ['contact', 'address', ''],
