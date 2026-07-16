@@ -277,7 +277,7 @@ $router->get("{$msgPrefix}/messages", function () use ($msgPrefix) {
     $html .= '<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"/>';
     $html .= '<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>';
     $html .= '<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>';
-    $html .= '<style>.material-symbols-outlined{font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;} .hard-step-shadow{box-shadow:2px 2px 0 0 #000} .msg-card{transition:all .15s} .msg-card:hover{border-color:#e6c446} .msg-card.active{background:#242a36;border-color:#e6c446}</style>';
+    $html .= '<style>.material-symbols-outlined{font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;} ::-webkit-scrollbar{width:6px} ::-webkit-scrollbar-track{background:#1a202c} ::-webkit-scrollbar-thumb{background:#4a5568;border-radius:3px} ::-webkit-scrollbar-thumb:hover{background:#e6c446} .hard-step-shadow{box-shadow:2px 2px 0 0 #000} .msg-card{transition:all .15s} .msg-card:hover{border-color:#e6c446} .msg-card.active{background:#242a36;border-color:#e6c446}</style>';
     $html .= '</head><body class="bg-background text-on-background overflow-x-hidden">';
 
     // Include sidebar
@@ -452,7 +452,7 @@ $router->get("{$seoPrefix}/seo", function () use ($seoPrefix) {
     $html .= '<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"/>';
     $html .= '<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>';
     $html .= '<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>';
-    $html .= '<style>.material-symbols-outlined{font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;} .hard-step-shadow{box-shadow:2px 2px 0 0 #000} .seo-card{transition:all .15s} .seo-card:hover{border-color:#e6c446;transform:translateY(-2px)}</style>';
+    $html .= '<style>.material-symbols-outlined{font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;} ::-webkit-scrollbar{width:6px} ::-webkit-scrollbar-track{background:#1a202c} ::-webkit-scrollbar-thumb{background:#4a5568;border-radius:3px} ::-webkit-scrollbar-thumb:hover{background:#e6c446} .hard-step-shadow{box-shadow:2px 2px 0 0 #000} .seo-card{transition:all .15s} .seo-card:hover{border-color:#e6c446;transform:translateY(-2px)}</style>';
     $html .= '</head><body class="bg-background text-on-background overflow-x-hidden">';
 
     // Include sidebar
