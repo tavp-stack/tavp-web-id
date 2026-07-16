@@ -16,6 +16,7 @@ use Tavp\Core\Kernel;
 $cms = new CmsServiceProvider();
 $cms->register();
 $cms->boot();
+$cms->loadRoutes();
 
 // Manually register required CMS services (in case CmsServiceProvider didn't)
 // 1. ContentStore
