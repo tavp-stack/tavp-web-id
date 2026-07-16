@@ -258,7 +258,7 @@ $router->get("{$msgPrefix}/messages", function () {
     $messages = $db->fetchAll('SELECT * FROM contact_messages ORDER BY created_at DESC', PDO::FETCH_ASSOC);
 
     $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>Messages</title>';
-    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
+    $html .= '<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">';
     $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"bg":"#0d131f","surface":"#1a202c","high":"#242a36","text":"#dde2f3","sec":"#e6c446","out":"#45474c","dim":"#95a0b5"}}}}</script>';
     $html .= '</head><body class="bg-bg text-text"><div class="max-w-5xl mx-auto px-6 py-8">';
     $html .= '<div class="flex justify-between items-center mb-6">';
@@ -389,21 +389,52 @@ try {
     $s = app()->getService(\Tavp\Cms\Settings\Settings::class);
     $p = $s?->get('admin.route_prefix');
     if ($p) $seoPrefix = '/' . trim($p, '/');
-} catch (\Throwable) {}
+} catch (\Throwable $e) { error_log('SEO PREFIX ERROR: ' . $e->getMessage()); }
+error_log('SEO PREFIX: ' . $seoPrefix);
 
-$router->get("{$seoPrefix}/seo", function () {
-    $ctrl = new \App\Admin\SeoController();
-    return $ctrl->index();
+$router->get("{$seoPrefix}/seo", function () use ($seoPrefix) {
+    $db = app('db');
+    $pageCount = $db->fetchAll("SELECT COUNT(*) as cnt FROM contents WHERE status='published'", PDO::FETCH_ASSOC);
+    $postCount = $db->fetchAll("SELECT COUNT(*) as cnt FROM contents WHERE type='post' AND status='published'", PDO::FETCH_ASSOC);
+
+    $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>SEO Dashboard</title>';
+    $html .= '<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">';
+    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"bg":"#0d131f","surface":"#1a202c","high":"#242a36","text":"#dde2f3","sec":"#e6c446","out":"#45474c","dim":"#95a0b5"}}}}</script>';
+    $html .= '</head><body class="bg-bg text-text"><div class="max-w-3xl mx-auto px-6 py-8">';
+    $html .= '<h1 class="text-2xl font-bold text-sec mb-6">SEO Dashboard</h1>';
+    $html .= '<div class="grid grid-cols-3 gap-4 mb-6">';
+    $html .= '<div class="bg-surface border border-out rounded-lg p-4"><p class="text-sm text-dim">Published Pages</p><p class="text-2xl font-bold text-sec">' . ($pageCount[0]['cnt'] ?? 0) . '</p></div>';
+    $html .= '<div class="bg-surface border border-out rounded-lg p-4"><p class="text-sm text-dim">Published Posts</p><p class="text-2xl font-bold text-sec">' . ($postCount[0]['cnt'] ?? 0) . '</p></div>';
+    $html .= '<div class="bg-surface border border-out rounded-lg p-4"><p class="text-sm text-dim">Sitemap</p><a href="/sitemap.xml" target="_blank" class="text-sec hover:underline">/sitemap.xml</a></div>';
+    $html .= '</div>';
+    $html .= '<div class="bg-surface border border-out rounded-lg p-6">';
+    $html .= '<h2 class="font-bold mb-4">Quick Links</h2>';
+    $html .= '<div class="space-y-3">';
+    $html .= '<a href="' . $seoPrefix . '/seo/settings" class="block text-sec hover:underline">SEO Settings</a>';
+    $html .= '<a href="' . $seoPrefix . '/seo/redirects" class="block text-sec hover:underline">Redirects</a>';
+    $html .= '<a href="' . $seoPrefix . '/seo/analyzer" class="block text-sec hover:underline">Analyzer</a>';
+    $html .= '<form method="POST" action="' . $seoPrefix . '/seo/ping" class="mt-4"><button type="submit" class="bg-sec text-bg px-4 py-2 rounded font-bold">Ping Sitemap</button></form>';
+    $html .= '</div></div>';
+    $html .= '<div class="mt-6"><a href="' . $seoPrefix . '" class="text-dim hover:text-sec">← Dashboard</a></div>';
+    $html .= '</div></body></html>';
+    return (new \Tavp\Core\Http\Response())->setContent($html);
 });
 
 // SEO sub-routes (settings, redirects, analyzer, ping)
+$router->get("{$seoPrefix}/seo/test123", function () {
+    return (new \Tavp\Core\Http\Response())->setContent('SEO Test123 Works!');
+});
+
 $router->get("{$seoPrefix}/seo/settings", function () use ($seoPrefix) {
     if (session_status() === PHP_SESSION_NONE) session_start();
     if (empty($_SESSION['cms_admin'])) {
         return (new \Tavp\Core\Http\Response())->setContent('<script>window.location="' . $seoPrefix . '/login"</script>');
     }
+    if (empty($_SESSION['cms_admin'])) {
+        return (new \Tavp\Core\Http\Response())->setContent('<script>window.location="' . $seoPrefix . '/login"</script>');
+    }
     $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>SEO Settings</title>';
-    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
+    $html .= '<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">';
     $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"bg":"#0d131f","surface":"#1a202c","high":"#242a36","text":"#dde2f3","sec":"#e6c446","out":"#45474c","dim":"#95a0b5"}}}}</script>';
     $html .= '</head><body class="bg-bg text-text"><div class="max-w-3xl mx-auto px-6 py-8">';
     $html .= '<a href="' . $seoPrefix . '/seo" class="text-dim hover:text-sec mb-4 inline-block">← Back to SEO</a>';
@@ -414,14 +445,19 @@ $router->get("{$seoPrefix}/seo/settings", function () use ($seoPrefix) {
 });
 
 $router->get("{$seoPrefix}/seo/redirects", function () use ($seoPrefix) {
-    if (session_status() === PHP_SESSION_NONE) session_start();
-    if (empty($_SESSION['cms_admin'])) {
-        return (new \Tavp\Core\Http\Response())->setContent('<script>window.location="' . $seoPrefix . '/login"</script>');
-    }
     $db = app('db');
     $redirects = $db->fetchAll('SELECT * FROM redirects ORDER BY created_at DESC', PDO::FETCH_ASSOC);
+    
+    $html = '<!DOCTYPE html><html class="dark"><head><meta charset="utf-8"><title>Redirects</title>';
+    $html .= '<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">';
+    $html .= '</head><body class="bg-[#0d131f] text-[#dde2f3]"><div class="max-w-3xl mx-auto px-6 py-8">';
+    $html .= '<h1 class="text-2xl font-bold mb-6 text-[#e6c446]">Redirects (' . count($redirects) . ')</h1>';
+    $html .= '<a href="' . $seoPrefix . '/seo" class="text-[#e6c446]">← Back</a>';
+    $html .= '</div></body></html>';
+    return (new \Tavp\Core\Http\Response())->setContent($html);
+    $redirects = $db->fetchAll('SELECT * FROM redirects ORDER BY created_at DESC', PDO::FETCH_ASSOC);
     $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>SEO Redirects</title>';
-    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
+    $html .= '<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">';
     $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"bg":"#0d131f","surface":"#1a202c","high":"#242a36","text":"#dde2f3","sec":"#e6c446","out":"#45474c","dim":"#95a0b5"}}}}</script>';
     $html .= '</head><body class="bg-bg text-text"><div class="max-w-3xl mx-auto px-6 py-8">';
     $html .= '<a href="' . $seoPrefix . '/seo" class="text-dim hover:text-sec mb-4 inline-block">← Back to SEO</a>';
@@ -447,7 +483,7 @@ $router->get("{$seoPrefix}/seo/analyzer", function () use ($seoPrefix) {
         return (new \Tavp\Core\Http\Response())->setContent('<script>window.location="' . $seoPrefix . '/login"</script>');
     }
     $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>SEO Analyzer</title>';
-    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
+    $html .= '<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">';
     $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"bg":"#0d131f","surface":"#1a202c","high":"#242a36","text":"#dde2f3","sec":"#e6c446","out":"#45474c","dim":"#95a0b5"}}}}</script>';
     $html .= '</head><body class="bg-bg text-text"><div class="max-w-3xl mx-auto px-6 py-8">';
     $html .= '<a href="' . $seoPrefix . '/seo" class="text-dim hover:text-sec mb-4 inline-block">← Back to SEO</a>';
@@ -475,7 +511,7 @@ $router->post("{$seoPrefix}/seo/ping", function () use ($seoPrefix) {
     $results[] = 'Bing: ' . ($bing !== false ? 'OK' : 'Failed');
     
     $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>Ping Result</title>';
-    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
+    $html .= '<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">';
     $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"bg":"#0d131f","surface":"#1a202c","high":"#242a36","text":"#dde2f3","sec":"#e6c446","out":"#45474c","dim":"#95a0b5"}}}}</script>';
     $html .= '</head><body class="bg-bg text-text"><div class="max-w-3xl mx-auto px-6 py-8">';
     $html .= '<a href="' . $seoPrefix . '/seo" class="text-dim hover:text-sec mb-4 inline-block">← Back to SEO</a>';
