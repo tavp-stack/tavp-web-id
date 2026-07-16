@@ -10,6 +10,27 @@ declare(strict_types=1);
 
 echo "━━━ TAVP CMS Database Setup ━━━\n\n";
 
+// ─── 0. Create symlinks for volume mount compatibility ───────────
+echo "[0/5] Creating symlinks...\n";
+$symlinks = [
+    '/var/vendor' => '/var/www/html/vendor',
+    '/var/bootstrap' => '/var/www/html/bootstrap',
+    '/var/config' => '/var/www/html/config',
+    '/var/routes' => '/var/www/html/routes',
+    '/var/themes' => '/var/www/html/themes',
+    '/var/app' => '/var/www/html/app',
+    '/var/storage' => '/var/www/html/storage',
+];
+foreach ($symlinks as $link => $target) {
+    if (!file_exists($link)) {
+        symlink($target, $link);
+        echo "  ✓ {$link} → {$target}\n";
+    } else {
+        echo "  · {$link} already exists\n";
+    }
+}
+echo "\n";
+
 $pdo = new PDO('mysql:host=127.0.0.1;dbname=tavp', 'tavp', 'tavp');
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
