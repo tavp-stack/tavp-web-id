@@ -245,12 +245,6 @@ $router->post('/contact', function () {
 // --- Contact Messages Admin ------------------------------------------------
 $msgPrefix = '/' . trim(config('cms.admin.route_prefix', 'admin'), '/');
 $router->get("{$msgPrefix}/messages", function () use ($msgPrefix) {
-    if (session_status() === PHP_SESSION_NONE) session_start();
-    if (empty($_SESSION['cms_admin'])) {
-        header('Location: ' . $msgPrefix . '/login');
-        http_response_code(302);
-        exit;
-    }
     $db = app('db');
     $messages = $db->fetchAll('SELECT * FROM contact_messages ORDER BY created_at DESC', PDO::FETCH_ASSOC);
     
@@ -297,7 +291,7 @@ $router->get("{$msgPrefix}/messages", function () use ($msgPrefix) {
     $html .= $content;
     $html .= '</div></body></html>';
     
-    return new \Tavp\Core\Http\Response($html);
+    return (new \Tavp\Core\Http\Response())->setContent($html);
 });
 
 // Blog index
@@ -398,12 +392,6 @@ $router->get('/blog/{slug}', function (array $params) {
 // --- SEO Admin Routes ---------------------------------------------------
 $seoPrefix = '/' . trim(config('cms.admin.route_prefix', 'admin'), '/');
 $router->get("{$seoPrefix}/seo", function () use ($seoPrefix) {
-    if (session_status() === PHP_SESSION_NONE) session_start();
-    if (empty($_SESSION['cms_admin'])) {
-        header('Location: ' . $seoPrefix . '/login');
-        http_response_code(302);
-        exit;
-    }
     $brand = config('cms.admin.brand', 'TAVP');
     $db = app('db');
     $pageCount = $db->fetchAll("SELECT COUNT(*) as cnt FROM contents WHERE status='published'", PDO::FETCH_ASSOC);
@@ -436,7 +424,7 @@ $router->get("{$seoPrefix}/seo", function () use ($seoPrefix) {
     $html .= '</div></div>';
     
     $html .= '</div></body></html>';
-    return new \Tavp\Core\Http\Response($html);
+    return (new \Tavp\Core\Http\Response())->setContent($html);
 });
 
 // Page catch-all (keep last)
