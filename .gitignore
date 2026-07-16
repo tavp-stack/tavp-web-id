@@ -20,7 +20,7 @@ Thumbs.db
 # Local / sensitive files (not pushed to repo)
 .local/
 
-# Leftover / temp files
+# Temp / leftover files
 0
 index.nginx-debian.html
 pma
