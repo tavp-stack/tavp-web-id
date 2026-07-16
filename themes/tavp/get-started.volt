@@ -29,15 +29,15 @@
         </div>
         <div class="rounded-lg overflow-hidden border border-outline-variant code-glow">
           <div class="bg-surface-container px-4 py-2 flex justify-between items-center border-b border-outline-variant">
-            <span class="font-label-caps text-label-caps text-label-caps text-on-tertiary-container">TERMINAL</span>
+            <span class="font-label-caps text-label-caps text-label-caps text-on-tertiary-container">{{ content['step1_code_lang']|default('TERMINAL') }}</span>
             <span class="material-symbols-outlined text-on-tertiary-container text-sm">content_copy</span>
           </div>
           <div class="p-4 font-code-sm text-code-sm text-code-sm bg-background">
             <code class="block">
-              <span class="token-comment"># Install the TAVP CLI globally</span><br/>
+{% autoescape false %}{{ content['step1_code']|default('<span class="token-comment"># Install the TAVP CLI globally</span><br/>
               composer global require tavp/cli<br/><br/>
               <span class="token-comment"># Install the Phalcon C-extension</span><br/>
-              tavp phalcon:install
+              tavp phalcon:install') }}{% endautoescape %}
             </code>
           </div>
         </div>
@@ -52,14 +52,14 @@
         </div>
         <div class="rounded-lg overflow-hidden border border-outline-variant code-glow">
           <div class="bg-surface-container px-4 py-2 flex justify-between items-center border-b border-outline-variant">
-            <span class="font-label-caps text-label-caps text-label-caps text-on-tertiary-container">BASH</span>
+            <span class="font-label-caps text-label-caps text-label-caps text-on-tertiary-container">{{ content['step2_code_lang']|default('BASH') }}</span>
             <span class="material-symbols-outlined text-on-tertiary-container text-sm">content_copy</span>
           </div>
           <div class="p-4 font-code-sm text-code-sm text-code-sm bg-background">
             <code class="block">
-              composer create-project tavp/core my-app<br/>
+{% autoescape false %}{{ content['step2_code']|default('composer create-project tavp/core my-app<br/>
               <span class="token-keyword">cd</span> my-app<br/>
-              tavp serve
+              tavp serve') }}{% endautoescape %}
             </code>
           </div>
         </div>
@@ -74,16 +74,16 @@
         </div>
         <div class="rounded-lg overflow-hidden border border-outline-variant code-glow">
           <div class="bg-surface-container px-4 py-2 flex justify-between items-center border-b border-outline-variant">
-            <span class="font-label-caps text-label-caps text-on-tertiary-container">TERMINAL</span>
+            <span class="font-label-caps text-label-caps text-on-tertiary-container">{{ content['step3_code_lang']|default('TERMINAL') }}</span>
             <span class="material-symbols-outlined text-on-tertiary-container text-sm">content_copy</span>
           </div>
           <div class="p-4 font-code-sm text-code-sm bg-background">
             <code class="block">
-              <span class="token-comment"># TAVPblocks is included via composer</span><br/>
+{% autoescape false %}{{ content['step3_code']|default('<span class="token-comment"># TAVPblocks is included via composer</span><br/>
               composer require tavp/tavpblocks<br/><br/>
               <span class="token-comment"># Components available out of the box:</span><br/>
               Button, Input, Select, Modal, Card,<br/>
-              Chart, Datatable, Form, Pagination...
+              Chart, Datatable, Form, Pagination...') }}{% endautoescape %}
             </code>
           </div>
         </div>
@@ -103,10 +103,10 @@
             <div class="w-3 h-3 rounded-full bg-error/40"></div>
             <div class="w-3 h-3 rounded-full bg-secondary/40"></div>
             <div class="w-3 h-3 rounded-full bg-on-tertiary-container/40"></div>
-            <span class="ml-auto font-label-caps text-label-caps text-label-caps text-on-tertiary-container">views/index.volt</span>
+            <span class="ml-auto font-label-caps text-label-caps text-label-caps text-on-tertiary-container">{{ content['hello_code_filename']|default('views/index.volt') }}</span>
           </div>
           <div class="p-6 font-code-sm text-code-sm text-code-sm">
-<pre class="border-none !bg-transparent"><span class="token-comment">&lt;!-- Volt + Alpine.js --&gt;</span>
+{% autoescape false %}{{ content['hello_code']|default('<pre class="border-none !bg-transparent"><span class="token-comment">&lt;!-- Volt + Alpine.js --&gt;</span>
 &lt;div <span class="token-keyword">x-data</span>="{ count: 0 }" class="p-8 text-center"&gt;
     &lt;h1 class="text-3xl font-bold"&gt;
         &#123;&#123; <span class="token-string">"Hello, "</span> ~ user_name &#125;&#125;
@@ -115,7 +115,7 @@
     &lt;button <span class="token-keyword">@click</span>="count++" class="bg-secondary text-black px-4 py-2 mt-4"&gt;
         Clicks: &lt;span <span class="token-keyword">x-text</span>="count"&gt;&lt;/span&gt;
     &lt;/button&gt;
-&lt;/div&gt;</pre>
+&lt;/div&gt;</pre>') }}{% endautoescape %}
           </div>
         </div>
       </section>
@@ -133,19 +133,19 @@
           <ul class="space-y-4">
             <li class="flex gap-3">
               <span class="material-symbols-outlined text-secondary text-sm shrink-0">check_circle</span>
-              <div class="text-sm"><span class="block font-bold text-on-surface">Enable OPcache</span><span class="text-on-tertiary-container">Set <code>opcache.enable=1</code> in php.ini for script caching.</span></div>
+              <div class="text-sm"><span class="block font-bold text-on-surface">{{ content['tip1_title']|default('Enable OPcache') }}</span><span class="text-on-tertiary-container">{{ content['tip1_desc']|default('Set <code>opcache.enable=1</code> in php.ini for script caching.') }}</span></div>
             </li>
             <li class="flex gap-3">
               <span class="material-symbols-outlined text-secondary text-sm shrink-0">check_circle</span>
-              <div class="text-sm"><span class="block font-bold text-on-surface">Disable View Stat</span><span class="text-on-tertiary-container">Turn off Volt file-existence checks in production.</span></div>
+              <div class="text-sm"><span class="block font-bold text-on-surface">{{ content['tip2_title']|default('Disable View Stat') }}</span><span class="text-on-tertiary-container">{{ content['tip2_desc']|default('Turn off Volt file-existence checks in production.') }}</span></div>
             </li>
             <li class="flex gap-3">
               <span class="material-symbols-outlined text-secondary text-sm shrink-0">check_circle</span>
-              <div class="text-sm"><span class="block font-bold text-on-surface">Lean Memory</span><span class="text-on-tertiary-container">Phalcon is a C-extension, so PHP's memory_limit can stay low.</span></div>
+              <div class="text-sm"><span class="block font-bold text-on-surface">{{ content['tip3_title']|default('Lean Memory') }}</span><span class="text-on-tertiary-container">{{ content['tip3_desc']|default('Phalcon is a C-extension, so PHP\'s memory_limit can stay low.') }}</span></div>
             </li>
             <li class="flex gap-3">
               <span class="material-symbols-outlined text-secondary text-sm shrink-0">check_circle</span>
-              <div class="text-sm"><span class="block font-bold text-on-surface">Serve Static Assets</span><span class="text-on-tertiary-container">Let Nginx serve compiled CSS/JS directly.</span></div>
+              <div class="text-sm"><span class="block font-bold text-on-surface">{{ content['tip4_title']|default('Serve Static Assets') }}</span><span class="text-on-tertiary-container">{{ content['tip4_desc']|default('Let Nginx serve compiled CSS/JS directly.') }}</span></div>
             </li>
           </ul>
         </div>

@@ -63,24 +63,24 @@
         <h2 class="font-headline-lg text-headline-lg text-headline-lg mb-8 border-b-2 border-surface-variant pb-2">{{ content['core_heading']|default('Core Components') }}</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="performance-card bg-surface-container p-6 rounded-xl border border-outline-variant border-t-2 border-t-secondary">
-            <div class="flex items-center gap-3 mb-4"><span class="w-10 h-10 flex items-center justify-center bg-secondary-container text-on-secondary rounded font-bold font-code-sm text-code-sm">T</span><h3 class="font-headline-lg text-headline-lg text-xl">Tailwind CSS</h3></div>
-            <p class="text-body-md text-on-tertiary-container mb-4">Utility-first styling that keeps bundles small and design consistent.</p>
-            <div class="code-block p-3 rounded font-code-sm text-code-sm text-code-sm text-on-tertiary-container"><span class="text-secondary">class</span>=<span class="text-on-surface">"flex gap-4 items-center"</span></div>
+            <div class="flex items-center gap-3 mb-4"><span class="w-10 h-10 flex items-center justify-center bg-secondary-container text-on-secondary rounded font-bold font-code-sm text-code-sm">{{ content['comp_1_initial']|default('T') }}</span><h3 class="font-headline-lg text-headline-lg text-xl">{{ content['comp_1_name']|default('Tailwind CSS') }}</h3></div>
+            <p class="text-body-md text-on-tertiary-container mb-4">{{ content['comp_1_desc']|default('Utility-first styling that keeps bundles small and design consistent.') }}</p>
+{% autoescape false %}            <div class="code-block p-3 rounded font-code-sm text-code-sm text-code-sm text-on-tertiary-container">{{ content['comp_1_code']|default('<span class="text-secondary">class</span>=<span class="text-on-surface">"flex gap-4 items-center"') }}</div>{% endautoescape %}
           </div>
           <div class="performance-card bg-surface-container p-6 rounded-xl border border-outline-variant border-t-2 border-t-secondary">
-            <div class="flex items-center gap-3 mb-4"><span class="w-10 h-10 flex items-center justify-center bg-secondary-container text-on-secondary rounded font-bold font-code-sm text-code-sm">A</span><h3 class="font-headline-lg text-headline-lg text-xl">Alpine.js</h3></div>
-            <p class="text-body-md text-on-tertiary-container mb-4">Lightweight reactivity right in your HTML. Minimal footprint, declarative power.</p>
-            <div class="code-block p-3 rounded font-code-sm text-code-sm text-code-sm text-on-tertiary-container"><span class="text-secondary">x-data</span>=<span class="text-on-surface">"{ open: false }"</span></div>
+            <div class="flex items-center gap-3 mb-4"><span class="w-10 h-10 flex items-center justify-center bg-secondary-container text-on-secondary rounded font-bold font-code-sm text-code-sm">{{ content['comp_2_initial']|default('A') }}</span><h3 class="font-headline-lg text-headline-lg text-xl">{{ content['comp_2_name']|default('Alpine.js') }}</h3></div>
+            <p class="text-body-md text-on-tertiary-container mb-4">{{ content['comp_2_desc']|default('Lightweight reactivity right in your HTML. Minimal footprint, declarative power.') }}</p>
+{% autoescape false %}            <div class="code-block p-3 rounded font-code-sm text-code-sm text-code-sm text-on-tertiary-container">{{ content['comp_2_code']|default('<span class="text-secondary">x-data</span>=<span class="text-on-surface">"{ open: false }"') }}</div>{% endautoescape %}
           </div>
           <div class="performance-card bg-surface-container p-6 rounded-xl border border-outline-variant border-t-2 border-t-secondary">
-            <div class="flex items-center gap-3 mb-4"><span class="w-10 h-10 flex items-center justify-center bg-secondary-container text-on-secondary rounded font-bold font-code-sm text-code-sm">V</span><h3 class="font-headline-lg text-headline-lg text-xl">Volt Templates</h3></div>
-            <p class="text-body-md text-on-tertiary-container mb-4">A template engine compiled to plain PHP for fast, zero-delay rendering.</p>
-            <div class="code-block p-3 rounded font-code-sm text-code-sm text-code-sm text-on-tertiary-container">&#123;&#123; <span class="text-secondary">content()</span> &#125;&#125;</div>
+            <div class="flex items-center gap-3 mb-4"><span class="w-10 h-10 flex items-center justify-center bg-secondary-container text-on-secondary rounded font-bold font-code-sm text-code-sm">{{ content['comp_3_initial']|default('V') }}</span><h3 class="font-headline-lg text-headline-lg text-xl">{{ content['comp_3_name']|default('Volt Templates') }}</h3></div>
+            <p class="text-body-md text-on-tertiary-container mb-4">{{ content['comp_3_desc']|default('A template engine compiled to plain PHP for fast, zero-delay rendering.') }}</p>
+{% autoescape false %}            <div class="code-block p-3 rounded font-code-sm text-code-sm text-code-sm text-on-tertiary-container">{{ content['comp_3_code']|default('&#123;&#123; <span class="text-secondary">content()</span> &#125;&#125;') }}</div>{% endautoescape %}
           </div>
           <div class="performance-card bg-surface-container p-6 rounded-xl border border-outline-variant border-t-2 border-t-secondary">
-            <div class="flex items-center gap-3 mb-4"><span class="w-10 h-10 flex items-center justify-center bg-secondary-container text-on-secondary rounded font-bold font-code-sm text-code-sm">P</span><h3 class="font-headline-lg text-headline-lg text-xl">Phalcon PHP</h3></div>
-            <p class="text-body-md text-on-tertiary-container mb-4">A C-extension PHP framework: high-speed routing, ORM, and DI container.</p>
-            <div class="code-block p-3 rounded font-code-sm text-code-sm text-code-sm text-on-tertiary-container"><span class="text-secondary">$app</span>-&gt;<span class="text-on-surface">handle()</span>;</div>
+            <div class="flex items-center gap-3 mb-4"><span class="w-10 h-10 flex items-center justify-center bg-secondary-container text-on-secondary rounded font-bold font-code-sm text-code-sm">{{ content['comp_4_initial']|default('P') }}</span><h3 class="font-headline-lg text-headline-lg text-xl">{{ content['comp_4_name']|default('Phalcon PHP') }}</h3></div>
+            <p class="text-body-md text-on-tertiary-container mb-4">{{ content['comp_4_desc']|default('A C-extension PHP framework: high-speed routing, ORM, and DI container.') }}</p>
+{% autoescape false %}            <div class="code-block p-3 rounded font-code-sm text-code-sm text-code-sm text-on-tertiary-container">{{ content['comp_4_code']|default('<span class="text-secondary">$app</span>-&gt;<span class="text-on-surface">handle()</span>;') }}</div>{% endautoescape %}
           </div>
         </div>
       </section>
@@ -89,9 +89,9 @@
       <section class="mb-16">
         <h2 class="font-headline-lg text-headline-lg text-headline-lg mb-8 border-b-2 border-surface-variant pb-2">{{ content['philosophy_heading']|default('The \'Lean\' Philosophy') }}</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="space-y-4"><span class="material-symbols-outlined text-secondary text-4xl">speed</span><h4 class="font-headline-lg text-headline-lg text-lg">Maximum Speed</h4><p class="text-body-md text-on-tertiary-container">Phalcon's C-extension keeps backend response times low and predictable.</p></div>
-          <div class="space-y-4"><span class="material-symbols-outlined text-secondary text-4xl">layers_clear</span><h4 class="font-headline-lg text-headline-lg text-lg">Zero Bloat</h4><p class="text-body-md text-on-tertiary-container">Ship only what the page needs. Lightweight by default, no heavy runtime.</p></div>
-          <div class="space-y-4"><span class="material-symbols-outlined text-secondary text-4xl">developer_mode</span><h4 class="font-headline-lg text-headline-lg text-lg">Tooling Unity</h4><p class="text-body-md text-on-tertiary-container">One coherent stack for styling, behavior, and logic — productive end to end.</p></div>
+          <div class="space-y-4"><span class="material-symbols-outlined text-secondary text-4xl">{{ content['philosophy_1_icon']|default('speed') }}</span><h4 class="font-headline-lg text-headline-lg text-lg">{{ content['philosophy_1_title']|default('Maximum Speed') }}</h4><p class="text-body-md text-on-tertiary-container">{{ content['philosophy_1_desc']|default('Phalcon\'s C-extension keeps backend response times low and predictable.') }}</p></div>
+          <div class="space-y-4"><span class="material-symbols-outlined text-secondary text-4xl">{{ content['philosophy_2_icon']|default('layers_clear') }}</span><h4 class="font-headline-lg text-headline-lg text-lg">{{ content['philosophy_2_title']|default('Zero Bloat') }}</h4><p class="text-body-md text-on-tertiary-container">{{ content['philosophy_2_desc']|default('Ship only what the page needs. Lightweight by default, no heavy runtime.') }}</p></div>
+          <div class="space-y-4"><span class="material-symbols-outlined text-secondary text-4xl">{{ content['philosophy_3_icon']|default('developer_mode') }}</span><h4 class="font-headline-lg text-headline-lg text-lg">{{ content['philosophy_3_title']|default('Tooling Unity') }}</h4><p class="text-body-md text-on-tertiary-container">{{ content['philosophy_3_desc']|default('One coherent stack for styling, behavior, and logic — productive end to end.') }}</p></div>
         </div>
       </section>
 
