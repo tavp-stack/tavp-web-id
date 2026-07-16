@@ -339,19 +339,15 @@ $router->get("{$msgPrefix}/messages", function () use ($msgPrefix) {
         }
         $html .= '</div>';
         $html .= '<div class="lg:col-span-8">';
-        foreach ($messages as $i => $msg) {
-            $html .= '<div x-show="selected === ' . $i . '" x-cloak x-transition class="bg-surface-container border border-outline-variant rounded-xl p-8">';
-            $html .= '<div class="flex items-start justify-between mb-6"><div class="flex items-center gap-4">';
-            $html .= '<div class="w-12 h-12 rounded-full bg-secondary/20 flex items-center justify-center"><span class="text-lg font-bold text-secondary">' . strtoupper(substr(htmlspecialchars($msg['name']), 0, 1)) . '</span></div>';
-            $html .= '<div><h3 class="text-lg font-bold text-on-surface">' . htmlspecialchars($msg['name']) . '</h3><p class="text-sm text-on-tertiary-container">' . htmlspecialchars($msg['email']) . '</p></div></div>';
-            $html .= '<span class="text-xs text-on-tertiary-container">' . htmlspecialchars($msg['created_at']) . '</span></div>';
-            if (!empty($msg['subject'])) {
-                $html .= '<div class="mb-4"><span class="text-[10px] font-semibold uppercase tracking-wider text-on-tertiary-container">Subject</span><p class="text-on-surface font-semibold mt-1">' . htmlspecialchars($msg['subject']) . '</p></div>';
-            }
-            $html .= '<div class="bg-surface-container-low border border-outline-variant rounded-lg p-6 mb-4"><p class="text-on-surface leading-relaxed whitespace-pre-wrap">' . htmlspecialchars($msg['message']) . '</p></div>';
-            $html .= '<div class="flex items-center gap-4 text-xs text-on-tertiary-container"><span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">language</span>IP: ' . htmlspecialchars($msg['ip_address'] ?? 'unknown') . '</span></div></div>';
-        }
-        $html .= '</div></div>';
+        $html .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-8">';
+        $html .= '<div class="flex items-start justify-between mb-6"><div class="flex items-center gap-4">';
+        $html .= '<div class="w-12 h-12 rounded-full bg-secondary/20 flex items-center justify-center"><span class="text-lg font-bold text-secondary" x-text="messages[selected]?.name?.charAt(0)?.toUpperCase()"></span></div>';
+        $html .= '<div><h3 class="text-lg font-bold text-on-surface" x-text="messages[selected]?.name"></h3><p class="text-sm text-on-tertiary-container" x-text="messages[selected]?.email"></p></div></div>';
+        $html .= '<span class="text-xs text-on-tertiary-container" x-text="messages[selected]?.date"></span></div>';
+        $html .= '<div x-show="messages[selected]?.subject" class="mb-4"><span class="text-[10px] font-semibold uppercase tracking-wider text-on-tertiary-container">Subject</span><p class="text-on-surface font-semibold mt-1" x-text="messages[selected]?.subject"></p></div>';
+        $html .= '<div class="bg-surface-container-low border border-outline-variant rounded-lg p-6 mb-4"><p class="text-on-surface leading-relaxed whitespace-pre-wrap" x-text="messages[selected]?.message"></p></div>';
+        $html .= '<div class="flex items-center gap-4 text-xs text-on-tertiary-container"><span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">language</span>IP: <span x-text="messages[selected]?.ip || \'unknown\'"></span></span></div>';
+        $html .= '</div></div></div>';
     }
 
     $html .= '</div></main></body></html>';
