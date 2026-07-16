@@ -245,7 +245,15 @@ $router->post('/contact', function () {
 });
 
 // --- Contact Messages Admin ------------------------------------------------
-$router->get('/admin/inbox', function () {
+// Read admin prefix from database
+$msgPrefix = '/';
+try {
+    $s = app()->getService(\Tavp\Cms\Settings\Settings::class);
+    $p = $s?->get('admin.route_prefix');
+    if ($p) $msgPrefix = '/' . trim($p, '/');
+} catch (\Throwable) {}
+
+$router->get("{$msgPrefix}/inbox", function () {
     $db = app('db');
     $messages = $db->fetchAll('SELECT * FROM contact_messages ORDER BY created_at DESC', PDO::FETCH_ASSOC);
 
@@ -376,7 +384,12 @@ $router->get('/blog/{slug}', function (array $params) {
 });
 
 // --- SEO Admin Routes ---------------------------------------------------
-$seoPrefix = '/' . trim(config('cms.admin.route_prefix', 'admin'), '/');
+$seoPrefix = '/';
+try {
+    $s = app()->getService(\Tavp\Cms\Settings\Settings::class);
+    $p = $s?->get('admin.route_prefix');
+    if ($p) $seoPrefix = '/' . trim($p, '/');
+} catch (\Throwable) {}
 $router->get("{$seoPrefix}/seo", function () {
     $ctrl = new \App\Admin\SeoController();
     return $ctrl->index();
