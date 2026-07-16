@@ -247,45 +247,56 @@ $msgPrefix = '/' . trim(config('cms.admin.route_prefix', 'admin'), '/');
 $router->get("{$msgPrefix}/messages", function () use ($msgPrefix) {
     if (session_status() === PHP_SESSION_NONE) session_start();
     if (empty($_SESSION['cms_admin'])) {
-        return (new \Tavp\Core\Http\Response())->header('Location', $msgPrefix . '/login')->setStatusCode(302);
+        header('Location: ' . $msgPrefix . '/login');
+        http_response_code(302);
+        exit;
     }
     $db = app('db');
     $messages = $db->fetchAll('SELECT * FROM contact_messages ORDER BY created_at DESC', PDO::FETCH_ASSOC);
     
-    $html = '<!DOCTYPE html><html class="dark"><head><meta charset="utf-8"><title>Messages — TAVP Admin</title>';
-    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
-    $html .= '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>';
-    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#0d131f","surface":"#1a202c","surface-high":"#242a36","on-surface":"#dde2f3","secondary":"#e6c446","outline":"#45474c","on-tertiary":"#95a0b5"}}}}</script>';
-    $html .= '</head><body class="bg-background text-on-surface font-[Inter]">';
-    $html .= '<div class="max-w-[1280px] mx-auto px-10 py-8">';
-    $html .= '<div class="flex justify-between items-center mb-8">';
-    $html .= '<h1 class="text-3xl font-bold text-secondary">Contact Messages</h1>';
-    $html .= '<a href="' . $msgPrefix . '" class="text-on-tertiary hover:text-secondary">← Back to Dashboard</a>';
-    $html .= '</div>';
+    // Use admin layout
+    $brand = config('cms.admin.brand', 'TAVP');
+    $adminEmail = $_SESSION['cms_admin'] ?? '';
     
+    // Build messages HTML
+    $msgHtml = '';
     if (empty($messages)) {
-        $html .= '<div class="text-center py-16 text-on-tertiary">No messages yet.</div>';
+        $msgHtml = '<div class="text-center py-16 text-on-tertiary-container"><span class="material-symbols-outlined text-secondary text-5xl mb-4 block">mail</span><p>No messages yet.</p></div>';
     } else {
-        $html .= '<div class="space-y-4">';
         foreach ($messages as $msg) {
             $isRead = $msg['is_read'] ?? 0;
-            $html .= '<div class="bg-surface border border-outline rounded-xl p-6' . ($isRead ? ' opacity-60' : '') . '">';
-            $html .= '<div class="flex justify-between items-start mb-3">';
-            $html .= '<div><span class="font-bold text-lg">' . htmlspecialchars($msg['name']) . '</span>';
-            $html .= '<span class="text-on-tertiary ml-3 text-sm">' . htmlspecialchars($msg['email']) . '</span></div>';
-            $html .= '<span class="text-xs text-on-tertiary">' . htmlspecialchars($msg['created_at'] ?? '') . '</span>';
-            $html .= '</div>';
+            $msgHtml .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6' . ($isRead ? ' opacity-60' : '') . '">';
+            $msgHtml .= '<div class="flex justify-between items-start mb-3">';
+            $msgHtml .= '<div><span class="font-bold text-lg text-on-surface">' . htmlspecialchars($msg['name']) . '</span>';
+            $msgHtml .= '<span class="text-on-tertiary-container ml-3 text-sm">' . htmlspecialchars($msg['email']) . '</span></div>';
+            $msgHtml .= '<span class="text-xs text-on-tertiary-container">' . htmlspecialchars($msg['created_at'] ?? '') . '</span>';
+            $msgHtml .= '</div>';
             if (!empty($msg['subject'])) {
-                $html .= '<p class="font-semibold mb-2">' . htmlspecialchars($msg['subject']) . '</p>';
+                $msgHtml .= '<p class="font-semibold mb-2 text-on-surface">' . htmlspecialchars($msg['subject']) . '</p>';
             }
-            $html .= '<p class="text-on-tertiary leading-relaxed">' . nl2br(htmlspecialchars($msg['message'])) . '</p>';
-            $html .= '<p class="text-xs text-on-tertiary mt-3">IP: ' . htmlspecialchars($msg['ip_address'] ?? 'unknown') . '</p>';
-            $html .= '</div>';
+            $msgHtml .= '<p class="text-on-tertiary-container leading-relaxed">' . nl2br(htmlspecialchars($msg['message'])) . '</p>';
+            $msgHtml .= '<p class="text-xs text-on-tertiary-container mt-3">IP: ' . htmlspecialchars($msg['ip_address'] ?? 'unknown') . '</p>';
+            $msgHtml .= '</div>';
         }
-        $html .= '</div>';
     }
     
+    // Wrap in admin layout
+    $content = '<div class="flex justify-between items-center mb-gutter"><div><h2 class="font-headline-xl text-headline-xl">Contact Messages</h2><p class="font-body-md text-body-md text-on-surface-variant mt-1">View messages from the contact form</p></div></div>';
+    $content .= '<div class="space-y-4">' . $msgHtml . '</div>';
+    
+    // Simple layout wrapper
+    $html = '<!DOCTYPE html><html class="dark"><head><meta charset="utf-8"><title>Messages — ' . htmlspecialchars($brand) . '</title>';
+    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
+    $html .= '<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"/>';
+    $html .= '<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>';
+    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#0d131f","on-background":"#dde2f3","surface-container":"#1a202c","surface-container-low":"#161c27","surface-container-high":"#242a36","on-surface":"#dde2f3","on-surface-variant":"#c5c6cd","secondary":"#e6c446","on-secondary":"#3b2f00","outline-variant":"#45474c","on-tertiary-container":"#95a0b5","error":"#ffb4ab"}}}}</script>';
+    $html .= '<style>.material-symbols-outlined{font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;}</style>';
+    $html .= '</head><body class="bg-background text-on-background font-[Inter]">';
+    $html .= '<div class="max-w-[1280px] mx-auto px-10 py-8">';
+    $html .= '<div class="mb-6"><a href="' . $msgPrefix . '" class="text-on-tertiary-container hover:text-secondary transition-colors flex items-center gap-2"><span class="material-symbols-outlined text-sm">arrow_back</span> Back to Dashboard</a></div>';
+    $html .= $content;
     $html .= '</div></body></html>';
+    
     return new \Tavp\Core\Http\Response($html);
 });
 
@@ -389,37 +400,41 @@ $seoPrefix = '/' . trim(config('cms.admin.route_prefix', 'admin'), '/');
 $router->get("{$seoPrefix}/seo", function () use ($seoPrefix) {
     if (session_status() === PHP_SESSION_NONE) session_start();
     if (empty($_SESSION['cms_admin'])) {
-        return (new \Tavp\Core\Http\Response())->header('Location', $seoPrefix . '/login')->setStatusCode(302);
+        header('Location: ' . $seoPrefix . '/login');
+        http_response_code(302);
+        exit;
     }
-    $html = '<!DOCTYPE html><html class="dark"><head><meta charset="utf-8"><title>SEO Dashboard</title>';
-    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
-    $html .= '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>';
-    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#0d131f","surface":"#1a202c","surface-high":"#242a36","on-surface":"#dde2f3","secondary":"#e6c446","outline":"#45474c","on-tertiary":"#95a0b5"}}}}</script>';
-    $html .= '</head><body class="bg-background text-on-surface font-[Inter]">';
-    $html .= '<div class="max-w-[1280px] mx-auto px-10 py-8">';
-    $html .= '<h1 class="text-3xl font-bold text-secondary mb-8">SEO Dashboard</h1>';
-    $html .= '<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">';
-    
-    // Stats
+    $brand = config('cms.admin.brand', 'TAVP');
     $db = app('db');
     $pageCount = $db->fetchAll("SELECT COUNT(*) as cnt FROM contents WHERE status='published'", PDO::FETCH_ASSOC);
-    $html .= '<div class="bg-surface border border-outline rounded-xl p-6"><p class="text-on-tertiary text-sm">Published Pages</p><p class="text-3xl font-bold text-secondary">' . ($pageCount[0]['cnt'] ?? 0) . '</p></div>';
+    $postCount = $db->fetchAll("SELECT COUNT(*) as cnt FROM contents WHERE type='post' AND status='published'", PDO::FETCH_ASSOC);
     
-    $sitemapUrl = env('APP_URL', 'https://tavp.web.id') . '/sitemap.xml';
-    $html .= '<div class="bg-surface border border-outline rounded-xl p-6"><p class="text-on-tertiary text-sm">Sitemap</p><a href="/sitemap.xml" target="_blank" class="text-secondary hover:underline">/sitemap.xml</a></div>';
+    $html = '<!DOCTYPE html><html class="dark"><head><meta charset="utf-8"><title>SEO Dashboard — ' . htmlspecialchars($brand) . '</title>';
+    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
+    $html .= '<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"/>';
+    $html .= '<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>';
+    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#0d131f","on-background":"#dde2f3","surface-container":"#1a202c","surface-container-low":"#161c27","surface-container-high":"#242a36","on-surface":"#dde2f3","on-surface-variant":"#c5c6cd","secondary":"#e6c446","on-secondary":"#3b2f00","outline-variant":"#45474c","on-tertiary-container":"#95a0b5","error":"#ffb4ab"}}}}</script>';
+    $html .= '<style>.material-symbols-outlined{font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;}</style>';
+    $html .= '</head><body class="bg-background text-on-background font-[Inter]">';
+    $html .= '<div class="max-w-[1280px] mx-auto px-10 py-8">';
+    $html .= '<div class="mb-6"><a href="' . $seoPrefix . '" class="text-on-tertiary-container hover:text-secondary transition-colors flex items-center gap-2"><span class="material-symbols-outlined text-sm">arrow_back</span> Back to Dashboard</a></div>';
+    $html .= '<h2 class="font-headline-xl text-headline-xl mb-2">SEO Dashboard</h2>';
+    $html .= '<p class="text-on-tertiary-container mb-8">Search engine optimization overview</p>';
     
-    $html .= '<div class="bg-surface border border-outline rounded-xl p-6"><p class="text-on-tertiary text-sm">Robots.txt</p><a href="/robots.txt" target="_blank" class="text-secondary hover:underline">/robots.txt</a></div>';
+    $html .= '<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">';
+    $html .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6"><p class="text-on-tertiary-container text-sm mb-1">Published Pages</p><p class="text-3xl font-bold text-secondary">' . ($pageCount[0]['cnt'] ?? 0) . '</p></div>';
+    $html .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6"><p class="text-on-tertiary-container text-sm mb-1">Published Posts</p><p class="text-3xl font-bold text-secondary">' . ($postCount[0]['cnt'] ?? 0) . '</p></div>';
+    $html .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6"><p class="text-on-tertiary-container text-sm mb-1">Sitemap</p><a href="/sitemap.xml" target="_blank" class="text-secondary hover:underline">/sitemap.xml</a></div>';
     $html .= '</div>';
     
-    $html .= '<div class="bg-surface border border-outline rounded-xl p-6">';
-    $html .= '<h2 class="text-xl font-bold mb-4">Quick Links</h2>';
-    $html .= '<div class="space-y-3">';
-    $html .= '<a href="/sitemap.xml" target="_blank" class="block text-secondary hover:underline">View Sitemap</a>';
-    $html .= '<a href="/robots.txt" target="_blank" class="block text-secondary hover:underline">View Robots.txt</a>';
-    $html .= '<a href="/feed" target="_blank" class="block text-secondary hover:underline">View RSS Feed</a>';
+    $html .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6 mb-6">';
+    $html .= '<h3 class="font-headline-lg text-headline-lg mb-4">Quick Links</h3>';
+    $html .= '<div class="grid grid-cols-1 md:grid-cols-3 gap-4">';
+    $html .= '<a href="/sitemap.xml" target="_blank" class="flex items-center gap-3 p-4 bg-surface-container-low border border-outline-variant rounded-lg hover:border-secondary transition-colors"><span class="material-symbols-outlined text-secondary">sitemap</span><div><p class="font-bold text-on-surface">Sitemap</p><p class="text-sm text-on-tertiary-container">XML sitemap for search engines</p></div></a>';
+    $html .= '<a href="/robots.txt" target="_blank" class="flex items-center gap-3 p-4 bg-surface-container-low border border-outline-variant rounded-lg hover:border-secondary transition-colors"><span class="material-symbols-outlined text-secondary">smart_toy</span><div><p class="font-bold text-on-surface">Robots.txt</p><p class="text-sm text-on-tertiary-container">Crawler instructions</p></div></a>';
+    $html .= '<a href="/feed" target="_blank" class="flex items-center gap-3 p-4 bg-surface-container-low border border-outline-variant rounded-lg hover:border-secondary transition-colors"><span class="material-symbols-outlined text-secondary">rss_feed</span><div><p class="font-bold text-on-surface">RSS Feed</p><p class="text-sm text-on-tertiary-container">Blog feed for readers</p></div></a>';
     $html .= '</div></div>';
     
-    $html .= '<div class="mt-8"><a href="' . $seoPrefix . '" class="text-on-tertiary hover:text-secondary">← Back to Dashboard</a></div>';
     $html .= '</div></body></html>';
     return new \Tavp\Core\Http\Response($html);
 });
