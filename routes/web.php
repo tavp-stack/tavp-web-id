@@ -379,12 +379,8 @@ $router->get('/blog/{slug}', function (array $params) {
 
     $body = $post['body'] ?? '';
     // If content already contains HTML tags (from WYSIWYG editor), use as-is.
-    // Only convert Markdown if no HTML tags detected.
-    if (preg_match('/<[a-z][a-z0-9]*[\s>]/i', $body)) {
-        $post['body'] = $body;
-    } else {
-        $post['body'] = \App\Support\Markdown::toHtml($body);
-    }
+    // Always convert markdown to HTML (EasyMDE outputs markdown)
+    $post['body'] = \App\Support\Markdown::toHtml($body);
 
     return view('post', ['content' => $post]);
 });
