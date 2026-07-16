@@ -31,13 +31,13 @@
         <span class="material-symbols-outlined text-base">person</span>
         <span class="font-semibold text-on-surface"><?= htmlspecialchars($author, ENT_QUOTES) ?></span>
       </span>
-      {% if dateStr is not empty %}
+      <?php if ($dateStr !== ''): ?>
         <span class="text-outline-variant">·</span>
         <span class="flex items-center gap-1">
           <span class="material-symbols-outlined text-base">calendar_today</span>
-          <?= dateStr ?>
+          <?= $dateStr ?>
         </span>
-      {% endif %}
+      <?php endif; ?>
       <span class="text-outline-variant">·</span>
       <span class="flex items-center gap-1">
         <span class="material-symbols-outlined text-base">schedule</span>
