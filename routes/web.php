@@ -272,13 +272,13 @@ $router->get("{$msgPrefix}/messages", function () use ($msgPrefix) {
     $__auth_email = $_SESSION['cms_admin'] ?? '';
 
     $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>Messages — TAVP Admin</title>';
-    $html .= '<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">';
+    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
+    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#0d131f","on-background":"#dde2f3","surface":"#0d131f","surface-container-lowest":"#080e1a","surface-container-low":"#161c27","surface-container":"#1a202c","surface-container-high":"#242a36","surface-container-highest":"#2f3542","on-surface":"#dde2f3","on-surface-variant":"#c5c6cd","primary":"#bdc7dc","on-primary":"#273141","primary-container":"#2d3748","secondary":"#e6c446","on-secondary":"#3b2f00","secondary-container":"#ac8e0a","tertiary":"#bcc7dd","on-tertiary-container":"#95a0b5","outline":"#8f9097","outline-variant":"#45474c","error":"#ffb4ab"}}}}</script>';
     $html .= '<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"/>';
     $html .= '<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>';
     $html .= '<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>';
-    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#0d131f","on-background":"#dde2f3","surface":"#0d131f","surface-container-lowest":"#080e1a","surface-container-low":"#161c27","surface-container":"#1a202c","surface-container-high":"#242a36","surface-container-highest":"#2f3542","on-surface":"#dde2f3","on-surface-variant":"#c5c6cd","primary":"#bdc7dc","on-primary":"#273141","primary-container":"#2d3748","secondary":"#e6c446","on-secondary":"#3b2f00","secondary-container":"#ac8e0a","tertiary":"#bcc7dd","on-tertiary-container":"#95a0b5","outline":"#8f9097","outline-variant":"#45474c","error":"#ffb4ab"}}}}</script>';
     $html .= '<style>.material-symbols-outlined{font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;} .hard-step-shadow{box-shadow:2px 2px 0 0 #000} .msg-card{transition:all .15s} .msg-card:hover{border-color:#e6c446} .msg-card.active{background:#242a36;border-color:#e6c446}</style>';
-    $html .= '</head><body class="overflow-x-hidden">';
+    $html .= '</head><body class="bg-background text-on-background overflow-x-hidden">';
 
     // Include sidebar
     ob_start();
@@ -447,13 +447,13 @@ $router->get("{$seoPrefix}/seo", function () use ($seoPrefix) {
     $__auth_email = $_SESSION['cms_admin'] ?? '';
 
     $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>SEO Dashboard — TAVP Admin</title>';
-    $html .= '<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">';
+    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
+    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#0d131f","on-background":"#dde2f3","surface":"#0d131f","surface-container-lowest":"#080e1a","surface-container-low":"#161c27","surface-container":"#1a202c","surface-container-high":"#242a36","surface-container-highest":"#2f3542","on-surface":"#dde2f3","on-surface-variant":"#c5c6cd","primary":"#bdc7dc","on-primary":"#273141","primary-container":"#2d3748","secondary":"#e6c446","on-secondary":"#3b2f00","secondary-container":"#ac8e0a","tertiary":"#bcc7dd","on-tertiary-container":"#95a0b5","outline":"#8f9097","outline-variant":"#45474c","error":"#ffb4ab"}}}}</script>';
     $html .= '<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"/>';
     $html .= '<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>';
     $html .= '<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>';
-    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#0d131f","on-background":"#dde2f3","surface":"#0d131f","surface-container-lowest":"#080e1a","surface-container-low":"#161c27","surface-container":"#1a202c","surface-container-high":"#242a36","surface-container-highest":"#2f3542","on-surface":"#dde2f3","on-surface-variant":"#c5c6cd","primary":"#bdc7dc","on-primary":"#273141","primary-container":"#2d3748","secondary":"#e6c446","on-secondary":"#3b2f00","secondary-container":"#ac8e0a","tertiary":"#bcc7dd","on-tertiary-container":"#95a0b5","outline":"#8f9097","outline-variant":"#45474c","error":"#ffb4ab"}}}}</script>';
     $html .= '<style>.material-symbols-outlined{font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;} .hard-step-shadow{box-shadow:2px 2px 0 0 #000} .seo-card{transition:all .15s} .seo-card:hover{border-color:#e6c446;transform:translateY(-2px)}</style>';
-    $html .= '</head><body class="overflow-x-hidden">';
+    $html .= '</head><body class="bg-background text-on-background overflow-x-hidden">';
 
     // Include sidebar
     ob_start();
