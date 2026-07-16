@@ -291,19 +291,50 @@ $router->get("{$msgPrefix}/messages", function () use ($msgPrefix) {
 
     // Messages header
     $html .= '<div class="flex justify-between items-center mb-8"><div><h2 class="text-2xl font-bold text-on-surface">Messages</h2><p class="text-sm text-on-tertiary-container mt-1">' . count($messages) . ' contact messages</p></div>';
-    if ($unread > 0) $html .= '<span class="text-xs px-3 py-1 rounded-full bg-error/20 text-error font-bold">' . $unread . ' unread</span>';
+    $html .= '<span x-show="unreadCount > 0" class="text-xs px-3 py-1 rounded-full bg-error/20 text-error font-bold" x-text="unreadCount + \' unread\'"></span>';
     $html .= '</div>';
 
     if (empty($messages)) {
         $html .= '<div class="text-center py-24"><span class="material-symbols-outlined text-6xl text-on-tertiary-container/30 mb-4">mail</span><p class="text-on-tertiary-container text-lg">No messages yet.</p></div>';
     } else {
-        $html .= '<div x-data="{ selected: 0 }" x-init="$watch(\'selected\', i => { fetch(\'' . $msgPrefix . '/messages/\' + (i+1) + \'/read\', {method:\'POST\'}).catch(()=>{}) })" class="grid grid-cols-1 lg:grid-cols-12 gap-6">';
+        // Build messages JSON for Alpine
+        $msgsJson = json_encode(array_map(function ($m) {
+            return [
+                'id' => (int)$m['id'],
+                'name' => $m['name'],
+                'email' => $m['email'],
+                'subject' => $m['subject'] ?? '',
+                'message' => $m['message'],
+                'ip' => $m['ip_address'] ?? 'unknown',
+                'date' => date('M j, g:ia', strtotime($m['created_at'])),
+                'read' => (bool)($m['is_read'] ?? false),
+            ];
+        }, $messages));
+
+        $html .= '<div x-data="{
+            messages: ' . htmlspecialchars($msgsJson, ENT_QUOTES, 'UTF-8') . ',
+            selected: 0,
+            unreadCount: ' . $unread . ',
+            readTimers: {},
+            selectMessage(i) {
+                this.selected = i;
+                const msg = this.messages[i];
+                if (!msg.read && !this.readTimers[msg.id]) {
+                    this.readTimers[msg.id] = setTimeout(() => {
+                        fetch(\'' . $msgPrefix . '/messages/\' + msg.id + \'/read\', {method:\'POST\'});
+                        msg.read = true;
+                        this.unreadCount = Math.max(0, this.unreadCount - 1);
+                    }, 3000);
+                }
+            }
+        }" class="grid grid-cols-1 lg:grid-cols-12 gap-6">';
         $html .= '<div class="lg:col-span-4 space-y-1 overflow-y-auto pr-2" style="max-height:calc(100vh - 12rem)">';
         foreach ($messages as $i => $msg) {
-            $html .= '<div class="msg-card p-4 rounded-lg border cursor-pointer" :class="selected === ' . $i . ' ? \'active border-secondary bg-surface-container-high\' : \'border-outline-variant bg-surface-container\'" @click="selected = ' . $i . '">';
-            $html .= '<div class="flex items-center gap-3 mb-2"><div class="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center shrink-0"><span class="text-sm font-bold text-secondary">' . strtoupper(substr(htmlspecialchars($msg['name']), 0, 1)) . '</span></div>';
-            $html .= '<div class="flex-1 min-w-0"><span class="font-bold text-sm text-on-surface truncate block">' . htmlspecialchars($msg['name']) . '</span>';
-            $html .= '<span class="text-xs text-on-tertiary-container">' . date('M j, g:ia', strtotime($msg['created_at'])) . '</span></div></div>';
+            $html .= '<div class="msg-card p-4 rounded-lg border cursor-pointer" :class="selected === ' . $i . ' ? \'active border-secondary bg-surface-container-high\' : \'border-outline-variant bg-surface-container\'" @click="selectMessage(' . $i . ')">';
+            $html .= '<div class="flex items-center gap-3 mb-2"><div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0" :class="messages[' . $i . '].read ? \'bg-surface-container-high\' : \'bg-secondary/20\'"><span class="text-sm font-bold" :class="messages[' . $i . '].read ? \'text-on-tertiary-container\' : \'text-secondary\'">' . strtoupper(substr(htmlspecialchars($msg['name']), 0, 1)) . '</span></div>';
+            $html .= '<div class="flex-1 min-w-0"><span class="font-bold text-sm truncate block" :class="messages[' . $i . '].read ? \'text-on-tertiary-container\' : \'text-on-surface\'">' . htmlspecialchars($msg['name']) . '</span>';
+            $html .= '<span class="text-xs text-on-tertiary-container">' . date('M j, g:ia', strtotime($msg['created_at'])) . '</span></div>';
+            $html .= '<span x-show="!messages[' . $i . '].read" class="w-2 h-2 rounded-full bg-secondary shrink-0"></span></div>';
             $html .= '<p class="text-xs text-on-tertiary-container truncate ml-11">' . htmlspecialchars($msg['subject'] ?: substr($msg['message'], 0, 50)) . '</p></div>';
         }
         $html .= '</div>';
