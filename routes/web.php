@@ -236,6 +236,52 @@ $router->post('/contact', function () {
     ]);
 });
 
+// --- Contact Messages Admin ------------------------------------------------
+$adminPrefix = '/' . trim(config('cms.admin.route_prefix', 'admin'), '/');
+$router->get("{$adminPrefix}/messages", function () {
+    if (empty($_SESSION['cms_admin'])) {
+        return (new \Tavp\Core\Http\Response())->header('Location', '/' . trim(config('cms.admin.route_prefix', 'admin'), '/') . '/login')->setStatusCode(302);
+    }
+    $db = app('db');
+    $messages = $db->fetchAll('SELECT * FROM contact_messages ORDER BY created_at DESC', PDO::FETCH_ASSOC);
+    
+    $html = '<!DOCTYPE html><html class="dark"><head><meta charset="utf-8"><title>Messages — TAVP Admin</title>';
+    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
+    $html .= '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>';
+    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#0d131f","surface":"#1a202c","surface-high":"#242a36","on-surface":"#dde2f3","secondary":"#e6c446","outline":"#45474c","on-tertiary":"#95a0b5"}}}}</script>';
+    $html .= '</head><body class="bg-background text-on-surface font-[Inter]">';
+    $html .= '<div class="max-w-[1280px] mx-auto px-10 py-8">';
+    $html .= '<div class="flex justify-between items-center mb-8">';
+    $html .= '<h1 class="text-3xl font-bold text-secondary">Contact Messages</h1>';
+    $html .= '<a href="' . $adminPrefix . '" class="text-on-tertiary hover:text-secondary">← Back to Dashboard</a>';
+    $html .= '</div>';
+    
+    if (empty($messages)) {
+        $html .= '<div class="text-center py-16 text-on-tertiary">No messages yet.</div>';
+    } else {
+        $html .= '<div class="space-y-4">';
+        foreach ($messages as $msg) {
+            $isRead = $msg['is_read'] ?? 0;
+            $html .= '<div class="bg-surface border border-outline rounded-xl p-6' . ($isRead ? ' opacity-60' : '') . '">';
+            $html .= '<div class="flex justify-between items-start mb-3">';
+            $html .= '<div><span class="font-bold text-lg">' . htmlspecialchars($msg['name']) . '</span>';
+            $html .= '<span class="text-on-tertiary ml-3 text-sm">' . htmlspecialchars($msg['email']) . '</span></div>';
+            $html .= '<span class="text-xs text-on-tertiary">' . htmlspecialchars($msg['created_at'] ?? '') . '</span>';
+            $html .= '</div>';
+            if (!empty($msg['subject'])) {
+                $html .= '<p class="font-semibold mb-2">' . htmlspecialchars($msg['subject']) . '</p>';
+            }
+            $html .= '<p class="text-on-tertiary leading-relaxed">' . nl2br(htmlspecialchars($msg['message'])) . '</p>';
+            $html .= '<p class="text-xs text-on-tertiary mt-3">IP: ' . htmlspecialchars($msg['ip_address'] ?? 'unknown') . '</p>';
+            $html .= '</div>';
+        }
+        $html .= '</div>';
+    }
+    
+    $html .= '</div></body></html>';
+    return new \Tavp\Core\Http\Response($html);
+});
+
 // Blog index
 $router->get('/blog', function () {
     $posts = app()->getService(BreadManager::class)->browse('post', ['status' => 'published']);
@@ -329,6 +375,45 @@ $router->get('/blog/{slug}', function (array $params) {
     }
 
     return view('post', ['content' => $post]);
+});
+
+// --- SEO Admin Routes ---------------------------------------------------
+$adminPrefix = '/' . trim(config('cms.admin.route_prefix', 'admin'), '/');
+$router->get("{$adminPrefix}/seo", function () {
+    if (empty($_SESSION['cms_admin'])) {
+        return (new \Tavp\Core\Http\Response())->header('Location', '/' . trim(config('cms.admin.route_prefix', 'admin'), '/') . '/login')->setStatusCode(302);
+    }
+    $html = '<!DOCTYPE html><html class="dark"><head><meta charset="utf-8"><title>SEO Dashboard</title>';
+    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
+    $html .= '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>';
+    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#0d131f","surface":"#1a202c","surface-high":"#242a36","on-surface":"#dde2f3","secondary":"#e6c446","outline":"#45474c","on-tertiary":"#95a0b5"}}}}</script>';
+    $html .= '</head><body class="bg-background text-on-surface font-[Inter]">';
+    $html .= '<div class="max-w-[1280px] mx-auto px-10 py-8">';
+    $html .= '<h1 class="text-3xl font-bold text-secondary mb-8">SEO Dashboard</h1>';
+    $html .= '<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">';
+    
+    // Stats
+    $db = app('db');
+    $pageCount = $db->fetchAll("SELECT COUNT(*) as cnt FROM contents WHERE status='published'", PDO::FETCH_ASSOC);
+    $html .= '<div class="bg-surface border border-outline rounded-xl p-6"><p class="text-on-tertiary text-sm">Published Pages</p><p class="text-3xl font-bold text-secondary">' . ($pageCount[0]['cnt'] ?? 0) . '</p></div>';
+    
+    $sitemapUrl = env('APP_URL', 'https://tavp.web.id') . '/sitemap.xml';
+    $html .= '<div class="bg-surface border border-outline rounded-xl p-6"><p class="text-on-tertiary text-sm">Sitemap</p><a href="/sitemap.xml" target="_blank" class="text-secondary hover:underline">/sitemap.xml</a></div>';
+    
+    $html .= '<div class="bg-surface border border-outline rounded-xl p-6"><p class="text-on-tertiary text-sm">Robots.txt</p><a href="/robots.txt" target="_blank" class="text-secondary hover:underline">/robots.txt</a></div>';
+    $html .= '</div>';
+    
+    $html .= '<div class="bg-surface border border-outline rounded-xl p-6">';
+    $html .= '<h2 class="text-xl font-bold mb-4">Quick Links</h2>';
+    $html .= '<div class="space-y-3">';
+    $html .= '<a href="/sitemap.xml" target="_blank" class="block text-secondary hover:underline">View Sitemap</a>';
+    $html .= '<a href="/robots.txt" target="_blank" class="block text-secondary hover:underline">View Robots.txt</a>';
+    $html .= '<a href="/feed" target="_blank" class="block text-secondary hover:underline">View RSS Feed</a>';
+    $html .= '</div></div>';
+    
+    $html .= '<div class="mt-8"><a href="' . $adminPrefix . '" class="text-on-tertiary hover:text-secondary">← Back to Dashboard</a></div>';
+    $html .= '</div></body></html>';
+    return new \Tavp\Core\Http\Response($html);
 });
 
 // Page catch-all (keep last)
