@@ -253,7 +253,7 @@ try {
     if ($p) $msgPrefix = '/' . trim($p, '/');
 } catch (\Throwable) {}
 
-$router->get("{$msgPrefix}/inbox", function () {
+$router->get("{$msgPrefix}/messages", function () {
     $db = app('db');
     $messages = $db->fetchAll('SELECT * FROM contact_messages ORDER BY created_at DESC', PDO::FETCH_ASSOC);
 
@@ -390,9 +390,103 @@ try {
     $p = $s?->get('admin.route_prefix');
     if ($p) $seoPrefix = '/' . trim($p, '/');
 } catch (\Throwable) {}
+
 $router->get("{$seoPrefix}/seo", function () {
     $ctrl = new \App\Admin\SeoController();
     return $ctrl->index();
+});
+
+// SEO sub-routes (settings, redirects, analyzer, ping)
+$router->get("{$seoPrefix}/seo/settings", function () use ($seoPrefix) {
+    if (session_status() === PHP_SESSION_NONE) session_start();
+    if (empty($_SESSION['cms_admin'])) {
+        return (new \Tavp\Core\Http\Response())->setContent('<script>window.location="' . $seoPrefix . '/login"</script>');
+    }
+    $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>SEO Settings</title>';
+    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
+    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"bg":"#0d131f","surface":"#1a202c","high":"#242a36","text":"#dde2f3","sec":"#e6c446","out":"#45474c","dim":"#95a0b5"}}}}</script>';
+    $html .= '</head><body class="bg-bg text-text"><div class="max-w-3xl mx-auto px-6 py-8">';
+    $html .= '<a href="' . $seoPrefix . '/seo" class="text-dim hover:text-sec mb-4 inline-block">← Back to SEO</a>';
+    $html .= '<h1 class="text-2xl font-bold text-sec mb-6">SEO Settings</h1>';
+    $html .= '<p class="text-dim">SEO settings will be configurable here. For now, edit config/seo.php directly.</p>';
+    $html .= '</div></body></html>';
+    return (new \Tavp\Core\Http\Response())->setContent($html);
+});
+
+$router->get("{$seoPrefix}/seo/redirects", function () use ($seoPrefix) {
+    if (session_status() === PHP_SESSION_NONE) session_start();
+    if (empty($_SESSION['cms_admin'])) {
+        return (new \Tavp\Core\Http\Response())->setContent('<script>window.location="' . $seoPrefix . '/login"</script>');
+    }
+    $db = app('db');
+    $redirects = $db->fetchAll('SELECT * FROM redirects ORDER BY created_at DESC', PDO::FETCH_ASSOC);
+    $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>SEO Redirects</title>';
+    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
+    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"bg":"#0d131f","surface":"#1a202c","high":"#242a36","text":"#dde2f3","sec":"#e6c446","out":"#45474c","dim":"#95a0b5"}}}}</script>';
+    $html .= '</head><body class="bg-bg text-text"><div class="max-w-3xl mx-auto px-6 py-8">';
+    $html .= '<a href="' . $seoPrefix . '/seo" class="text-dim hover:text-sec mb-4 inline-block">← Back to SEO</a>';
+    $html .= '<h1 class="text-2xl font-bold text-sec mb-6">Redirects</h1>';
+    if (empty($redirects)) {
+        $html .= '<p class="text-dim">No redirects configured.</p>';
+    } else {
+        $html .= '<div class="space-y-2">';
+        foreach ($redirects as $r) {
+            $html .= '<div class="bg-surface border border-out rounded p-3 text-sm">';
+            $html .= '<span class="text-sec">' . htmlspecialchars($r['from_url']) . '</span> → <span class="text-dim">' . htmlspecialchars($r['to_url']) . '</span>';
+            $html .= '</div>';
+        }
+        $html .= '</div>';
+    }
+    $html .= '</div></body></html>';
+    return (new \Tavp\Core\Http\Response())->setContent($html);
+});
+
+$router->get("{$seoPrefix}/seo/analyzer", function () use ($seoPrefix) {
+    if (session_status() === PHP_SESSION_NONE) session_start();
+    if (empty($_SESSION['cms_admin'])) {
+        return (new \Tavp\Core\Http\Response())->setContent('<script>window.location="' . $seoPrefix . '/login"</script>');
+    }
+    $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>SEO Analyzer</title>';
+    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
+    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"bg":"#0d131f","surface":"#1a202c","high":"#242a36","text":"#dde2f3","sec":"#e6c446","out":"#45474c","dim":"#95a0b5"}}}}</script>';
+    $html .= '</head><body class="bg-bg text-text"><div class="max-w-3xl mx-auto px-6 py-8">';
+    $html .= '<a href="' . $seoPrefix . '/seo" class="text-dim hover:text-sec mb-4 inline-block">← Back to SEO</a>';
+    $html .= '<h1 class="text-2xl font-bold text-sec mb-6">SEO Analyzer</h1>';
+    $html .= '<p class="text-dim">SEO content analyzer will check your pages for optimization opportunities.</p>';
+    $html .= '</div></body></html>';
+    return (new \Tavp\Core\Http\Response())->setContent($html);
+});
+
+$router->post("{$seoPrefix}/seo/ping", function () use ($seoPrefix) {
+    if (session_status() === PHP_SESSION_NONE) session_start();
+    if (empty($_SESSION['cms_admin'])) {
+        return (new \Tavp\Core\Http\Response())->setContent('Unauthorized');
+    }
+    $siteUrl = env('APP_URL', 'https://tavp.web.id');
+    $sitemapUrl = $siteUrl . '/sitemap.xml';
+    $results = [];
+    
+    // Ping Google
+    $google = @file_get_contents("https://www.google.com/ping?sitemap=" . urlencode($sitemapUrl));
+    $results[] = 'Google: ' . ($google !== false ? 'OK' : 'Failed');
+    
+    // Ping Bing
+    $bing = @file_get_contents("https://www.bing.com/indexnow?url=" . urlencode($siteUrl) . "&key=none");
+    $results[] = 'Bing: ' . ($bing !== false ? 'OK' : 'Failed');
+    
+    $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>Ping Result</title>';
+    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
+    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"bg":"#0d131f","surface":"#1a202c","high":"#242a36","text":"#dde2f3","sec":"#e6c446","out":"#45474c","dim":"#95a0b5"}}}}</script>';
+    $html .= '</head><body class="bg-bg text-text"><div class="max-w-3xl mx-auto px-6 py-8">';
+    $html .= '<a href="' . $seoPrefix . '/seo" class="text-dim hover:text-sec mb-4 inline-block">← Back to SEO</a>';
+    $html .= '<h1 class="text-2xl font-bold text-sec mb-6">Sitemap Ping Result</h1>';
+    $html .= '<div class="space-y-2">';
+    foreach ($results as $r) {
+        $html .= '<p class="text-dim">' . $r . '</p>';
+    }
+    $html .= '</div>';
+    $html .= '</div></body></html>';
+    return (new \Tavp\Core\Http\Response())->setContent($html);
 });
 
 // Page catch-all (keep last)
