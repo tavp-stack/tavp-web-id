@@ -20,6 +20,27 @@ $layout = $layoutRecords[0] ?? [];
 <link rel="icon" type="image/png" href="/favicon.png"/>
 <title><?= htmlspecialchars($page_title ?? $defaultTitle) ?></title>
 <meta name="description" content="<?= htmlspecialchars($page_description ?? $defaultDescription) ?>"/>
+<?php
+$ogTitle = htmlspecialchars($page_title ?? $defaultTitle);
+$ogDesc = htmlspecialchars($page_description ?? $defaultDescription);
+$ogImage = $logoUrl ? (env('APP_URL', 'https://tavp.web.id') . $logoUrl) : '';
+$ogUrl = env('APP_URL', 'https://tavp.web.id') . ($_SERVER['REQUEST_URI'] ?? '/');
+?>
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="<?= $ogTitle ?>"/>
+<meta property="og:description" content="<?= $ogDesc ?>"/>
+<meta property="og:image" content="<?= $ogImage ?>"/>
+<meta property="og:url" content="<?= htmlspecialchars($ogUrl) ?>"/>
+<meta property="og:site_name" content="<?= htmlspecialchars($siteName) ?>"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="<?= $ogTitle ?>"/>
+<meta name="twitter:description" content="<?= $ogDesc ?>"/>
+<meta name="twitter:image" content="<?= $ogImage ?>"/>
+<link rel="canonical" href="<?= htmlspecialchars($ogUrl) ?>"/>
+<link rel="alternate" type="application/rss+xml" title="<?= htmlspecialchars($siteName) ?> Blog" href="/feed"/>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Organization","name":"<?= htmlspecialchars($siteName) ?>","url":"<?= env('APP_URL', 'https://tavp.web.id') ?>","logo":"<?= $ogImage ?>","description":"<?= $ogDesc ?>"}
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"/>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>

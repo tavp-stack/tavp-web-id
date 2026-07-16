@@ -150,9 +150,29 @@ $router->post('/contact', function () {
                 'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
             ]
         );
+
+        // Send notification email to admin
+        $adminEmail = config('contact.email', '') ?: config('cms.mail.from', 'noreply@tavp.web.id');
+        $siteName = config('general.site_name', 'TAVP');
+        if ($adminEmail) {
+            $mailSubject = "[{$siteName}] New Contact: " . ($subject ?: 'No Subject');
+            $mailBody = "New contact message received:\n\n";
+            $mailBody .= "Name: {$name}\n";
+            $mailBody .= "Email: {$email}\n";
+            $mailBody .= "Subject: {$subject}\n";
+            $mailBody .= "Message:\n{$message}\n\n";
+            $mailBody .= "IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'unknown') . "\n";
+            $mailBody .= "Date: " . date('Y-m-d H:i:s') . "\n\n";
+            $mailBody .= "View in admin: " . (env('APP_URL', 'https://tavp.web.id')) . "/" . config('cms.admin.route_prefix', 'admin') . "\n";
+
+            $headers = "From: " . config('cms.mail.from', 'noreply@tavp.web.id') . "\r\n";
+            $headers .= "Reply-To: {$email}\r\n";
+            $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
+
+            @mail($adminEmail, $mailSubject, $mailBody, $headers);
+        }
     } catch (\Throwable $e) {
-        // Log error but don't break the user experience
-        error_log('Contact form DB error: ' . $e->getMessage());
+        error_log('Contact form error: ' . $e->getMessage());
     }
 
     // Generate new captcha

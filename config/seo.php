@@ -23,13 +23,13 @@ return [
         'enabled' => true,
         'path' => '/robots.txt',
         'allow' => ['/'],
-        'disallow' => ['/admin', '/api'],
+        'disallow' => ['/' . trim(config('cms.admin.route_prefix', 'admin'), '/'), '/api'],
         'sitemap_url' => '/sitemap.xml',
     ],
 
     'open_graph' => [
         'enabled' => true,
-        'default_image' => '',
+        'default_image' => '/assets/logo.png',
         'default_type' => 'website',
         'facebook_app_id' => '',
     ],
@@ -37,7 +37,7 @@ return [
     'twitter' => [
         'enabled' => true,
         'card_type' => 'summary_large_image',
-        'site_handle' => '',
+        'site_handle' => '@tavpstack',
         'creator_handle' => '',
     ],
 
@@ -46,20 +46,20 @@ return [
         'types' => [
             'page' => 'WebPage',
             'post' => 'Article',
-            'product' => 'Product',
+            'home' => 'WebPage',
         ],
         'organization' => [
-            'name' => '',
-            'logo' => '',
-            'url' => '',
+            'name' => 'TAVP Stack',
+            'logo' => '/assets/logo.png',
+            'url' => 'https://tavp.web.id',
         ],
     ],
 
     'rss' => [
         'enabled' => true,
         'path' => '/feed',
-        'title' => '',
-        'description' => '',
+        'title' => 'TAVP Stack Blog',
+        'description' => 'Latest posts from the TAVP Stack — Tailwind, Alpine, Volt, Phalcon.',
         'limit' => 20,
     ],
 
