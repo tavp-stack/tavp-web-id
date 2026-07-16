@@ -16,7 +16,7 @@ use Tavp\Core\Kernel;
 $cms = new CmsServiceProvider();
 $cms->register();
 $cms->boot();
-$cms->loadRoutes();
+// $cms->loadRoutes(); — moved AFTER project routes to avoid catch-all conflict
 
 // Manually register required CMS services (in case CmsServiceProvider didn't)
 // 1. ContentStore
@@ -46,6 +46,9 @@ $appProvider->register();
 
 // Site routes (front-end + CMS catch-all). $router is in scope here.
 require_once $app->getBasePath() . '/routes/web.php';
+
+// Load CMS routes AFTER project routes (SEO, sitemap, etc.)
+$cms->loadRoutes();
 
 $kernel = new Kernel($app, $router);
 
