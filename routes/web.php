@@ -260,7 +260,7 @@ $router->get("{$msgPrefix}/messages", function () use ($msgPrefix) {
     $html .= '<div class="max-w-[1280px] mx-auto px-10 py-8">';
     $html .= '<div class="flex justify-between items-center mb-8">';
     $html .= '<h1 class="text-3xl font-bold text-secondary">Contact Messages</h1>';
-    $html .= '<a href="' . $adminPrefix . '" class="text-on-tertiary hover:text-secondary">← Back to Dashboard</a>';
+    $html .= '<a href="' . $msgPrefix . '" class="text-on-tertiary hover:text-secondary">← Back to Dashboard</a>';
     $html .= '</div>';
     
     if (empty($messages)) {
@@ -419,7 +419,7 @@ $router->get("{$seoPrefix}/seo", function () use ($seoPrefix) {
     $html .= '<a href="/feed" target="_blank" class="block text-secondary hover:underline">View RSS Feed</a>';
     $html .= '</div></div>';
     
-    $html .= '<div class="mt-8"><a href="' . $adminPrefix . '" class="text-on-tertiary hover:text-secondary">← Back to Dashboard</a></div>';
+    $html .= '<div class="mt-8"><a href="' . $seoPrefix . '" class="text-on-tertiary hover:text-secondary">← Back to Dashboard</a></div>';
     $html .= '</div></body></html>';
     return new \Tavp\Core\Http\Response($html);
 });
