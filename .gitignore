@@ -2,16 +2,27 @@
 /node_modules/
 /public/uploads/
 /storage/
+/public/storage/
+/public/vendor/
+bootstrap/cache/
 .env
 composer.lock
 *.log
 .DS_Store
 Thumbs.db
 
-# Leftover / temp files
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Temp / leftover files
+0
 index.nginx-debian.html
 pma
 run_migrations.php
+_temp_content.txt
 
 # Design source (mockups/exports) — kept local, not shipped in the repo.
 /docs/*/
