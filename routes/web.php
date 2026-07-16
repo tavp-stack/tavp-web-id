@@ -239,8 +239,9 @@ $router->post('/contact', function () {
 // --- Contact Messages Admin ------------------------------------------------
 $adminPrefix = '/' . trim(config('cms.admin.route_prefix', 'admin'), '/');
 $router->get("{$adminPrefix}/messages", function () {
+    if (session_status() === PHP_SESSION_NONE) session_start();
     if (empty($_SESSION['cms_admin'])) {
-        return (new \Tavp\Core\Http\Response())->header('Location', '/' . trim(config('cms.admin.route_prefix', 'admin'), '/') . '/login')->setStatusCode(302);
+        return (new \Tavp\Core\Http\Response())->header('Location', $adminPrefix . '/login')->setStatusCode(302);
     }
     $db = app('db');
     $messages = $db->fetchAll('SELECT * FROM contact_messages ORDER BY created_at DESC', PDO::FETCH_ASSOC);
@@ -380,8 +381,9 @@ $router->get('/blog/{slug}', function (array $params) {
 // --- SEO Admin Routes ---------------------------------------------------
 $adminPrefix = '/' . trim(config('cms.admin.route_prefix', 'admin'), '/');
 $router->get("{$adminPrefix}/seo", function () {
+    if (session_status() === PHP_SESSION_NONE) session_start();
     if (empty($_SESSION['cms_admin'])) {
-        return (new \Tavp\Core\Http\Response())->header('Location', '/' . trim(config('cms.admin.route_prefix', 'admin'), '/') . '/login')->setStatusCode(302);
+        return (new \Tavp\Core\Http\Response())->header('Location', $adminPrefix . '/login')->setStatusCode(302);
     }
     $html = '<!DOCTYPE html><html class="dark"><head><meta charset="utf-8"><title>SEO Dashboard</title>';
     $html .= '<script src="https://cdn.tailwindcss.com"></script>';
