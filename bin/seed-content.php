@@ -56,17 +56,7 @@ function upsert(PDO $pdo, string $type, string $slug, array $data, string $statu
     $row = $stmt->fetch();
 
     if ($row) {
-        $sql = "UPDATE contents
-                SET data = :data, status = :status, updated_at = :updated_at
-                WHERE type = :type AND slug = :slug";
-        $pdo->prepare($sql)->execute([
-            ':data'       => $json,
-            ':status'     => $status,
-            ':updated_at' => $now,
-            ':type'       => $type,
-            ':slug'       => $slug,
-        ]);
-        echo "  ↻ UPDATED  {$type}/{$slug}\n";
+        echo "  · SKIP     {$type}/{$slug} (already exists)\n";
     } else {
         $sql = "INSERT INTO contents (type, slug, status, data, author_id, published_at, created_at, updated_at)
                 VALUES (:type, :slug, :status, :data, 1, :published_at, :created_at, :updated_at)";
