@@ -264,7 +264,7 @@ $router->get("{$msgPrefix}/messages", function () use ($msgPrefix) {
     $messages = $db->fetchAll('SELECT * FROM contact_messages ORDER BY created_at DESC', PDO::FETCH_ASSOC);
 
     $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>Messages — Admin</title>';
-    $html .= '<script src="https://cdn.tailwindcss.com?plugins=forms"></script>';
+    $html .= '<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">';
     $html .= '<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet"/>';
     $html .= '<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>';
     $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#0d131f","surface-container":"#1a202c","surface-container-low":"#161c27","surface-container-high":"#242a36","on-surface":"#dde2f3","on-surface-variant":"#c5c6cd","secondary":"#e6c446","outline-variant":"#45474c","on-tertiary-container":"#95a0b5","error":"#ffb4ab"}}}}</script>';
@@ -424,7 +424,7 @@ $router->get("{$seoPrefix}/seo", function () use ($seoPrefix) {
     $postCount = $db->fetchAll("SELECT COUNT(*) as cnt FROM contents WHERE type='post' AND status='published'", PDO::FETCH_ASSOC);
 
     $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>SEO Dashboard — Admin</title>';
-    $html .= '<script src="https://cdn.tailwindcss.com?plugins=forms"></script>';
+    $html .= '<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">';
     $html .= '<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet"/>';
     $html .= '<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>';
     $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#0d131f","surface-container":"#1a202c","surface-container-low":"#161c27","surface-container-high":"#242a36","on-surface":"#dde2f3","on-surface-variant":"#c5c6cd","secondary":"#e6c446","outline-variant":"#45474c","on-tertiary-container":"#95a0b5","error":"#ffb4ab"}}}}</script>';
