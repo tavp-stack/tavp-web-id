@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-error_log('ROUTES FILE LOADED FROM: ' . ($_SERVER['REQUEST_URI'] ?? 'CLI'));
+error_log('WEB.PHP LOADED: ' . ($_SERVER['REQUEST_URI'] ?? 'CLI'));
 
 use Tavp\Analytics\AnalyticsManager;
 use Tavp\Cms\Admin\AdminModule;
@@ -255,62 +255,60 @@ try {
 $router->get("{$msgPrefix}/messages", function () use ($msgPrefix) {
     if (session_status() === PHP_SESSION_NONE) session_start();
     if (empty($_SESSION['cms_admin'])) {
-        return (new \Tavp\Core\Http\Response())->setContent('<script>window.location="' . $msgPrefix . '/login"</script>');
+        header('Location: ' . $msgPrefix . '/login');
+        http_response_code(302);
+        exit;
     }
 
     $db = app('db');
     $messages = $db->fetchAll('SELECT * FROM contact_messages ORDER BY created_at DESC', PDO::FETCH_ASSOC);
 
-    // Build inner content
-    $inner = '<div class="flex justify-between items-center mb-gutter">';
-    $inner .= '<div><h2 class="font-headline-xl text-headline-xl">Messages</h2>';
-    $inner .= '<p class="font-body-md text-body-md text-on-surface-variant mt-1">' . count($messages) . ' contact messages</p></div></div>';
+    $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>Messages — Admin</title>';
+    $html .= '<script src="https://cdn.tailwindcss.com?plugins=forms"></script>';
+    $html .= '<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet"/>';
+    $html .= '<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>';
+    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#0d131f","surface-container":"#1a202c","surface-container-low":"#161c27","surface-container-high":"#242a36","on-surface":"#dde2f3","on-surface-variant":"#c5c6cd","secondary":"#e6c446","outline-variant":"#45474c","on-tertiary-container":"#95a0b5","error":"#ffb4ab"}}}}</script>';
+    $html .= '<style>.material-symbols-outlined{font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;}</style>';
+    $html .= '</head><body class="bg-background text-on-surface font-[Inter]">';
+    $html .= '<div class="max-w-[1280px] mx-auto px-10 py-8">';
+    $html .= '<div class="flex items-center gap-4 mb-8"><a href="' . $msgPrefix . '" class="text-on-surface-variant hover:text-secondary transition-colors"><span class="material-symbols-outlined">arrow_back</span></a>';
+    $html .= '<h1 class="text-3xl font-bold text-on-surface">Messages</h1><span class="text-sm text-on-tertiary-container ml-2">' . count($messages) . ' total</span></div>';
 
     if (empty($messages)) {
-        $inner .= '<div class="text-center py-16 text-on-tertiary-container"><span class="material-symbols-outlined text-secondary text-5xl mb-4 block">mail</span><p>No messages yet.</p></div>';
+        $html .= '<div class="text-center py-16 text-on-tertiary-container"><p>No messages yet.</p></div>';
     } else {
-        $inner .= '<div x-data="{ selected: 0 }" class="grid grid-cols-1 lg:grid-cols-12 gap-6">';
-        $inner .= '<div class="lg:col-span-5 space-y-2 max-h-[calc(100vh-12rem)] overflow-y-auto pr-2">';
+        $html .= '<div x-data="{ selected: 0 }" class="grid grid-cols-1 lg:grid-cols-12 gap-6">';
+        $html .= '<div class="lg:col-span-5 space-y-2 max-h-[calc(100vh-12rem)] overflow-y-auto pr-2">';
         foreach ($messages as $i => $msg) {
-            $inner .= '<div class="p-4 rounded-lg border cursor-pointer transition-all hover:border-secondary" :class="selected === ' . $i . ' ? \'bg-surface-container-high border-secondary\' : \'bg-surface-container border-outline-variant\'" @click="selected = ' . $i . '">';
-            $inner .= '<div class="flex justify-between items-start mb-1"><span class="font-bold text-sm text-on-surface truncate">' . htmlspecialchars($msg['name']) . '</span>';
-            $inner .= '<span class="text-xs text-on-tertiary-container shrink-0 ml-2">' . date('M j', strtotime($msg['created_at'])) . '</span></div>';
-            $inner .= '<p class="text-xs text-on-tertiary-container truncate">' . htmlspecialchars($msg['subject'] ?: 'No subject') . '</p>';
-            $inner .= '<p class="text-xs text-on-surface-variant truncate mt-1">' . htmlspecialchars(substr($msg['message'], 0, 80)) . '...</p>';
-            $inner .= '</div>';
+            $html .= '<div class="p-4 rounded-lg border cursor-pointer transition-all hover:border-secondary" :class="selected === ' . $i . ' ? \'bg-surface-container-high border-secondary\' : \'bg-surface-container border-outline-variant\'" @click="selected = ' . $i . '">';
+            $html .= '<div class="flex justify-between items-start mb-1"><span class="font-bold text-sm text-on-surface truncate">' . htmlspecialchars($msg['name']) . '</span>';
+            $html .= '<span class="text-xs text-on-tertiary-container shrink-0 ml-2">' . date('M j', strtotime($msg['created_at'])) . '</span></div>';
+            $html .= '<p class="text-xs text-on-tertiary-container truncate">' . htmlspecialchars($msg['subject'] ?: 'No subject') . '</p>';
+            $html .= '</div>';
         }
-        $inner .= '</div>';
-        $inner .= '<div class="lg:col-span-7">';
+        $html .= '</div>';
+        $html .= '<div class="lg:col-span-7">';
         foreach ($messages as $i => $msg) {
-            $inner .= '<div x-show="selected === ' . $i . '" class="bg-surface-container border border-outline-variant rounded-xl p-8">';
-            $inner .= '<div class="flex justify-between items-start mb-6"><div>';
-            $inner .= '<h3 class="font-headline-lg text-headline-lg text-on-surface">' . htmlspecialchars($msg['name']) . '</h3>';
-            $inner .= '<p class="text-sm text-on-tertiary-container">' . htmlspecialchars($msg['email']) . '</p></div>';
-            $inner .= '<span class="text-xs text-on-tertiary-container">' . htmlspecialchars($msg['created_at']) . '</span></div>';
+            $html .= '<div x-show="selected === ' . $i . '" class="bg-surface-container border border-outline-variant rounded-xl p-8">';
+            $html .= '<div class="flex justify-between items-start mb-6"><div>';
+            $html .= '<h3 class="text-xl font-bold text-on-surface">' . htmlspecialchars($msg['name']) . '</h3>';
+            $html .= '<p class="text-sm text-on-tertiary-container">' . htmlspecialchars($msg['email']) . '</p></div>';
+            $html .= '<span class="text-xs text-on-tertiary-container">' . htmlspecialchars($msg['created_at']) . '</span></div>';
             if (!empty($msg['subject'])) {
-                $inner .= '<p class="font-semibold text-on-surface mb-4">Subject: ' . htmlspecialchars($msg['subject']) . '</p>';
+                $html .= '<p class="font-semibold text-on-surface mb-4">Subject: ' . htmlspecialchars($msg['subject']) . '</p>';
             }
-            $inner .= '<div class="bg-surface-container-low border border-outline-variant rounded-lg p-6 mb-4">';
-            $inner .= '<p class="text-on-surface leading-relaxed whitespace-pre-wrap">' . htmlspecialchars($msg['message']) . '</p></div>';
-            $inner .= '<p class="text-xs text-on-tertiary-container">IP: ' . htmlspecialchars($msg['ip_address'] ?? 'unknown') . '</p>';
-            $inner .= '</div>';
+            $html .= '<div class="bg-surface-container-low border border-outline-variant rounded-lg p-6 mb-4">';
+            $html .= '<p class="text-on-surface leading-relaxed whitespace-pre-wrap">' . htmlspecialchars($msg['message']) . '</p></div>';
+            $html .= '<p class="text-xs text-on-tertiary-container">IP: ' . htmlspecialchars($msg['ip_address'] ?? 'unknown') . '</p>';
+            $html .= '</div>';
         }
-        $inner .= '</div></div>';
+        $html .= '</div></div>';
     }
 
-    // Render with admin layout
-    $layoutFile = dirname(__DIR__) . '/vendor/tavp/cms/resources/admin/layout.php';
-    $__brand = config('cms.admin.brand', 'TAVP');
-    $__auth_email = $_SESSION['cms_admin'] ?? '';
-    $__rbac = null;
-    try { $__rbac = app()->getService('tavpid.rbac'); } catch (\Throwable) {}
-    $__types = [];
-    $__errors = [];
-    $content = $inner;
-
-    ob_start();
-    include $layoutFile;
-    return (new \Tavp\Core\Http\Response())->setContent(ob_get_clean());
+    $html .= '</div>';
+    $html .= '<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>';
+    $html .= '</body></html>';
+    return (new \Tavp\Core\Http\Response())->setContent($html);
 });
 
 // Blog index
@@ -416,40 +414,43 @@ error_log('SEO PREFIX: ' . $seoPrefix);
 $router->get("{$seoPrefix}/seo", function () use ($seoPrefix) {
     if (session_status() === PHP_SESSION_NONE) session_start();
     if (empty($_SESSION['cms_admin'])) {
-        return (new \Tavp\Core\Http\Response())->setContent('<script>window.location="' . $seoPrefix . '/login"</script>');
+        header('Location: ' . $seoPrefix . '/login');
+        http_response_code(302);
+        exit;
     }
 
     $db = app('db');
     $pageCount = $db->fetchAll("SELECT COUNT(*) as cnt FROM contents WHERE status='published'", PDO::FETCH_ASSOC);
     $postCount = $db->fetchAll("SELECT COUNT(*) as cnt FROM contents WHERE type='post' AND status='published'", PDO::FETCH_ASSOC);
 
-    $inner = '<div class="mb-gutter"><h2 class="font-headline-xl text-headline-xl">SEO Dashboard</h2>';
-    $inner .= '<p class="font-body-md text-body-md text-on-surface-variant mt-1">Search engine optimization overview</p></div>';
-    $inner .= '<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">';
-    $inner .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6"><p class="text-on-tertiary-container text-sm mb-1">Published Pages</p><p class="text-3xl font-bold text-secondary">' . ($pageCount[0]['cnt'] ?? 0) . '</p></div>';
-    $inner .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6"><p class="text-on-tertiary-container text-sm mb-1">Published Posts</p><p class="text-3xl font-bold text-secondary">' . ($postCount[0]['cnt'] ?? 0) . '</p></div>';
-    $inner .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6"><p class="text-on-tertiary-container text-sm mb-1">Sitemap</p><a href="/sitemap.xml" target="_blank" class="text-secondary hover:underline font-code-sm text-code-sm">/sitemap.xml</a></div>';
-    $inner .= '</div>';
-    $inner .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6">';
-    $inner .= '<h3 class="font-headline-lg text-headline-lg mb-4">Quick Links</h3>';
-    $inner .= '<div class="grid grid-cols-1 md:grid-cols-3 gap-4">';
-    $inner .= '<a href="' . $seoPrefix . '/seo/settings" class="flex items-center gap-3 p-4 bg-surface-container-low border border-outline-variant rounded-lg hover:border-secondary transition-colors"><span class="material-symbols-outlined text-secondary text-xl">settings</span><div><p class="font-bold text-on-surface text-sm">SEO Settings</p><p class="text-xs text-on-tertiary-container">Configure meta tags, OG, Twitter</p></div></a>';
-    $inner .= '<a href="' . $seoPrefix . '/seo/redirects" class="flex items-center gap-3 p-4 bg-surface-container-low border border-outline-variant rounded-lg hover:border-secondary transition-colors"><span class="material-symbols-outlined text-secondary text-xl">forward</span><div><p class="font-bold text-on-surface text-sm">Redirects</p><p class="text-xs text-on-tertiary-container">Manage URL redirects</p></div></a>';
-    $inner .= '<a href="' . $seoPrefix . '/seo/analyzer" class="flex items-center gap-3 p-4 bg-surface-container-low border border-outline-variant rounded-lg hover:border-secondary transition-colors"><span class="material-symbols-outlined text-secondary text-xl">analytics</span><div><p class="font-bold text-on-surface text-sm">Analyzer</p><p class="text-xs text-on-tertiary-container">Check SEO scores</p></div></a>';
-    $inner .= '</div></div>';
+    $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>SEO Dashboard — Admin</title>';
+    $html .= '<script src="https://cdn.tailwindcss.com?plugins=forms"></script>';
+    $html .= '<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet"/>';
+    $html .= '<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>';
+    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#0d131f","surface-container":"#1a202c","surface-container-low":"#161c27","surface-container-high":"#242a36","on-surface":"#dde2f3","on-surface-variant":"#c5c6cd","secondary":"#e6c446","outline-variant":"#45474c","on-tertiary-container":"#95a0b5","error":"#ffb4ab"}}}}</script>';
+    $html .= '<style>.material-symbols-outlined{font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;}</style>';
+    $html .= '</head><body class="bg-background text-on-surface font-[Inter]">';
+    $html .= '<div class="max-w-[1280px] mx-auto px-10 py-8">';
+    $html .= '<div class="flex items-center gap-4 mb-8"><a href="' . $seoPrefix . '" class="text-on-surface-variant hover:text-secondary transition-colors"><span class="material-symbols-outlined">arrow_back</span></a>';
+    $html .= '<h1 class="text-3xl font-bold text-on-surface">SEO Dashboard</h1></div>';
+    $html .= '<p class="text-on-tertiary-container mb-8">Search engine optimization overview</p>';
 
-    $layoutFile = dirname(__DIR__) . '/vendor/tavp/cms/resources/admin/layout.php';
-    $__brand = config('cms.admin.brand', 'TAVP');
-    $__auth_email = $_SESSION['cms_admin'] ?? '';
-    $__rbac = null;
-    try { $__rbac = app()->getService('tavpid.rbac'); } catch (\Throwable) {}
-    $__types = [];
-    $__errors = [];
-    $content = $inner;
+    $html .= '<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">';
+    $html .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6"><p class="text-on-tertiary-container text-sm mb-1">Published Pages</p><p class="text-3xl font-bold text-secondary">' . ($pageCount[0]['cnt'] ?? 0) . '</p></div>';
+    $html .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6"><p class="text-on-tertiary-container text-sm mb-1">Published Posts</p><p class="text-3xl font-bold text-secondary">' . ($postCount[0]['cnt'] ?? 0) . '</p></div>';
+    $html .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6"><p class="text-on-tertiary-container text-sm mb-1">Sitemap</p><a href="/sitemap.xml" target="_blank" class="text-secondary hover:underline">/sitemap.xml</a></div>';
+    $html .= '</div>';
 
-    ob_start();
-    include $layoutFile;
-    return (new \Tavp\Core\Http\Response())->setContent(ob_get_clean());
+    $html .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6">';
+    $html .= '<h3 class="text-xl font-bold mb-4">Quick Links</h3>';
+    $html .= '<div class="grid grid-cols-1 md:grid-cols-3 gap-4">';
+    $html .= '<a href="' . $seoPrefix . '/seo/settings" class="flex items-center gap-3 p-4 bg-surface-container-low border border-outline-variant rounded-lg hover:border-secondary transition-colors"><span class="material-symbols-outlined text-secondary text-xl">settings</span><div><p class="font-bold text-on-surface text-sm">SEO Settings</p><p class="text-xs text-on-tertiary-container">Configure meta tags</p></div></a>';
+    $html .= '<a href="' . $seoPrefix . '/seo/redirects" class="flex items-center gap-3 p-4 bg-surface-container-low border border-outline-variant rounded-lg hover:border-secondary transition-colors"><span class="material-symbols-outlined text-secondary text-xl">forward</span><div><p class="font-bold text-on-surface text-sm">Redirects</p><p class="text-xs text-on-tertiary-container">Manage URL redirects</p></div></a>';
+    $html .= '<a href="' . $seoPrefix . '/seo/analyzer" class="flex items-center gap-3 p-4 bg-surface-container-low border border-outline-variant rounded-lg hover:border-secondary transition-colors"><span class="material-symbols-outlined text-secondary text-xl">analytics</span><div><p class="font-bold text-on-surface text-sm">Analyzer</p><p class="text-xs text-on-tertiary-container">Check SEO scores</p></div></a>';
+    $html .= '</div></div>';
+
+    $html .= '</div></body></html>';
+    return (new \Tavp\Core\Http\Response())->setContent($html);
 });
 
 // SEO sub-routes (settings, redirects, analyzer, ping)
@@ -460,10 +461,10 @@ $router->get("{$seoPrefix}/seo/test123", function () {
 $router->get("{$seoPrefix}/seo/settings", function () use ($seoPrefix) {
     if (session_status() === PHP_SESSION_NONE) session_start();
     if (empty($_SESSION['cms_admin'])) {
-        return (new \Tavp\Core\Http\Response())->setContent('<script>window.location="' . $seoPrefix . '/login"</script>');
+        header('Location: ' . $seoPrefix . '/login'); http_response_code(302); exit;
     }
     if (empty($_SESSION['cms_admin'])) {
-        return (new \Tavp\Core\Http\Response())->setContent('<script>window.location="' . $seoPrefix . '/login"</script>');
+        header('Location: ' . $seoPrefix . '/login'); http_response_code(302); exit;
     }
     $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>SEO Settings</title>';
     $html .= '<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">';
@@ -512,7 +513,7 @@ $router->get("{$seoPrefix}/seo/redirects", function () use ($seoPrefix) {
 $router->get("{$seoPrefix}/seo/analyzer", function () use ($seoPrefix) {
     if (session_status() === PHP_SESSION_NONE) session_start();
     if (empty($_SESSION['cms_admin'])) {
-        return (new \Tavp\Core\Http\Response())->setContent('<script>window.location="' . $seoPrefix . '/login"</script>');
+        header('Location: ' . $seoPrefix . '/login'); http_response_code(302); exit;
     }
     $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>SEO Analyzer</title>';
     $html .= '<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">';
