@@ -41,14 +41,8 @@ $ogUrl = env('APP_URL', 'https://tavp.web.id') . ($_SERVER['REQUEST_URI'] ?? '/'
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"<?= htmlspecialchars($siteName) ?>","url":"<?= env('APP_URL', 'https://tavp.web.id') ?>","logo":"<?= $ogImage ?>","description":"<?= $ogDesc ?>"}
 </script>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"/>
-<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-php.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-javascript.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-css.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
+<link rel="stylesheet" href="/assets/fonts.css"/>
+<script defer src="/js/prism-bundle.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <link rel="stylesheet" href="/assets/app.css"/>
 <script>window.tavpAnalyticsConfig={endpoint:'/api/analytics',sessionRecording:false};</script>
