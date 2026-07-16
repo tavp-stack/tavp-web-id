@@ -25,10 +25,55 @@ if (config('cms.api.enabled', true)) {
     ApiModule::routes($router);
 }
 
-// --- SEO: sitemap.xml ----------------------------------------------------
+// --- SEO: sitemap.xml, robots.txt, feed -----------------------------------
 $router->get('/sitemap.xml', function () {
     $sitemap = new SitemapController(app()->getService(BreadManager::class));
     return $sitemap();
+});
+
+$router->get('/robots.txt', function () {
+    $adminPrefix = config('cms.admin.route_prefix', 'admin');
+    $siteUrl = env('APP_URL', 'https://tavp.web.id');
+    $lines = [
+        'User-agent: *',
+        'Allow: /',
+        'Disallow: /' . $adminPrefix,
+        'Disallow: /api',
+        '',
+        'Sitemap: ' . $siteUrl . '/sitemap.xml',
+    ];
+    return response(implode("\n", $lines), 200, ['Content-Type' => 'text/plain']);
+});
+
+$router->get('/feed', function () {
+    $bread = app()->getService(BreadManager::class);
+    $posts = $bread->browse('post', ['status' => 'published']);
+    $siteName = config('general.site_name', 'TAVP Stack');
+    $siteUrl = env('APP_URL', 'https://tavp.web.id');
+    
+    $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+    $xml .= '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">' . "\n";
+    $xml .= '<channel>' . "\n";
+    $xml .= '  <title>' . htmlspecialchars($siteName) . ' Blog</title>' . "\n";
+    $xml .= '  <link>' . $siteUrl . '</link>' . "\n";
+    $xml .= '  <description>Latest posts from ' . htmlspecialchars($siteName) . '</description>' . "\n";
+    $xml .= '  <atom:link href="' . $siteUrl . '/feed" rel="self" type="application/rss+xml"/>' . "\n";
+    
+    foreach (array_slice($posts, 0, 20) as $post) {
+        $pubDate = strtotime($post['published_at'] ?? $post['created_at'] ?? 'now') ?: time();
+        $xml .= '  <item>' . "\n";
+        $xml .= '    <title>' . htmlspecialchars($post['title'] ?? '') . '</title>' . "\n";
+        $xml .= '    <link>' . $siteUrl . '/blog/' . htmlspecialchars($post['slug'] ?? '') . '</link>' . "\n";
+        $xml .= '    <description>' . htmlspecialchars($post['excerpt'] ?? '') . '</description>' . "\n";
+        $xml .= '    <pubDate>' . date(DATE_RSS, $pubDate) . '</pubDate>' . "\n";
+        $xml .= '    <guid>' . $siteUrl . '/blog/' . htmlspecialchars($post['slug'] ?? '') . '</guid>' . "\n";
+        $xml .= '  </item>' . "\n";
+    }
+    
+    $xml .= '</channel>' . "\n";
+    $xml .= '</rss>';
+    
+    return response($xml, 200, ['Content-Type' => 'application/rss+xml']);
 });
 
 // --- Analytics Dashboard -------------------------------------------------
