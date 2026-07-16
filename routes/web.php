@@ -244,33 +244,7 @@ $router->post('/contact', function () {
 
 // --- Contact Messages Admin ------------------------------------------------
 $msgPrefix = '/' . trim(config('cms.admin.route_prefix', 'admin'), '/');
-$router->get("{$msgPrefix}/messages", function () use ($msgPrefix) {
-    $db = app('db');
-    $messages = $db->fetchAll('SELECT * FROM contact_messages ORDER BY created_at DESC', PDO::FETCH_ASSOC);
-
-    $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>Messages</title>';
-    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
-    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"bg":"#0d131f","surface":"#1a202c","high":"#242a36","text":"#dde2f3","sec":"#e6c446","out":"#45474c","dim":"#95a0b5"}}}}</script>';
-    $html .= '</head><body class="bg-bg text-text"><div class="max-w-5xl mx-auto px-6 py-8">';
-    $html .= '<h1 class="text-2xl font-bold text-sec mb-6">Contact Messages</h1>';
-
-    if (empty($messages)) {
-        $html .= '<p class="text-dim">No messages yet.</p>';
-    } else {
-        $html .= '<div class="space-y-4">';
-        foreach ($messages as $msg) {
-            $html .= '<div class="bg-surface border border-out rounded-lg p-5">';
-            $html .= '<div class="flex justify-between mb-2"><span class="font-bold">' . htmlspecialchars($msg['name']) . '</span><span class="text-sm text-dim">' . htmlspecialchars($msg['created_at'] ?? '') . '</span></div>';
-            $html .= '<p class="text-sm text-dim mb-2">' . htmlspecialchars($msg['email']) . '</p>';
-            if (!empty($msg['subject'])) $html .= '<p class="font-semibold mb-2">' . htmlspecialchars($msg['subject']) . '</p>';
-            $html .= '<p class="text-dim">' . nl2br(htmlspecialchars($msg['message'])) . '</p>';
-            $html .= '</div>';
-        }
-        $html .= '</div>';
-    }
-    $html .= '</div></body></html>';
-    return (new \Tavp\Core\Http\Response())->setContent($html);
-});
+$router->get("{$msgPrefix}/messages", [\App\Admin\MessagesController::class, 'index']);
 
 // Blog index
 $router->get('/blog', function () {
@@ -365,31 +339,7 @@ $router->get('/blog/{slug}', function (array $params) {
 
 // --- SEO Admin Routes ---------------------------------------------------
 $seoPrefix = '/' . trim(config('cms.admin.route_prefix', 'admin'), '/');
-$router->get("{$seoPrefix}/seo", function () use ($seoPrefix) {
-    $db = app('db');
-    $pageCount = $db->fetchAll("SELECT COUNT(*) as cnt FROM contents WHERE status='published'", PDO::FETCH_ASSOC);
-    $postCount = $db->fetchAll("SELECT COUNT(*) as cnt FROM contents WHERE type='post' AND status='published'", PDO::FETCH_ASSOC);
-
-    $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>SEO Dashboard</title>';
-    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
-    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"bg":"#0d131f","surface":"#1a202c","high":"#242a36","text":"#dde2f3","sec":"#e6c446","out":"#45474c","dim":"#95a0b5"}}}}</script>';
-    $html .= '</head><body class="bg-bg text-text"><div class="max-w-5xl mx-auto px-6 py-8">';
-    $html .= '<h1 class="text-2xl font-bold text-sec mb-6">SEO Dashboard</h1>';
-    $html .= '<div class="grid grid-cols-3 gap-4 mb-6">';
-    $html .= '<div class="bg-surface border border-out rounded-lg p-4"><p class="text-sm text-dim">Published Pages</p><p class="text-2xl font-bold text-sec">' . ($pageCount[0]['cnt'] ?? 0) . '</p></div>';
-    $html .= '<div class="bg-surface border border-out rounded-lg p-4"><p class="text-sm text-dim">Published Posts</p><p class="text-2xl font-bold text-sec">' . ($postCount[0]['cnt'] ?? 0) . '</p></div>';
-    $html .= '<div class="bg-surface border border-out rounded-lg p-4"><p class="text-sm text-dim">Sitemap</p><a href="/sitemap.xml" target="_blank" class="text-sec hover:underline">/sitemap.xml</a></div>';
-    $html .= '</div>';
-    $html .= '<div class="bg-surface border border-out rounded-lg p-4">';
-    $html .= '<h2 class="font-bold mb-3">Quick Links</h2>';
-    $html .= '<div class="space-y-2">';
-    $html .= '<a href="/sitemap.xml" target="_blank" class="block text-sec hover:underline">Sitemap XML</a>';
-    $html .= '<a href="/robots.txt" target="_blank" class="block text-sec hover:underline">Robots.txt</a>';
-    $html .= '<a href="/feed" target="_blank" class="block text-sec hover:underline">RSS Feed</a>';
-    $html .= '</div></div>';
-    $html .= '</div></body></html>';
-    return (new \Tavp\Core\Http\Response())->setContent($html);
-});
+$router->get("{$seoPrefix}/seo", [\App\Admin\SeoController::class, 'index']);
 
 // Page catch-all (keep last)
 $router->get('/{slug}', function (array $params) {
