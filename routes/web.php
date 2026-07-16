@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+error_log('ROUTES FILE LOADED FROM: ' . ($_SERVER['REQUEST_URI'] ?? 'CLI'));
+
 use Tavp\Analytics\AnalyticsManager;
 use Tavp\Cms\Admin\AdminModule;
 use Tavp\Cms\Api\ApiModule;
@@ -243,8 +245,44 @@ $router->post('/contact', function () {
 });
 
 // --- Contact Messages Admin ------------------------------------------------
-$msgPrefix = '/' . trim(config('cms.admin.route_prefix', 'admin'), '/');
-$router->get("{$msgPrefix}/messages", [\App\Admin\MessagesController::class, 'index']);
+$router->get('/admin/inbox', function () {
+    $db = app('db');
+    $messages = $db->fetchAll('SELECT * FROM contact_messages ORDER BY created_at DESC', PDO::FETCH_ASSOC);
+
+    $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>Messages</title>';
+    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
+    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"bg":"#0d131f","surface":"#1a202c","high":"#242a36","text":"#dde2f3","sec":"#e6c446","out":"#45474c","dim":"#95a0b5"}}}}</script>';
+    $html .= '</head><body class="bg-bg text-text"><div class="max-w-5xl mx-auto px-6 py-8">';
+    $html .= '<div class="flex justify-between items-center mb-6">';
+    $html .= '<h1 class="text-2xl font-bold text-sec">Messages (' . count($messages) . ')</h1>';
+    $html .= '<a href="/admin" class="text-dim hover:text-sec">← Dashboard</a></div>';
+
+    if (empty($messages)) {
+        $html .= '<p class="text-dim">No messages yet.</p>';
+    } else {
+        $html .= '<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">';
+        $html .= '<div class="space-y-2">';
+        foreach ($messages as $i => $msg) {
+            $html .= '<div class="bg-surface border border-out rounded-lg p-4 cursor-pointer hover:border-sec transition" onclick="showMsg(' . $i . ')">';
+            $html .= '<div class="flex justify-between mb-1"><span class="font-bold text-sm">' . htmlspecialchars($msg['name']) . '</span><span class="text-xs text-dim">' . date('M j', strtotime($msg['created_at'])) . '</span></div>';
+            $html .= '<p class="text-xs text-dim truncate">' . htmlspecialchars($msg['subject'] ?: 'No subject') . '</p>';
+            $html .= '</div>';
+        }
+        $html .= '</div>';
+        $html .= '<div id="msg-detail" class="bg-surface border border-out rounded-lg p-6">';
+        if (!empty($messages)) {
+            $msg = $messages[0];
+            $html .= '<h3 class="font-bold text-lg mb-2">' . htmlspecialchars($msg['name']) . '</h3>';
+            $html .= '<p class="text-sm text-dim mb-4">' . htmlspecialchars($msg['email']) . ' · ' . htmlspecialchars($msg['created_at']) . '</p>';
+            if (!empty($msg['subject'])) $html .= '<p class="font-semibold mb-3">Subject: ' . htmlspecialchars($msg['subject']) . '</p>';
+            $html .= '<div class="bg-high border border-out rounded p-4"><p class="whitespace-pre-wrap">' . htmlspecialchars($msg['message']) . '</p></div>';
+        }
+        $html .= '</div></div>';
+        $html .= '<script>var msgs=' . json_encode($messages) . ';function showMsg(i){var m=msgs[i],d=document.getElementById("msg-detail");d.innerHTML="<h3 class=\"font-bold text-lg mb-2\">"+esc(m.name)+"</h3><p class=\"text-sm text-dim mb-4\">"+esc(m.email)+" · "+esc(m.created_at)+"</p>"+(m.subject?"<p class=\"font-semibold mb-3\">Subject: "+esc(m.subject)+"</p>":"")+"<div class=\"bg-high border border-out rounded p-4\"><p class=\"whitespace-pre-wrap\">"+esc(m.message)+"</p></div>";}function esc(t){var d=document.createElement("div");d.textContent=t;return d.innerHTML;}</script>';
+    }
+    $html .= '</div></body></html>';
+    return (new \Tavp\Core\Http\Response())->setContent($html);
+});
 
 // Blog index
 $router->get('/blog', function () {
@@ -339,7 +377,10 @@ $router->get('/blog/{slug}', function (array $params) {
 
 // --- SEO Admin Routes ---------------------------------------------------
 $seoPrefix = '/' . trim(config('cms.admin.route_prefix', 'admin'), '/');
-$router->get("{$seoPrefix}/seo", [\App\Admin\SeoController::class, 'index']);
+$router->get("{$seoPrefix}/seo", function () {
+    $ctrl = new \App\Admin\SeoController();
+    return $ctrl->index();
+});
 
 // Page catch-all (keep last)
 $router->get('/{slug}', function (array $params) {
