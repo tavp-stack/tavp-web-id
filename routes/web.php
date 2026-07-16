@@ -245,91 +245,30 @@ $router->post('/contact', function () {
 // --- Contact Messages Admin ------------------------------------------------
 $msgPrefix = '/' . trim(config('cms.admin.route_prefix', 'admin'), '/');
 $router->get("{$msgPrefix}/messages", function () use ($msgPrefix) {
-    if (session_status() === PHP_SESSION_NONE) session_start();
-    if (empty($_SESSION['cms_admin'])) {
-        return (new \Tavp\Core\Http\Response())->setContent('<script>window.location="' . $msgPrefix . '/login"</script>');
-    }
-
     $db = app('db');
     $messages = $db->fetchAll('SELECT * FROM contact_messages ORDER BY created_at DESC', PDO::FETCH_ASSOC);
-    $unreadCount = 0;
-    foreach ($messages as $m) { if (!($m['is_read'] ?? 0)) $unreadCount++; }
 
-    // Build content HTML (admin inner content only)
-    $inner = '<div class="flex justify-between items-center mb-gutter">';
-    $inner .= '<div><h2 class="font-headline-xl text-headline-xl">Messages</h2>';
-    $inner .= '<p class="font-body-md text-body-md text-on-surface-variant mt-1">' . count($messages) . ' total, ' . $unreadCount . ' unread</p></div></div>';
+    $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>Messages</title>';
+    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
+    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"bg":"#0d131f","surface":"#1a202c","high":"#242a36","text":"#dde2f3","sec":"#e6c446","out":"#45474c","dim":"#95a0b5"}}}}</script>';
+    $html .= '</head><body class="bg-bg text-text"><div class="max-w-5xl mx-auto px-6 py-8">';
+    $html .= '<h1 class="text-2xl font-bold text-sec mb-6">Contact Messages</h1>';
 
     if (empty($messages)) {
-        $inner .= '<div class="text-center py-16 text-on-tertiary-container"><span class="material-symbols-outlined text-secondary text-5xl mb-4 block">mail</span><p>No messages yet.</p></div>';
+        $html .= '<p class="text-dim">No messages yet.</p>';
     } else {
-        $inner .= '<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">';
-        // Left: message list
-        $inner .= '<div class="lg:col-span-5 space-y-2 max-h-[calc(100vh-12rem)] overflow-y-auto pr-2">';
-        foreach ($messages as $i => $msg) {
-            $isRead = $msg['is_read'] ?? 0;
-            $active = $i === 0;
-            $inner .= '<div class="p-4 rounded-lg border cursor-pointer transition-all hover:border-secondary ' . ($active ? 'bg-surface-container-high border-secondary' : 'bg-surface-container border-outline-variant') . '" onclick="showMessage(' . $i . ')">';
-            $inner .= '<div class="flex justify-between items-start mb-1">';
-            $inner .= '<span class="font-bold text-sm text-on-surface truncate">' . htmlspecialchars($msg['name']) . '</span>';
-            $inner .= '<span class="text-xs text-on-tertiary-container shrink-0 ml-2">' . date('M j', strtotime($msg['created_at'])) . '</span>';
-            $inner .= '</div>';
-            $inner .= '<p class="text-xs text-on-tertiary-container truncate">' . htmlspecialchars($msg['subject'] ?: 'No subject') . '</p>';
-            $inner .= '<p class="text-xs text-on-surface-variant truncate mt-1">' . htmlspecialchars(substr($msg['message'], 0, 80)) . '...</p>';
-            $inner .= '</div>';
+        $html .= '<div class="space-y-4">';
+        foreach ($messages as $msg) {
+            $html .= '<div class="bg-surface border border-out rounded-lg p-5">';
+            $html .= '<div class="flex justify-between mb-2"><span class="font-bold">' . htmlspecialchars($msg['name']) . '</span><span class="text-sm text-dim">' . htmlspecialchars($msg['created_at'] ?? '') . '</span></div>';
+            $html .= '<p class="text-sm text-dim mb-2">' . htmlspecialchars($msg['email']) . '</p>';
+            if (!empty($msg['subject'])) $html .= '<p class="font-semibold mb-2">' . htmlspecialchars($msg['subject']) . '</p>';
+            $html .= '<p class="text-dim">' . nl2br(htmlspecialchars($msg['message'])) . '</p>';
+            $html .= '</div>';
         }
-        $inner .= '</div>';
-        // Right: message detail
-        $inner .= '<div class="lg:col-span-7 bg-surface-container border border-outline-variant rounded-xl p-8" id="msg-detail">';
-        if (!empty($messages)) {
-            $msg = $messages[0];
-            $inner .= '<div class="flex justify-between items-start mb-6">';
-            $inner .= '<div><h3 class="font-headline-lg text-headline-lg text-on-surface">' . htmlspecialchars($msg['name']) . '</h3>';
-            $inner .= '<p class="text-sm text-on-tertiary-container">' . htmlspecialchars($msg['email']) . '</p></div>';
-            $inner .= '<span class="text-xs text-on-tertiary-container">' . htmlspecialchars($msg['created_at']) . '</span>';
-            $inner .= '</div>';
-            if (!empty($msg['subject'])) {
-                $inner .= '<p class="font-semibold text-on-surface mb-4">Subject: ' . htmlspecialchars($msg['subject']) . '</p>';
-            }
-            $inner .= '<div class="bg-surface-container-low border border-outline-variant rounded-lg p-6 mb-4">';
-            $inner .= '<p class="text-on-surface leading-relaxed whitespace-pre-wrap">' . htmlspecialchars($msg['message']) . '</p>';
-            $inner .= '</div>';
-            $inner .= '<p class="text-xs text-on-tertiary-container">IP: ' . htmlspecialchars($msg['ip_address'] ?? 'unknown') . '</p>';
-        }
-        $inner .= '</div>';
-        $inner .= '</div>';
-
-        // JavaScript for message switching
-        $inner .= '<script>
-        var messages = ' . json_encode($messages) . ';
-        function showMessage(i) {
-            var m = messages[i];
-            var d = document.getElementById("msg-detail");
-            d.innerHTML = \'<div class="flex justify-between items-start mb-6"><div><h3 class="font-headline-lg text-headline-lg text-on-surface">\' + escapeHtml(m.name) + \'</h3><p class="text-sm text-on-tertiary-container">\' + escapeHtml(m.email) + \'</p></div><span class="text-xs text-on-tertiary-container">\' + escapeHtml(m.created_at) + \'</span></div>\' +
-                (m.subject ? \'<p class="font-semibold text-on-surface mb-4">Subject: \' + escapeHtml(m.subject) + \'</p>\' : \'\') +
-                \'<div class="bg-surface-container-low border border-outline-variant rounded-lg p-6 mb-4"><p class="text-on-surface leading-relaxed whitespace-pre-wrap">\' + escapeHtml(m.message) + \'</p></div>\' +
-                \'<p class="text-xs text-on-tertiary-container">IP: \' + escapeHtml(m.ip_address || "unknown") + \'</p>\';
-            document.querySelectorAll("[onclick]").forEach(function(el){el.classList.remove("bg-surface-container-high","border-secondary");el.classList.add("bg-surface-container","border-outline-variant")});
-            event.currentTarget.classList.add("bg-surface-container-high","border-secondary");
-        }
-        function escapeHtml(t){var d=document.createElement("div");d.textContent=t;return d.innerHTML;}
-        </script>';
+        $html .= '</div>';
     }
-
-    // Render with admin layout
-    $layoutFile = dirname(__DIR__) . '/vendor/tavp/cms/resources/admin/layout.php';
-    $__brand = config('cms.admin.brand', 'TAVP');
-    $__auth_email = $_SESSION['cms_admin'] ?? '';
-    $__rbac = null;
-    try { $__rbac = app()->getService('tavpid.rbac'); } catch (\Throwable) {}
-    $__types = [];
-    $__errors = [];
-    $content = $inner;
-
-    ob_start();
-    include $layoutFile;
-    $html = ob_get_clean();
-
+    $html .= '</div></body></html>';
     return (new \Tavp\Core\Http\Response())->setContent($html);
 });
 
@@ -427,49 +366,28 @@ $router->get('/blog/{slug}', function (array $params) {
 // --- SEO Admin Routes ---------------------------------------------------
 $seoPrefix = '/' . trim(config('cms.admin.route_prefix', 'admin'), '/');
 $router->get("{$seoPrefix}/seo", function () use ($seoPrefix) {
-    if (session_status() === PHP_SESSION_NONE) session_start();
-    if (empty($_SESSION['cms_admin'])) {
-        return (new \Tavp\Core\Http\Response())->setContent('<script>window.location="' . $seoPrefix . '/login"</script>');
-    }
-
     $db = app('db');
     $pageCount = $db->fetchAll("SELECT COUNT(*) as cnt FROM contents WHERE status='published'", PDO::FETCH_ASSOC);
     $postCount = $db->fetchAll("SELECT COUNT(*) as cnt FROM contents WHERE type='post' AND status='published'", PDO::FETCH_ASSOC);
 
-    // Build content HTML
-    $inner = '<div class="mb-gutter"><h2 class="font-headline-xl text-headline-xl">SEO Dashboard</h2>';
-    $inner .= '<p class="font-body-md text-body-md text-on-surface-variant mt-1">Search engine optimization overview</p></div>';
-
-    // Stats cards
-    $inner .= '<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">';
-    $inner .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6"><p class="text-on-tertiary-container text-sm mb-1">Published Pages</p><p class="text-3xl font-bold text-secondary">' . ($pageCount[0]['cnt'] ?? 0) . '</p></div>';
-    $inner .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6"><p class="text-on-tertiary-container text-sm mb-1">Published Posts</p><p class="text-3xl font-bold text-secondary">' . ($postCount[0]['cnt'] ?? 0) . '</p></div>';
-    $inner .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6"><p class="text-on-tertiary-container text-sm mb-1">Sitemap</p><a href="/sitemap.xml" target="_blank" class="text-secondary hover:underline font-code-sm text-code-sm">/sitemap.xml</a></div>';
-    $inner .= '</div>';
-
-    // Quick Links
-    $inner .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6">';
-    $inner .= '<h3 class="font-headline-lg text-headline-lg mb-4">Quick Links</h3>';
-    $inner .= '<div class="grid grid-cols-1 md:grid-cols-3 gap-4">';
-    $inner .= '<a href="/sitemap.xml" target="_blank" class="flex items-center gap-3 p-4 bg-surface-container-low border border-outline-variant rounded-lg hover:border-secondary transition-colors"><span class="material-symbols-outlined text-secondary text-2xl">folder_open</span><div><p class="font-bold text-on-surface">Sitemap</p><p class="text-sm text-on-tertiary-container">XML sitemap for search engines</p></div></a>';
-    $inner .= '<a href="/robots.txt" target="_blank" class="flex items-center gap-3 p-4 bg-surface-container-low border border-outline-variant rounded-lg hover:border-secondary transition-colors"><span class="material-symbols-outlined text-secondary text-2xl">smart_toy</span><div><p class="font-bold text-on-surface">Robots.txt</p><p class="text-sm text-on-tertiary-container">Crawler instructions</p></div></a>';
-    $inner .= '<a href="/feed" target="_blank" class="flex items-center gap-3 p-4 bg-surface-container-low border border-outline-variant rounded-lg hover:border-secondary transition-colors"><span class="material-symbols-outlined text-secondary text-2xl">rss_feed</span><div><p class="font-bold text-on-surface">RSS Feed</p><p class="text-sm text-on-tertiary-container">Blog feed for readers</p></div></a>';
-    $inner .= '</div></div>';
-
-    // Render with admin layout
-    $layoutFile = dirname(__DIR__) . '/vendor/tavp/cms/resources/admin/layout.php';
-    $__brand = config('cms.admin.brand', 'TAVP');
-    $__auth_email = $_SESSION['cms_admin'] ?? '';
-    $__rbac = null;
-    try { $__rbac = app()->getService('tavpid.rbac'); } catch (\Throwable) {}
-    $__types = [];
-    $__errors = [];
-    $content = $inner;
-
-    ob_start();
-    include $layoutFile;
-    $html = ob_get_clean();
-
+    $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>SEO Dashboard</title>';
+    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
+    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"bg":"#0d131f","surface":"#1a202c","high":"#242a36","text":"#dde2f3","sec":"#e6c446","out":"#45474c","dim":"#95a0b5"}}}}</script>';
+    $html .= '</head><body class="bg-bg text-text"><div class="max-w-5xl mx-auto px-6 py-8">';
+    $html .= '<h1 class="text-2xl font-bold text-sec mb-6">SEO Dashboard</h1>';
+    $html .= '<div class="grid grid-cols-3 gap-4 mb-6">';
+    $html .= '<div class="bg-surface border border-out rounded-lg p-4"><p class="text-sm text-dim">Published Pages</p><p class="text-2xl font-bold text-sec">' . ($pageCount[0]['cnt'] ?? 0) . '</p></div>';
+    $html .= '<div class="bg-surface border border-out rounded-lg p-4"><p class="text-sm text-dim">Published Posts</p><p class="text-2xl font-bold text-sec">' . ($postCount[0]['cnt'] ?? 0) . '</p></div>';
+    $html .= '<div class="bg-surface border border-out rounded-lg p-4"><p class="text-sm text-dim">Sitemap</p><a href="/sitemap.xml" target="_blank" class="text-sec hover:underline">/sitemap.xml</a></div>';
+    $html .= '</div>';
+    $html .= '<div class="bg-surface border border-out rounded-lg p-4">';
+    $html .= '<h2 class="font-bold mb-3">Quick Links</h2>';
+    $html .= '<div class="space-y-2">';
+    $html .= '<a href="/sitemap.xml" target="_blank" class="block text-sec hover:underline">Sitemap XML</a>';
+    $html .= '<a href="/robots.txt" target="_blank" class="block text-sec hover:underline">Robots.txt</a>';
+    $html .= '<a href="/feed" target="_blank" class="block text-sec hover:underline">RSS Feed</a>';
+    $html .= '</div></div>';
+    $html .= '</div></body></html>';
     return (new \Tavp\Core\Http\Response())->setContent($html);
 });
 
