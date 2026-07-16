@@ -277,7 +277,7 @@ $router->get("{$msgPrefix}/messages", function () use ($msgPrefix) {
     $html .= '<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"/>';
     $html .= '<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>';
     $html .= '<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>';
-    $html .= '<style>.material-symbols-outlined{font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;} ::-webkit-scrollbar{width:6px} ::-webkit-scrollbar-track{background:#1a202c} ::-webkit-scrollbar-thumb{background:#4a5568;border-radius:3px} ::-webkit-scrollbar-thumb:hover{background:#e6c446} .hard-step-shadow{box-shadow:2px 2px 0 0 #000} .msg-card{transition:all .15s} .msg-card:hover{border-color:#e6c446} .msg-card.active{background:#242a36;border-color:#e6c446}</style>';
+    $html .= '<style>.material-symbols-outlined{font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;} [x-cloak]{display:none!important} ::-webkit-scrollbar{width:6px} ::-webkit-scrollbar-track{background:#1a202c} ::-webkit-scrollbar-thumb{background:#4a5568;border-radius:3px} ::-webkit-scrollbar-thumb:hover{background:#e6c446} .hard-step-shadow{box-shadow:2px 2px 0 0 #000} .msg-card{transition:all .15s} .msg-card:hover{border-color:#e6c446} .msg-card.active{background:#242a36;border-color:#e6c446}</style>';
     $html .= '</head><body class="bg-background text-on-background overflow-x-hidden">';
 
     // Include sidebar
@@ -297,10 +297,10 @@ $router->get("{$msgPrefix}/messages", function () use ($msgPrefix) {
     if (empty($messages)) {
         $html .= '<div class="text-center py-24"><span class="material-symbols-outlined text-6xl text-on-tertiary-container/30 mb-4">mail</span><p class="text-on-tertiary-container text-lg">No messages yet.</p></div>';
     } else {
-        $html .= '<div x-data="{ selected: 0 }" class="grid grid-cols-1 lg:grid-cols-12 gap-6">';
+        $html .= '<div x-data="{ selected: 0 }" x-init="$watch(\'selected\', i => { fetch(\'' . $msgPrefix . '/messages/\' + (i+1) + \'/read\', {method:\'POST\'}).catch(()=>{}) })" class="grid grid-cols-1 lg:grid-cols-12 gap-6">';
         $html .= '<div class="lg:col-span-4 space-y-1 overflow-y-auto pr-2" style="max-height:calc(100vh - 12rem)">';
         foreach ($messages as $i => $msg) {
-            $html .= '<div class="msg-card p-4 rounded-lg border cursor-pointer ' . ($i === 0 ? 'active border-secondary' : 'border-outline-variant') . '" @click="selected = ' . $i . '">';
+            $html .= '<div class="msg-card p-4 rounded-lg border cursor-pointer" :class="selected === ' . $i . ' ? \'active border-secondary bg-surface-container-high\' : \'border-outline-variant bg-surface-container\'" @click="selected = ' . $i . '">';
             $html .= '<div class="flex items-center gap-3 mb-2"><div class="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center shrink-0"><span class="text-sm font-bold text-secondary">' . strtoupper(substr(htmlspecialchars($msg['name']), 0, 1)) . '</span></div>';
             $html .= '<div class="flex-1 min-w-0"><span class="font-bold text-sm text-on-surface truncate block">' . htmlspecialchars($msg['name']) . '</span>';
             $html .= '<span class="text-xs text-on-tertiary-container">' . date('M j, g:ia', strtotime($msg['created_at'])) . '</span></div></div>';
@@ -309,7 +309,7 @@ $router->get("{$msgPrefix}/messages", function () use ($msgPrefix) {
         $html .= '</div>';
         $html .= '<div class="lg:col-span-8">';
         foreach ($messages as $i => $msg) {
-            $html .= '<div x-show="selected === ' . $i . '" x-transition class="bg-surface-container border border-outline-variant rounded-xl p-8">';
+            $html .= '<div x-show="selected === ' . $i . '" x-cloak x-transition class="bg-surface-container border border-outline-variant rounded-xl p-8">';
             $html .= '<div class="flex items-start justify-between mb-6"><div class="flex items-center gap-4">';
             $html .= '<div class="w-12 h-12 rounded-full bg-secondary/20 flex items-center justify-center"><span class="text-lg font-bold text-secondary">' . strtoupper(substr(htmlspecialchars($msg['name']), 0, 1)) . '</span></div>';
             $html .= '<div><h3 class="text-lg font-bold text-on-surface">' . htmlspecialchars($msg['name']) . '</h3><p class="text-sm text-on-tertiary-container">' . htmlspecialchars($msg['email']) . '</p></div></div>';
@@ -325,6 +325,21 @@ $router->get("{$msgPrefix}/messages", function () use ($msgPrefix) {
 
     $html .= '</div></main></body></html>';
     return (new \Tavp\Core\Http\Response())->setContent($html);
+});
+
+// Mark message as read
+$router->post("{$msgPrefix}/messages/{id}/read", function (array $params) {
+    if (session_status() === PHP_SESSION_NONE) session_start();
+    if (empty($_SESSION['cms_admin'])) {
+        return (new \Tavp\Core\Http\Response())->setContent(json_encode(['ok' => false]));
+    }
+    try {
+        $db = app('db');
+        $db->execute('UPDATE contact_messages SET is_read = 1 WHERE id = :id', ['id' => (int) $params['id']]);
+        return (new \Tavp\Core\Http\Response())->setContent(json_encode(['ok' => true]));
+    } catch (\Throwable $e) {
+        return (new \Tavp\Core\Http\Response())->setContent(json_encode(['ok' => false, 'error' => $e->getMessage()]));
+    }
 });
 
 // Blog index
