@@ -317,7 +317,7 @@ $router->get("{$msgPrefix}/messages", function () use ($msgPrefix) {
     }
 
     // Render with admin layout
-    $layoutFile = __DIR__ . '/vendor/tavp/cms/resources/admin/layout.php';
+    $layoutFile = dirname(__DIR__) . '/vendor/tavp/cms/resources/admin/layout.php';
     $__brand = config('cms.admin.brand', 'TAVP');
     $__auth_email = $_SESSION['cms_admin'] ?? '';
     $__rbac = null;
@@ -457,7 +457,7 @@ $router->get("{$seoPrefix}/seo", function () use ($seoPrefix) {
     $inner .= '</div></div>';
 
     // Render with admin layout
-    $layoutFile = __DIR__ . '/vendor/tavp/cms/resources/admin/layout.php';
+    $layoutFile = dirname(__DIR__) . '/vendor/tavp/cms/resources/admin/layout.php';
     $__brand = config('cms.admin.brand', 'TAVP');
     $__auth_email = $_SESSION['cms_admin'] ?? '';
     $__rbac = null;
