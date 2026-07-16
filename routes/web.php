@@ -265,9 +265,11 @@ $router->get("{$msgPrefix}/messages", function () use ($msgPrefix) {
     $unread = 0;
     foreach ($messages as $m) { if (!($m['is_read'] ?? 0)) $unread++; }
 
-    // Get sidebar data
-    $p = $msgPrefix;
-    $currentPath = $_SERVER['REQUEST_URI'] ?? '/';
+    // Variables for sidebar
+    $adminPrefix = $msgPrefix;
+    $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+    $__brand = config('cms.admin.brand', 'TAVP');
+    $__auth_email = $_SESSION['cms_admin'] ?? '';
 
     $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>Messages — TAVP Admin</title>';
     $html .= '<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">';
@@ -275,45 +277,19 @@ $router->get("{$msgPrefix}/messages", function () use ($msgPrefix) {
     $html .= '<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>';
     $html .= '<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>';
     $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#0d131f","on-background":"#dde2f3","surface":"#0d131f","surface-container-lowest":"#080e1a","surface-container-low":"#161c27","surface-container":"#1a202c","surface-container-high":"#242a36","surface-container-highest":"#2f3542","on-surface":"#dde2f3","on-surface-variant":"#c5c6cd","primary":"#bdc7dc","on-primary":"#273141","primary-container":"#2d3748","secondary":"#e6c446","on-secondary":"#3b2f00","secondary-container":"#ac8e0a","tertiary":"#bcc7dd","on-tertiary-container":"#95a0b5","outline":"#8f9097","outline-variant":"#45474c","error":"#ffb4ab"}}}}</script>';
-    $html .= '<style>.material-symbols-outlined{font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;} body{background:#0d131f;color:#dde2f3;font-family:Inter,sans-serif} .msg-card{transition:all .15s} .msg-card:hover{border-color:#e6c446} .msg-card.active{background:#242a36;border-color:#e6c446}</style>';
-    $html .= '</head><body class="overflow-x-hidden" x-data="{ sidebarCollapsed: false }">';
+    $html .= '<style>.material-symbols-outlined{font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;} .hard-step-shadow{box-shadow:2px 2px 0 0 #000} .msg-card{transition:all .15s} .msg-card:hover{border-color:#e6c446} .msg-card.active{background:#242a36;border-color:#e6c446}</style>';
+    $html .= '</head><body class="overflow-x-hidden">';
 
-    // Sidebar
-    $html .= '<aside class="h-screen fixed left-0 top-0 bg-surface-container border-r border-outline-variant flex flex-col z-50 overflow-hidden transition-all duration-300" :class="sidebarCollapsed ? \'w-[68px]\' : \'w-64\'">';
-    $html .= '<div class="px-4 pt-6 pb-4 flex items-center justify-between"><div class="flex items-center gap-2 min-w-0">';
-    $html .= '<div class="w-8 h-8 bg-secondary rounded flex items-center justify-center shrink-0"><span class="text-sm font-bold text-on-secondary">T</span></div>';
-    $html .= '<div x-show="!sidebarCollapsed" x-transition class="min-w-0"><h1 class="font-bold text-secondary tracking-tight truncate">TAVP</h1><p class="text-[10px] text-on-surface-variant opacity-60">admin v1.0</p></div></div>';
-    $html .= '<button @click="sidebarCollapsed = !sidebarCollapsed" class="text-on-surface-variant hover:text-secondary transition-colors shrink-0"><span class="material-symbols-outlined text-xl" x-text="sidebarCollapsed ? \'chevron_right\' : \'chevron_left\'"></span></button></div>';
-
-    $html .= '<nav class="flex-1 overflow-y-auto px-3 space-y-1 pb-4">';
-    $html .= '<a href="' . $p . '" class="flex items-center gap-3 px-3 py-2.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high" :class="sidebarCollapsed ? \'justify-center\' : \'\'"><span class="material-symbols-outlined text-xl">dashboard</span><span x-show="!sidebarCollapsed" x-transition class="whitespace-nowrap">Dashboard</span></a>';
-    $html .= '<a href="' . $p . '/home" class="flex items-center gap-3 px-3 py-2.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high" :class="sidebarCollapsed ? \'justify-center\' : \'\'"><span class="material-symbols-outlined text-xl">home</span><span x-show="!sidebarCollapsed" x-transition class="whitespace-nowrap">Home</span></a>';
-
-    $html .= '<div x-show="!sidebarCollapsed" class="pt-4 pb-1 px-3 text-on-surface-variant/40"><span class="text-[10px] font-semibold uppercase tracking-widest">Content</span></div>';
-    $html .= '<a href="' . $p . '/c/page" class="flex items-center gap-3 px-3 py-2.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high" :class="sidebarCollapsed ? \'justify-center\' : \'\'"><span class="material-symbols-outlined text-xl">description</span><span x-show="!sidebarCollapsed" x-transition class="whitespace-nowrap">Pages</span></a>';
-    $html .= '<a href="' . $p . '/c/post" class="flex items-center gap-3 px-3 py-2.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high" :class="sidebarCollapsed ? \'justify-center\' : \'\'"><span class="material-symbols-outlined text-xl">article</span><span x-show="!sidebarCollapsed" x-transition class="whitespace-nowrap">Blog</span></a>';
-
-    $html .= '<div x-show="!sidebarCollapsed" class="pt-4 pb-1 px-3 text-on-surface-variant/40"><span class="text-[10px] font-semibold uppercase tracking-widest">Site</span></div>';
-    $html .= '<a href="' . $p . '/menus" class="flex items-center gap-3 px-3 py-2.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high" :class="sidebarCollapsed ? \'justify-center\' : \'\'"><span class="material-symbols-outlined text-xl">menu</span><span x-show="!sidebarCollapsed" x-transition class="whitespace-nowrap">Menus</span></a>';
-    $html .= '<a href="' . $p . '/media" class="flex items-center gap-3 px-3 py-2.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high" :class="sidebarCollapsed ? \'justify-center\' : \'\'"><span class="material-symbols-outlined text-xl">image</span><span x-show="!sidebarCollapsed" x-transition class="whitespace-nowrap">Media</span></a>';
-    $html .= '<a href="' . $p . '/settings" class="flex items-center gap-3 px-3 py-2.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high" :class="sidebarCollapsed ? \'justify-center\' : \'\'"><span class="material-symbols-outlined text-xl">settings</span><span x-show="!sidebarCollapsed" x-transition class="whitespace-nowrap">Settings</span></a>';
-    $html .= '<a href="' . $p . '/users" class="flex items-center gap-3 px-3 py-2.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high" :class="sidebarCollapsed ? \'justify-center\' : \'\'"><span class="material-symbols-outlined text-xl">group</span><span x-show="!sidebarCollapsed" x-transition class="whitespace-nowrap">Users</span></a>';
-    $html .= '<a href="' . $p . '/messages" class="flex items-center gap-3 px-3 py-2.5 rounded text-secondary bg-primary-container/10" :class="sidebarCollapsed ? \'justify-center\' : \'\'"><span class="material-symbols-outlined text-xl">mail</span><span x-show="!sidebarCollapsed" x-transition class="whitespace-nowrap">Messages</span></a>';
-    $html .= '<a href="' . $p . '/analytics" class="flex items-center gap-3 px-3 py-2.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high" :class="sidebarCollapsed ? \'justify-center\' : \'\'"><span class="material-symbols-outlined text-xl">analytics</span><span x-show="!sidebarCollapsed" x-transition class="whitespace-nowrap">Analytics</span></a>';
-    $html .= '<a href="' . $p . '/seo" class="flex items-center gap-3 px-3 py-2.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high" :class="sidebarCollapsed ? \'justify-center\' : \'\'"><span class="material-symbols-outlined text-xl">search</span><span x-show="!sidebarCollapsed" x-transition class="whitespace-nowrap">SEO</span></a>';
-    $html .= '</nav>';
-
-    $html .= '<div class="px-3 pb-4 pt-2 border-t border-outline-variant">';
-    $html .= '<a href="' . $p . '/c/post/create" class="w-full bg-secondary text-on-secondary py-2.5 px-3 rounded font-bold text-xs text-center block mb-3" :class="sidebarCollapsed ? \'px-0\' : \'\'"><span x-show="!sidebarCollapsed">+ NEW POST</span><span x-show="sidebarCollapsed" class="material-symbols-outlined text-xl">add</span></a>';
-    $html .= '<div class="flex items-center gap-2 px-2" :class="sidebarCollapsed ? \'justify-center\' : \'\'"><div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-sm">person</span></div>';
-    $html .= '<div x-show="!sidebarCollapsed" x-transition class="flex-1 min-w-0"><p class="text-[10px] font-semibold truncate">' . htmlspecialchars($_SESSION['cms_admin'] ?? 'User') . '</p></div></div></div>';
-    $html .= '</aside>';
+    // Include sidebar
+    ob_start();
+    include dirname(__DIR__) . '/vendor/tavp/cms/resources/admin/_sidebar.php';
+    $html .= ob_get_clean();
 
     // Main content
-    $html .= '<main class="min-h-screen bg-background transition-all duration-300" :class="sidebarCollapsed ? \'ml-[68px]\' : \'ml-64\'">';
+    $html .= '<main class="min-h-screen bg-background transition-all duration-300" x-data="{ sidebarCollapsed: false }" :class="sidebarCollapsed ? \'ml-[68px]\' : \'ml-64\'">';
     $html .= '<div class="max-w-[1280px] mx-auto px-10 py-8">';
 
-    // Messages content
+    // Messages header
     $html .= '<div class="flex justify-between items-center mb-8"><div><h2 class="text-2xl font-bold text-on-surface">Messages</h2><p class="text-sm text-on-tertiary-container mt-1">' . count($messages) . ' contact messages</p></div>';
     if ($unread > 0) $html .= '<span class="text-xs px-3 py-1 rounded-full bg-error/20 text-error font-bold">' . $unread . ' unread</span>';
     $html .= '</div>';
@@ -464,8 +440,11 @@ $router->get("{$seoPrefix}/seo", function () use ($seoPrefix) {
     $postCount = $db->fetchAll("SELECT COUNT(*) as cnt FROM contents WHERE type='post' AND status='published'", PDO::FETCH_ASSOC);
     $contactCount = $db->fetchAll("SELECT COUNT(*) as cnt FROM contact_messages", PDO::FETCH_ASSOC);
 
-    $p = $seoPrefix;
-    $currentPath = $_SERVER['REQUEST_URI'] ?? '/';
+    // Variables for sidebar
+    $adminPrefix = $seoPrefix;
+    $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+    $__brand = config('cms.admin.brand', 'TAVP');
+    $__auth_email = $_SESSION['cms_admin'] ?? '';
 
     $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>SEO Dashboard — TAVP Admin</title>';
     $html .= '<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">';
@@ -473,61 +452,35 @@ $router->get("{$seoPrefix}/seo", function () use ($seoPrefix) {
     $html .= '<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>';
     $html .= '<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>';
     $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#0d131f","on-background":"#dde2f3","surface":"#0d131f","surface-container-lowest":"#080e1a","surface-container-low":"#161c27","surface-container":"#1a202c","surface-container-high":"#242a36","surface-container-highest":"#2f3542","on-surface":"#dde2f3","on-surface-variant":"#c5c6cd","primary":"#bdc7dc","on-primary":"#273141","primary-container":"#2d3748","secondary":"#e6c446","on-secondary":"#3b2f00","secondary-container":"#ac8e0a","tertiary":"#bcc7dd","on-tertiary-container":"#95a0b5","outline":"#8f9097","outline-variant":"#45474c","error":"#ffb4ab"}}}}</script>';
-    $html .= '<style>.material-symbols-outlined{font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;} body{background:#0d131f;color:#dde2f3;font-family:Inter,sans-serif} .seo-card{transition:all .15s} .seo-card:hover{border-color:#e6c446;transform:translateY(-2px)}</style>';
-    $html .= '</head><body class="overflow-x-hidden" x-data="{ sidebarCollapsed: false }">';
+    $html .= '<style>.material-symbols-outlined{font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;} .hard-step-shadow{box-shadow:2px 2px 0 0 #000} .seo-card{transition:all .15s} .seo-card:hover{border-color:#e6c446;transform:translateY(-2px)}</style>';
+    $html .= '</head><body class="overflow-x-hidden">';
 
-    // Sidebar (same as messages)
-    $html .= '<aside class="h-screen fixed left-0 top-0 bg-surface-container border-r border-outline-variant flex flex-col z-50 overflow-hidden transition-all duration-300" :class="sidebarCollapsed ? \'w-[68px]\' : \'w-64\'">';
-    $html .= '<div class="px-4 pt-6 pb-4 flex items-center justify-between"><div class="flex items-center gap-2 min-w-0">';
-    $html .= '<div class="w-8 h-8 bg-secondary rounded flex items-center justify-center shrink-0"><span class="text-sm font-bold text-on-secondary">T</span></div>';
-    $html .= '<div x-show="!sidebarCollapsed" x-transition class="min-w-0"><h1 class="font-bold text-secondary tracking-tight truncate">TAVP</h1><p class="text-[10px] text-on-surface-variant opacity-60">admin v1.0</p></div></div>';
-    $html .= '<button @click="sidebarCollapsed = !sidebarCollapsed" class="text-on-surface-variant hover:text-secondary transition-colors shrink-0"><span class="material-symbols-outlined text-xl" x-text="sidebarCollapsed ? \'chevron_right\' : \'chevron_left\'"></span></button></div>';
-
-    $html .= '<nav class="flex-1 overflow-y-auto px-3 space-y-1 pb-4">';
-    $html .= '<a href="' . $p . '" class="flex items-center gap-3 px-3 py-2.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high" :class="sidebarCollapsed ? \'justify-center\' : \'\'"><span class="material-symbols-outlined text-xl">dashboard</span><span x-show="!sidebarCollapsed" x-transition class="whitespace-nowrap">Dashboard</span></a>';
-    $html .= '<a href="' . $p . '/home" class="flex items-center gap-3 px-3 py-2.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high" :class="sidebarCollapsed ? \'justify-center\' : \'\'"><span class="material-symbols-outlined text-xl">home</span><span x-show="!sidebarCollapsed" x-transition class="whitespace-nowrap">Home</span></a>';
-    $html .= '<div x-show="!sidebarCollapsed" class="pt-4 pb-1 px-3 text-on-surface-variant/40"><span class="text-[10px] font-semibold uppercase tracking-widest">Content</span></div>';
-    $html .= '<a href="' . $p . '/c/page" class="flex items-center gap-3 px-3 py-2.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high" :class="sidebarCollapsed ? \'justify-center\' : \'\'"><span class="material-symbols-outlined text-xl">description</span><span x-show="!sidebarCollapsed" x-transition class="whitespace-nowrap">Pages</span></a>';
-    $html .= '<a href="' . $p . '/c/post" class="flex items-center gap-3 px-3 py-2.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high" :class="sidebarCollapsed ? \'justify-center\' : \'\'"><span class="material-symbols-outlined text-xl">article</span><span x-show="!sidebarCollapsed" x-transition class="whitespace-nowrap">Blog</span></a>';
-    $html .= '<div x-show="!sidebarCollapsed" class="pt-4 pb-1 px-3 text-on-surface-variant/40"><span class="text-[10px] font-semibold uppercase tracking-widest">Site</span></div>';
-    $html .= '<a href="' . $p . '/menus" class="flex items-center gap-3 px-3 py-2.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high" :class="sidebarCollapsed ? \'justify-center\' : \'\'"><span class="material-symbols-outlined text-xl">menu</span><span x-show="!sidebarCollapsed" x-transition class="whitespace-nowrap">Menus</span></a>';
-    $html .= '<a href="' . $p . '/media" class="flex items-center gap-3 px-3 py-2.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high" :class="sidebarCollapsed ? \'justify-center\' : \'\'"><span class="material-symbols-outlined text-xl">image</span><span x-show="!sidebarCollapsed" x-transition class="whitespace-nowrap">Media</span></a>';
-    $html .= '<a href="' . $p . '/settings" class="flex items-center gap-3 px-3 py-2.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high" :class="sidebarCollapsed ? \'justify-center\' : \'\'"><span class="material-symbols-outlined text-xl">settings</span><span x-show="!sidebarCollapsed" x-transition class="whitespace-nowrap">Settings</span></a>';
-    $html .= '<a href="' . $p . '/users" class="flex items-center gap-3 px-3 py-2.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high" :class="sidebarCollapsed ? \'justify-center\' : \'\'"><span class="material-symbols-outlined text-xl">group</span><span x-show="!sidebarCollapsed" x-transition class="whitespace-nowrap">Users</span></a>';
-    $html .= '<a href="' . $p . '/messages" class="flex items-center gap-3 px-3 py-2.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high" :class="sidebarCollapsed ? \'justify-center\' : \'\'"><span class="material-symbols-outlined text-xl">mail</span><span x-show="!sidebarCollapsed" x-transition class="whitespace-nowrap">Messages</span></a>';
-    $html .= '<a href="' . $p . '/analytics" class="flex items-center gap-3 px-3 py-2.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high" :class="sidebarCollapsed ? \'justify-center\' : \'\'"><span class="material-symbols-outlined text-xl">analytics</span><span x-show="!sidebarCollapsed" x-transition class="whitespace-nowrap">Analytics</span></a>';
-    $html .= '<a href="' . $p . '/seo" class="flex items-center gap-3 px-3 py-2.5 rounded text-secondary bg-primary-container/10" :class="sidebarCollapsed ? \'justify-center\' : \'\'"><span class="material-symbols-outlined text-xl">search</span><span x-show="!sidebarCollapsed" x-transition class="whitespace-nowrap">SEO</span></a>';
-    $html .= '</nav>';
-    $html .= '<div class="px-3 pb-4 pt-2 border-t border-outline-variant">';
-    $html .= '<a href="' . $p . '/c/post/create" class="w-full bg-secondary text-on-secondary py-2.5 px-3 rounded font-bold text-xs text-center block mb-3" :class="sidebarCollapsed ? \'px-0\' : \'\'"><span x-show="!sidebarCollapsed">+ NEW POST</span><span x-show="sidebarCollapsed" class="material-symbols-outlined text-xl">add</span></a>';
-    $html .= '<div class="flex items-center gap-2 px-2" :class="sidebarCollapsed ? \'justify-center\' : \'\'"><div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-sm">person</span></div>';
-    $html .= '<div x-show="!sidebarCollapsed" x-transition class="flex-1 min-w-0"><p class="text-[10px] font-semibold truncate">' . htmlspecialchars($_SESSION['cms_admin'] ?? 'User') . '</p></div></div></div>';
-    $html .= '</aside>';
+    // Include sidebar
+    ob_start();
+    include dirname(__DIR__) . '/vendor/tavp/cms/resources/admin/_sidebar.php';
+    $html .= ob_get_clean();
 
     // Main content
-    $html .= '<main class="min-h-screen bg-background transition-all duration-300" :class="sidebarCollapsed ? \'ml-[68px]\' : \'ml-64\'">';
+    $html .= '<main class="min-h-screen bg-background transition-all duration-300" x-data="{ sidebarCollapsed: false }" :class="sidebarCollapsed ? \'ml-[68px]\' : \'ml-64\'">';
     $html .= '<div class="max-w-[1280px] mx-auto px-10 py-8">';
 
-    // SEO content
     $html .= '<div class="mb-8"><h2 class="text-2xl font-bold text-on-surface">SEO Dashboard</h2><p class="text-sm text-on-tertiary-container mt-1">Search engine optimization overview</p></div>';
 
     $html .= '<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">';
     $html .= '<div class="seo-card bg-surface-container border border-outline-variant rounded-xl p-6"><div class="flex items-center gap-3 mb-3"><span class="material-symbols-outlined text-secondary text-2xl">description</span><p class="text-on-tertiary-container text-sm">Pages</p></div><p class="text-3xl font-bold text-secondary">' . ($pageCount[0]['cnt'] ?? 0) . '</p></div>';
     $html .= '<div class="seo-card bg-surface-container border border-outline-variant rounded-xl p-6"><div class="flex items-center gap-3 mb-3"><span class="material-symbols-outlined text-secondary text-2xl">article</span><p class="text-on-tertiary-container text-sm">Posts</p></div><p class="text-3xl font-bold text-secondary">' . ($postCount[0]['cnt'] ?? 0) . '</p></div>';
     $html .= '<div class="seo-card bg-surface-container border border-outline-variant rounded-xl p-6"><div class="flex items-center gap-3 mb-3"><span class="material-symbols-outlined text-secondary text-2xl">mail</span><p class="text-on-tertiary-container text-sm">Messages</p></div><p class="text-3xl font-bold text-secondary">' . ($contactCount[0]['cnt'] ?? 0) . '</p></div>';
-    $html .= '<div class="seo-card bg-surface-container border border-outline-variant rounded-xl p-6"><div class="flex items-center gap-3 mb-3"><span class="material-symbols-outlined text-secondary text-2xl">sitemap</span><p class="text-on-tertiary-container text-sm">Sitemap</p></div><a href="/sitemap.xml" target="_blank" class="text-secondary hover:underline text-sm">View →</a></div>';
+    $html .= '<div class="seo-card bg-surface-container border border-outline-variant rounded-xl p-6"><div class="flex items-center gap-3 mb-3"><span class="material-symbols-outlined text-secondary text-2xl">folder_open</span><p class="text-on-tertiary-container text-sm">Sitemap</p></div><a href="/sitemap.xml" target="_blank" class="text-secondary hover:underline text-sm">View →</a></div>';
     $html .= '</div>';
 
     $html .= '<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">';
-    $html .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6"><h3 class="text-lg font-bold mb-4">Quick Links</h3>';
-    $html .= '<div class="space-y-3">';
-    $html .= '<a href="' . $p . '/seo/settings" class="seo-card flex items-center gap-4 p-4 bg-surface-container-low border border-outline-variant rounded-lg"><span class="material-symbols-outlined text-secondary text-xl">settings</span><div><p class="font-bold text-on-surface text-sm">SEO Settings</p><p class="text-xs text-on-tertiary-container">Configure meta tags, OG, Twitter</p></div></a>';
-    $html .= '<a href="' . $p . '/seo/redirects" class="seo-card flex items-center gap-4 p-4 bg-surface-container-low border border-outline-variant rounded-lg"><span class="material-symbols-outlined text-secondary text-xl">forward</span><div><p class="font-bold text-on-surface text-sm">Redirects</p><p class="text-xs text-on-tertiary-container">Manage 301/302 redirects</p></div></a>';
-    $html .= '<a href="' . $p . '/seo/analyzer" class="seo-card flex items-center gap-4 p-4 bg-surface-container-low border border-outline-variant rounded-lg"><span class="material-symbols-outlined text-secondary text-xl">analytics</span><div><p class="font-bold text-on-surface text-sm">Analyzer</p><p class="text-xs text-on-tertiary-container">Check SEO scores</p></div></a>';
+    $html .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6"><h3 class="text-lg font-bold mb-4">Quick Links</h3><div class="space-y-3">';
+    $html .= '<a href="' . $seoPrefix . '/seo/settings" class="seo-card flex items-center gap-4 p-4 bg-surface-container-low border border-outline-variant rounded-lg"><span class="material-symbols-outlined text-secondary text-xl">settings</span><div><p class="font-bold text-on-surface text-sm">SEO Settings</p><p class="text-xs text-on-tertiary-container">Meta tags, OG, Twitter</p></div></a>';
+    $html .= '<a href="' . $seoPrefix . '/seo/redirects" class="seo-card flex items-center gap-4 p-4 bg-surface-container-low border border-outline-variant rounded-lg"><span class="material-symbols-outlined text-secondary text-xl">forward</span><div><p class="font-bold text-on-surface text-sm">Redirects</p><p class="text-xs text-on-tertiary-container">301/302 redirects</p></div></a>';
+    $html .= '<a href="' . $seoPrefix . '/seo/analyzer" class="seo-card flex items-center gap-4 p-4 bg-surface-container-low border border-outline-variant rounded-lg"><span class="material-symbols-outlined text-secondary text-xl">analytics</span><div><p class="font-bold text-on-surface text-sm">Analyzer</p><p class="text-xs text-on-tertiary-container">SEO scores</p></div></a>';
     $html .= '</div></div>';
 
-    $html .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6"><h3 class="text-lg font-bold mb-4">External Tools</h3>';
-    $html .= '<div class="space-y-3">';
+    $html .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6"><h3 class="text-lg font-bold mb-4">External Tools</h3><div class="space-y-3">';
     $html .= '<a href="/sitemap.xml" target="_blank" class="seo-card flex items-center gap-4 p-4 bg-surface-container-low border border-outline-variant rounded-lg"><span class="material-symbols-outlined text-secondary text-xl">folder_open</span><div><p class="font-bold text-on-surface text-sm">XML Sitemap</p><p class="text-xs text-on-tertiary-container">For search engines</p></div></a>';
     $html .= '<a href="/robots.txt" target="_blank" class="seo-card flex items-center gap-4 p-4 bg-surface-container-low border border-outline-variant rounded-lg"><span class="material-symbols-outlined text-secondary text-xl">smart_toy</span><div><p class="font-bold text-on-surface text-sm">Robots.txt</p><p class="text-xs text-on-tertiary-container">Crawler instructions</p></div></a>';
     $html .= '<a href="/feed" target="_blank" class="seo-card flex items-center gap-4 p-4 bg-surface-container-low border border-outline-variant rounded-lg"><span class="material-symbols-outlined text-secondary text-xl">rss_feed</span><div><p class="font-bold text-on-surface text-sm">RSS Feed</p><p class="text-xs text-on-tertiary-container">Blog feed</p></div></a>';
