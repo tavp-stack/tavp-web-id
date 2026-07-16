@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App;
 
 use Tavp\Cms\Auth\CmsUserProvider;
-use Tavp\Core\Auth\OtpService;
 use Tavp\Core\Auth\TokenService;
 use Tavp\Core\Module\ServiceProvider;
+use Tavp\Tavpid\Auth\OtpService;
 use Tavp\Tavpid\Rbac\AccessControl;
 
 /**

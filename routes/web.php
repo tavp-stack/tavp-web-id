@@ -65,6 +65,7 @@ $router->get('/contact', function () {
     $a = random_int(1, 10);
     $b = random_int(1, 10);
     $_SESSION['captcha_answer'] = $a + $b;
+    $_SESSION['captcha_question'] = "What is {$a} + {$b}?";
     $hash = hash('sha256', (string) ($a + $b));
 
     $records = app()->getService(BreadManager::class)->browse('contact');
@@ -81,13 +82,37 @@ $router->post('/contact', function () {
     session_start();
     $contactRecords = app()->getService(BreadManager::class)->browse('contact');
     $contactContent = $contactRecords[0] ?? [];
-    $name = $_POST['name'] ?? '';
-    $email = $_POST['email'] ?? '';
-    $subject = $_POST['subject'] ?? '';
-    $message = $_POST['message'] ?? '';
-    $captcha = $_POST['captcha'] ?? '';
-    $captchaHash = $_POST['captcha_hash'] ?? '';
-    $website = $_POST['website'] ?? '';
+
+    // Sanitize input
+    $name = htmlspecialchars(trim((string) ($_POST['name'] ?? '')), ENT_QUOTES, 'UTF-8');
+    $email = strtolower(trim((string) ($_POST['email'] ?? '')));
+    $subject = htmlspecialchars(trim((string) ($_POST['subject'] ?? '')), ENT_QUOTES, 'UTF-8');
+    $message = htmlspecialchars(trim((string) ($_POST['message'] ?? '')), ENT_QUOTES, 'UTF-8');
+    $captcha = trim((string) ($_POST['captcha'] ?? ''));
+    $captchaHash = trim((string) ($_POST['captcha_hash'] ?? ''));
+    $website = trim((string) ($_POST['website'] ?? ''));
+
+    // Validate required fields
+    if ($name === '' || $email === '' || $message === '') {
+        return view('contact', [
+            'content' => $contactContent,
+            'success' => false,
+            'error' => 'Name, email, and message are required.',
+            'captcha_question' => $_SESSION['captcha_question'] ?? '',
+            'captcha_hash' => $captchaHash,
+        ]);
+    }
+
+    // Validate email
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return view('contact', [
+            'content' => $contactContent,
+            'success' => false,
+            'error' => 'Please enter a valid email address.',
+            'captcha_question' => $_SESSION['captcha_question'] ?? '',
+            'captcha_hash' => $captchaHash,
+        ]);
+    }
 
     // Honeypot check
     if ($website !== '') {
@@ -95,11 +120,12 @@ $router->post('/contact', function () {
     }
 
     // Captcha check
-    $expectedHash = hash('sha256', (string) $_SESSION['captcha_answer'] ?? '');
-    if ($captchaHash !== $expectedHash || (string) $captcha !== (string) $_SESSION['captcha_answer']) {
+    $expectedHash = hash('sha256', (string) ($_SESSION['captcha_answer'] ?? ''));
+    if ($captchaHash !== $expectedHash || (string) $captcha !== (string) ($_SESSION['captcha_answer'] ?? '')) {
         $a = random_int(1, 10);
         $b = random_int(1, 10);
         $_SESSION['captcha_answer'] = $a + $b;
+        $_SESSION['captcha_question'] = "What is {$a} + {$b}?";
         $hash = hash('sha256', (string) ($a + $b));
 
         return view('contact', [
@@ -111,12 +137,29 @@ $router->post('/contact', function () {
         ]);
     }
 
-    // Here you would send the email or save to database
-    // For now, just show success message
+    // Save to database
+    try {
+        $db = app('db');
+        $db->execute(
+            'INSERT INTO contact_messages (name, email, subject, message, ip_address, created_at) VALUES (:name, :email, :subject, :message, :ip, NOW())',
+            [
+                'name' => $name,
+                'email' => $email,
+                'subject' => $subject,
+                'message' => $message,
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
+            ]
+        );
+    } catch (\Throwable $e) {
+        // Log error but don't break the user experience
+        error_log('Contact form DB error: ' . $e->getMessage());
+    }
 
+    // Generate new captcha
     $a = random_int(1, 10);
     $b = random_int(1, 10);
     $_SESSION['captcha_answer'] = $a + $b;
+    $_SESSION['captcha_question'] = "What is {$a} + {$b}?";
     $hash = hash('sha256', (string) ($a + $b));
 
     return view('contact', [

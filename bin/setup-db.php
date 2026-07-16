@@ -53,6 +53,11 @@ $tables = [
     "CREATE TABLE IF NOT EXISTS analytics_events (id BIGINT AUTO_INCREMENT PRIMARY KEY, event_name VARCHAR(100) NOT NULL, event_category VARCHAR(100) NULL, event_label VARCHAR(255) NULL, path VARCHAR(500) NULL, ip_address VARCHAR(45) NULL, session_id VARCHAR(100) NULL, platform VARCHAR(50) NOT NULL, metadata JSON NULL, fraud_score DECIMAL(5,3) DEFAULT 0, is_suspicious TINYINT(1) DEFAULT 0, created_at TIMESTAMP NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
     "CREATE TABLE IF NOT EXISTS analytics_sessions (id BIGINT AUTO_INCREMENT PRIMARY KEY, session_id VARCHAR(100) NOT NULL, ip_address VARCHAR(45) NOT NULL, user_agent VARCHAR(500) NULL, device VARCHAR(50) NOT NULL, browser VARCHAR(50) NOT NULL, os VARCHAR(50) NOT NULL, platform VARCHAR(50) NOT NULL, country VARCHAR(100) NULL, city VARCHAR(100) NULL, referrer VARCHAR(500) NULL, landing_page VARCHAR(500) NOT NULL, page_views INT DEFAULT 1, duration INT DEFAULT 0, is_bounce TINYINT(1) DEFAULT 1, is_bot TINYINT(1) DEFAULT 0, started_at TIMESTAMP NULL, last_activity_at TIMESTAMP NULL, created_at TIMESTAMP NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
     "CREATE TABLE IF NOT EXISTS analytics_fraud_events (id BIGINT AUTO_INCREMENT PRIMARY KEY, session_id VARCHAR(100) NULL, ip_address VARCHAR(45) NOT NULL, event_type VARCHAR(50) NOT NULL, rule_name VARCHAR(200) NOT NULL, score DECIMAL(5,3) NOT NULL, details JSON NULL, action_taken VARCHAR(50) NOT NULL, resolved_at TIMESTAMP NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
+    
+    // SEO tables
+    "CREATE TABLE IF NOT EXISTS seo_meta (id BIGINT AUTO_INCREMENT PRIMARY KEY, content_type VARCHAR(64) NOT NULL, content_id BIGINT NOT NULL, meta_title VARCHAR(255) NULL, meta_description TEXT NULL, og_title VARCHAR(255) NULL, og_description TEXT NULL, og_image VARCHAR(500) NULL, twitter_title VARCHAR(255) NULL, twitter_description TEXT NULL, twitter_image VARCHAR(500) NULL, canonical_url VARCHAR(500) NULL, robots VARCHAR(100) NULL, focus_keyword VARCHAR(255) NULL, seo_score INT DEFAULT 0, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, UNIQUE KEY unique_content (content_type, content_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
+    "CREATE TABLE IF NOT EXISTS redirects (id BIGINT AUTO_INCREMENT PRIMARY KEY, from_url VARCHAR(500) NOT NULL, to_url VARCHAR(500) NOT NULL, status_code INT DEFAULT 301, hits INT DEFAULT 0, active TINYINT(1) DEFAULT 1, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, UNIQUE KEY unique_from (from_url(191))) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
+    "CREATE TABLE IF NOT EXISTS outbound_links (id BIGINT AUTO_INCREMENT PRIMARY KEY, content_type VARCHAR(64) NOT NULL, content_id BIGINT NOT NULL, url VARCHAR(500) NOT NULL, is_broken TINYINT(1) DEFAULT 0, last_checked_at TIMESTAMP NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
 ];
 
 foreach ($tables as $sql) {
@@ -142,9 +147,9 @@ $dirs = [
 ];
 foreach ($dirs as $dir) {
     if (!is_dir($dir)) {
-        mkdir($dir, 0777, true);
+        mkdir($dir, 0755, true);
     }
-    chmod($dir, 0777);
+    chmod($dir, 0775);
 }
 echo "  ✓ Storage & upload permissions set\n";
 
