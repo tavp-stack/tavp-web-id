@@ -28,6 +28,10 @@
                 <p class="text-sm text-on-tertiary-container line-clamp-3">{{ post['excerpt'] }}</p>
               {% endif %}
               <div class="flex items-center gap-3 text-xs text-on-surface-variant">
+                {% if post['author'] is defined and post['author'] %}
+                  <span class="font-code-sm text-code-sm">{{ post['author'] }}</span>
+                  <span class="font-code-sm text-code-sm">·</span>
+                {% endif %}
                 {% if post['published_at'] is defined and post['published_at'] %}
                   <?php
                   $dt = new \DateTime($post['published_at']);
@@ -36,9 +40,12 @@
                   <span class="font-code-sm text-code-sm"><?= $dt->format('j') ?> <?= $idMonths[(int)$dt->format('n') - 1] ?> <?= $dt->format('Y') ?></span>
                   <span class="font-code-sm text-code-sm">·</span>
                 {% endif %}
-                {% if post['author'] is defined and post['author'] %}
-                  <span class="font-code-sm text-code-sm">{{ post['author'] }}</span>
-                {% endif %}
+                <?php
+                  $bodyText = strip_tags($post['body'] ?? $post['excerpt'] ?? '');
+                  $wordCount = str_word_count($bodyText);
+                  $readMin = max(1, ceil($wordCount / 200));
+                ?>
+                <span class="font-code-sm text-code-sm"><?= $readMin ?> min read</span>
               </div>
               {% if post['categories'] is defined and post['categories'] %}
                 <div class="flex flex-wrap gap-1 mt-2">
