@@ -2,32 +2,49 @@
 
 {% block content %}
 <article class="py-24 max-w-[800px] mx-auto px-gutter">
-  <header class="mb-12 space-y-4">
+  <header class="mb-12 space-y-6">
     <a href="/blog" class="inline-flex items-center gap-2 text-sm text-on-tertiary-container hover:text-secondary transition-colors">
       <span class="material-symbols-outlined text-sm">arrow_back</span>
       Back to Blog
     </a>
-    <h1 class="font-headline-xl text-headline-xl text-headline-xl text-on-surface">{{ content['title'] }}</h1>
-   <div class="flex items-center gap-4 text-sm text-on-tertiary-container">
-       {% if content['published_at'] is defined and content['published_at'] %}
-         <?php
-         $dt = new \DateTime($content['published_at']);
-         $idMonths = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-         $day = $dt->format('j');
-         $month = $idMonths[(int)$dt->format('n') - 1];
-         $year = $dt->format('Y');
-         $bodyText = strip_tags($content['body'] ?? '');
-         $wordCount = str_word_count($bodyText);
-         $readMin = max(1, ceil($wordCount / 200));
-         $author = $content['author'] ?? 'Jeremy Cheng';
-         ?>
-         <span class="font-code-sm text-code-sm"><?= $day ?> <?= $month ?> <?= $year ?></span>
-         <span class="font-code-sm text-code-sm">·</span>
-         <span class="font-code-sm text-code-sm"><?= $readMin ?> min read</span>
-         <span class="font-code-sm text-code-sm">·</span>
-          <span class="font-code-sm text-code-sm"><?= htmlspecialchars($author, ENT_QUOTES) ?></span>
-       {% endif %}
-     </div>
+    <h1 class="font-headline-xl text-headline-xl text-on-surface">{{ content['title'] }}</h1>
+
+    {# Medium-style meta: author · date · read time #}
+    <div class="flex items-center gap-3 text-sm text-on-tertiary-container border-b border-outline-variant pb-6">
+      <?php
+        $author = $content['author'] ?? 'TAVP Team';
+        $bodyText = strip_tags($content['body'] ?? '');
+        $wordCount = str_word_count($bodyText);
+        $readMin = max(1, ceil($wordCount / 200));
+        $dateStr = '';
+        if (!empty($content['published_at'])) {
+            $dt = new \DateTime($content['published_at']);
+            $idMonths = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
+            $dateStr = $dt->format('j') . ' ' . $idMonths[(int)$dt->format('n') - 1] . ' ' . $dt->format('Y');
+        } elseif (!empty($content['created_at'])) {
+            $dt = new \DateTime($content['created_at']);
+            $idMonths = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
+            $dateStr = $dt->format('j') . ' ' . $idMonths[(int)$dt->format('n') - 1] . ' ' . $dt->format('Y');
+        }
+      ?>
+      <span class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-base">person</span>
+        <span class="font-semibold text-on-surface"><?= htmlspecialchars($author, ENT_QUOTES) ?></span>
+      </span>
+      {% if dateStr is not empty %}
+        <span class="text-outline-variant">·</span>
+        <span class="flex items-center gap-1">
+          <span class="material-symbols-outlined text-base">calendar_today</span>
+          <?= dateStr ?>
+        </span>
+      {% endif %}
+      <span class="text-outline-variant">·</span>
+      <span class="flex items-center gap-1">
+        <span class="material-symbols-outlined text-base">schedule</span>
+        <?= $readMin ?> min read
+      </span>
+    </div>
+
     {% if content['excerpt'] is defined and content['excerpt'] %}
       <p class="text-lg text-on-surface-variant leading-relaxed">{{ content['excerpt'] }}</p>
     {% endif %}

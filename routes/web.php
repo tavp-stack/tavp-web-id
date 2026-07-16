@@ -401,6 +401,29 @@ $router->post("{$msgPrefix}/messages/{id}/read", function (array $params) {
 $router->get('/blog', function () {
     $posts = app()->getService(BreadManager::class)->browse('post', ['status' => 'published']);
 
+    // Resolve author names from users table
+    $db = app('db');
+    $authors = [];
+    try {
+        $rows = $db->fetchAll('SELECT id, name, email FROM users', PDO::FETCH_ASSOC);
+        foreach ($rows as $r) {
+            $authors[$r['email']] = $r['name'];
+            $authors[$r['id']] = $r['name'];
+        }
+    } catch (\Throwable) {}
+
+    foreach ($posts as &$post) {
+        $authorEmail = $post['author_email'] ?? '';
+        $authorName = $post['author'] ?? '';
+        // Try to resolve from users table
+        if ($authorEmail && isset($authors[$authorEmail])) {
+            $post['author'] = $authors[$authorEmail];
+        } elseif ($authorName && isset($authors[$authorName])) {
+            $post['author'] = $authors[$authorName];
+        }
+    }
+    unset($post);
+
     return view('blog', ['posts' => $posts]);
 });
 
@@ -480,8 +503,21 @@ $router->get('/blog/{slug}', function (array $params) {
         return view('404', []);
     }
 
+    // Resolve author name from users table
+    $db = app('db');
+    $authorEmail = $post['author_email'] ?? '';
+    $authorName = $post['author'] ?? '';
+    try {
+        if ($authorEmail) {
+            $rows = $db->fetchAll('SELECT name FROM users WHERE email = :email LIMIT 1', PDO::FETCH_ASSOC, ['email' => $authorEmail]);
+            if (!empty($rows[0]['name'])) $post['author'] = $rows[0]['name'];
+        } elseif ($authorName) {
+            $rows = $db->fetchAll('SELECT name FROM users WHERE email = :email OR name = :name LIMIT 1', PDO::FETCH_ASSOC, ['email' => $authorName, 'name' => $authorName]);
+            if (!empty($rows[0]['name'])) $post['author'] = $rows[0]['name'];
+        }
+    } catch (\Throwable) {}
+
     $body = $post['body'] ?? '';
-    // If content already contains HTML tags (from WYSIWYG editor), use as-is.
     // Always convert markdown to HTML (EasyMDE outputs markdown)
     $post['body'] = \App\Support\Markdown::toHtml($body);
 
