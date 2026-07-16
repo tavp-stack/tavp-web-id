@@ -41,10 +41,12 @@ $ogUrl = env('APP_URL', 'https://tavp.web.id') . ($_SERVER['REQUEST_URI'] ?? '/'
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"<?= htmlspecialchars($siteName) ?>","url":"<?= env('APP_URL', 'https://tavp.web.id') ?>","logo":"<?= $ogImage ?>","description":"<?= $ogDesc ?>"}
 </script>
+<style><?php readfile(base_path('public/assets/critical.css')); ?></style>
 <link rel="stylesheet" href="/assets/fonts.css"/>
+<link rel="stylesheet" href="/assets/app.css" media="print" onload="this.media='all'"/>
+<noscript><link rel="stylesheet" href="/assets/app.css"/></noscript>
 <script defer src="/js/prism-bundle.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-<link rel="stylesheet" href="/assets/app.css"/>
+<script defer src="/js/alpine.min.js"></script>
 <script>window.tavpAnalyticsConfig={endpoint:'/api/analytics',sessionRecording:false};</script>
 <script src="/js/tracker.js" defer></script>
 {% block head %}{% endblock %}

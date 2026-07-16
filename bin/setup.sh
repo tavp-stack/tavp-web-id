@@ -23,15 +23,18 @@ done
 echo "[1/6] Creating database user..."
 mysql -u root -e "CREATE DATABASE IF NOT EXISTS tavp; CREATE USER IF NOT EXISTS 'tavp'@'localhost' IDENTIFIED BY 'tavp'; CREATE USER IF NOT EXISTS 'tavp'@'%' IDENTIFIED BY 'tavp'; GRANT ALL ON tavp.* TO 'tavp'@'localhost'; GRANT ALL ON tavp.* TO 'tavp'@'%'; FLUSH PRIVILEGES;" 2>/dev/null && echo "  ✓ Database ready"
 
-# 2. Fix nginx root
+# 2. Fix nginx root + enable gzip
 echo "[2/6] Configuring nginx..."
 if grep -q "root /var/www/html;" /etc/nginx/sites-enabled/default 2>/dev/null; then
     sed -i 's|root /var/www/html;|root /var/www/html/public;|' /etc/nginx/sites-enabled/default
-    nginx -s reload 2>/dev/null || true
     echo "  ✓ Nginx root fixed"
-else
-    echo "  · Nginx root already correct"
 fi
+# Enable gzip compression
+if ! grep -q "gzip on" /etc/nginx/sites-enabled/default 2>/dev/null; then
+    sed -i '/server {/a\    gzip on;\n    gzip_types text/plain text/css application/json application/javascript text/xml application/xml text/javascript image/svg+xml;\n    gzip_min_length 256;\n    gzip_vary on;' /etc/nginx/sites-enabled/default
+    echo "  ✓ Gzip enabled"
+fi
+nginx -s reload 2>/dev/null || true
 
 # 3. Create symlinks
 echo "[3/6] Creating symlinks..."
