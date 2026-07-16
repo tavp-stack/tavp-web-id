@@ -17,7 +17,13 @@ env:
   DB_DATABASE: tavp
   DB_USERNAME: tavp
   DB_PASSWORD: tavp
+events:
+  post-start:
+    - bash /var/www/html/bin/setup.sh
 tooling:
+  setup:
+    cmd: bash /var/www/html/bin/setup.sh
+    description: Full setup (DB + nginx + symlinks + seed)
   tavp:
     cmd: php /var/www/html/vendor/bin/tavp
   migrate:
