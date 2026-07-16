@@ -527,9 +527,9 @@ $router->get("{$seoPrefix}/seo", function () use ($seoPrefix) {
     $html .= '</div></div>';
 
     $html .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6"><h3 class="text-lg font-bold mb-4">External Tools</h3><div class="space-y-3">';
-    $html .= '<a href="/sitemap.xml" target="_blank" class="seo-card flex items-center gap-4 p-4 bg-surface-container-low border border-outline-variant rounded-lg"><span class="material-symbols-outlined text-secondary text-xl">folder_open</span><div><p class="font-bold text-on-surface text-sm">XML Sitemap</p><p class="text-xs text-on-tertiary-container">For search engines</p></div></a>';
-    $html .= '<a href="/robots.txt" target="_blank" class="seo-card flex items-center gap-4 p-4 bg-surface-container-low border border-outline-variant rounded-lg"><span class="material-symbols-outlined text-secondary text-xl">smart_toy</span><div><p class="font-bold text-on-surface text-sm">Robots.txt</p><p class="text-xs text-on-tertiary-container">Crawler instructions</p></div></a>';
-    $html .= '<a href="/feed" target="_blank" class="seo-card flex items-center gap-4 p-4 bg-surface-container-low border border-outline-variant rounded-lg"><span class="material-symbols-outlined text-secondary text-xl">rss_feed</span><div><p class="font-bold text-on-surface text-sm">RSS Feed</p><p class="text-xs text-on-tertiary-container">Blog feed</p></div></a>';
+    $html .= '<a href="/sitemap.xml" target="_blank" rel="noopener" class="seo-card flex items-center gap-4 p-4 bg-surface-container-low border border-outline-variant rounded-lg"><span class="material-symbols-outlined text-secondary text-xl">folder_open</span><div><p class="font-bold text-on-surface text-sm">XML Sitemap</p><p class="text-xs text-on-tertiary-container">For search engines</p></div></a>';
+    $html .= '<a href="/robots.txt" target="_blank" rel="noopener" class="seo-card flex items-center gap-4 p-4 bg-surface-container-low border border-outline-variant rounded-lg"><span class="material-symbols-outlined text-secondary text-xl">smart_toy</span><div><p class="font-bold text-on-surface text-sm">Robots.txt</p><p class="text-xs text-on-tertiary-container">Crawler instructions</p></div></a>';
+    $html .= '<a href="/feed" target="_blank" rel="noopener" class="seo-card flex items-center gap-4 p-4 bg-surface-container-low border border-outline-variant rounded-lg"><span class="material-symbols-outlined text-secondary text-xl">rss_feed</span><div><p class="font-bold text-on-surface text-sm">RSS Feed</p><p class="text-xs text-on-tertiary-container">Blog feed</p></div></a>';
     $html .= '</div></div></div>';
 
     $html .= '</div></main></body></html>';
@@ -541,72 +541,96 @@ $router->get("{$seoPrefix}/seo/test123", function () {
     return (new \Tavp\Core\Http\Response())->setContent('SEO Test123 Works!');
 });
 
-$router->get("{$seoPrefix}/seo/settings", function () use ($seoPrefix) {
+// Helper: render SEO sub-page with sidebar
+$renderSeoPage = function (string $title, string $innerHtml) use ($seoPrefix) {
+    $adminPrefix = $seoPrefix;
+    $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+    $__brand = config('cms.admin.brand', 'TAVP');
+    $__auth_email = $_SESSION['cms_admin'] ?? '';
+
+    $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>' . htmlspecialchars($title) . ' — TAVP Admin</title>';
+    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
+    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#0d131f","on-background":"#dde2f3","surface":"#0d131f","surface-container-lowest":"#080e1a","surface-container-low":"#161c27","surface-container":"#1a202c","surface-container-high":"#242a36","surface-container-highest":"#2f3542","on-surface":"#dde2f3","on-surface-variant":"#c5c6cd","primary":"#bdc7dc","on-primary":"#273141","primary-container":"#2d3748","secondary":"#e6c446","on-secondary":"#3b2f00","secondary-container":"#ac8e0a","tertiary":"#bcc7dd","on-tertiary-container":"#95a0b5","outline":"#8f9097","outline-variant":"#45474c","error":"#ffb4ab"}}}}</script>';
+    $html .= '<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"/>';
+    $html .= '<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>';
+    $html .= '<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>';
+    $html .= '<style>.material-symbols-outlined{font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;} [x-cloak]{display:none!important} ::-webkit-scrollbar{width:6px} ::-webkit-scrollbar-track{background:#1a202c} ::-webkit-scrollbar-thumb{background:#4a5568;border-radius:3px} ::-webkit-scrollbar-thumb:hover{background:#e6c446} .hard-step-shadow{box-shadow:2px 2px 0 0 #000}</style>';
+    $html .= '</head><body class="bg-background text-on-background overflow-x-hidden">';
+
+    ob_start();
+    include dirname(__DIR__) . '/vendor/tavp/cms/resources/admin/_sidebar.php';
+    $html .= ob_get_clean();
+
+    $html .= '<main class="min-h-screen bg-background transition-all duration-300" x-data="{ sidebarCollapsed: false }" :class="sidebarCollapsed ? \'ml-[68px]\' : \'ml-64\'">';
+    $html .= '<div class="max-w-[1280px] mx-auto px-10 py-8">';
+    $html .= $innerHtml;
+    $html .= '</div></main></body></html>';
+    return (new \Tavp\Core\Http\Response())->setContent($html);
+};
+
+$router->get("{$seoPrefix}/seo/settings", function () use ($seoPrefix, $renderSeoPage) {
     if (session_status() === PHP_SESSION_NONE) session_start();
     if (empty($_SESSION['cms_admin'])) {
         header('Location: ' . $seoPrefix . '/login'); http_response_code(302); exit;
     }
+
+    $inner = '<div class="mb-8"><a href="' . $seoPrefix . '/seo" class="text-on-tertiary-container hover:text-secondary transition-colors flex items-center gap-2 text-sm mb-4"><span class="material-symbols-outlined text-sm">arrow_back</span> Back to SEO</a>';
+    $inner .= '<h2 class="text-2xl font-bold text-on-surface">SEO Settings</h2><p class="text-sm text-on-tertiary-container mt-1">Configure meta tags, Open Graph, Twitter Cards</p></div>';
+    $inner .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6">';
+    $inner .= '<p class="text-on-tertiary-container">SEO settings are configured via <code class="bg-surface-container-high px-2 py-0.5 rounded text-secondary">config/seo.php</code>. Full admin UI coming soon.</p>';
+    $inner .= '</div>';
+
+    return $renderSeoPage('SEO Settings', $inner);
+});
+
+$router->get("{$seoPrefix}/seo/redirects", function () use ($seoPrefix, $renderSeoPage) {
+    if (session_status() === PHP_SESSION_NONE) session_start();
     if (empty($_SESSION['cms_admin'])) {
         header('Location: ' . $seoPrefix . '/login'); http_response_code(302); exit;
     }
-    $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>SEO Settings</title>';
-    $html .= '<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">';
-    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"bg":"#0d131f","surface":"#1a202c","high":"#242a36","text":"#dde2f3","sec":"#e6c446","out":"#45474c","dim":"#95a0b5"}}}}</script>';
-    $html .= '</head><body class="bg-bg text-text"><div class="max-w-3xl mx-auto px-6 py-8">';
-    $html .= '<a href="' . $seoPrefix . '/seo" class="text-dim hover:text-sec mb-4 inline-block">← Back to SEO</a>';
-    $html .= '<h1 class="text-2xl font-bold text-sec mb-6">SEO Settings</h1>';
-    $html .= '<p class="text-dim">SEO settings will be configurable here. For now, edit config/seo.php directly.</p>';
-    $html .= '</div></body></html>';
-    return (new \Tavp\Core\Http\Response())->setContent($html);
-});
 
-$router->get("{$seoPrefix}/seo/redirects", function () use ($seoPrefix) {
     $db = app('db');
     $redirects = $db->fetchAll('SELECT * FROM redirects ORDER BY created_at DESC', PDO::FETCH_ASSOC);
-    
-    $html = '<!DOCTYPE html><html class="dark"><head><meta charset="utf-8"><title>Redirects</title>';
-    $html .= '<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">';
-    $html .= '</head><body class="bg-[#0d131f] text-[#dde2f3]"><div class="max-w-3xl mx-auto px-6 py-8">';
-    $html .= '<h1 class="text-2xl font-bold mb-6 text-[#e6c446]">Redirects (' . count($redirects) . ')</h1>';
-    $html .= '<a href="' . $seoPrefix . '/seo" class="text-[#e6c446]">← Back</a>';
-    $html .= '</div></body></html>';
-    return (new \Tavp\Core\Http\Response())->setContent($html);
-    $redirects = $db->fetchAll('SELECT * FROM redirects ORDER BY created_at DESC', PDO::FETCH_ASSOC);
-    $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>SEO Redirects</title>';
-    $html .= '<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">';
-    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"bg":"#0d131f","surface":"#1a202c","high":"#242a36","text":"#dde2f3","sec":"#e6c446","out":"#45474c","dim":"#95a0b5"}}}}</script>';
-    $html .= '</head><body class="bg-bg text-text"><div class="max-w-3xl mx-auto px-6 py-8">';
-    $html .= '<a href="' . $seoPrefix . '/seo" class="text-dim hover:text-sec mb-4 inline-block">← Back to SEO</a>';
-    $html .= '<h1 class="text-2xl font-bold text-sec mb-6">Redirects</h1>';
+
+    $inner = '<div class="mb-8"><a href="' . $seoPrefix . '/seo" class="text-on-tertiary-container hover:text-secondary transition-colors flex items-center gap-2 text-sm mb-4"><span class="material-symbols-outlined text-sm">arrow_back</span> Back to SEO</a>';
+    $inner .= '<h2 class="text-2xl font-bold text-on-surface">Redirects</h2><p class="text-sm text-on-tertiary-container mt-1">' . count($redirects) . ' redirects configured</p></div>';
+
     if (empty($redirects)) {
-        $html .= '<p class="text-dim">No redirects configured.</p>';
+        $inner .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-12 text-center"><span class="material-symbols-outlined text-4xl text-on-tertiary-container/30 mb-4">forward</span><p class="text-on-tertiary-container">No redirects configured yet.</p></div>';
     } else {
-        $html .= '<div class="space-y-2">';
+        $inner .= '<div class="bg-surface-container border border-outline-variant rounded-xl overflow-hidden">';
+        $inner .= '<table class="w-full"><thead class="bg-surface-container-high"><tr>';
+        $inner .= '<th class="px-4 py-3 text-left text-xs font-semibold text-on-tertiary-container uppercase tracking-wider">From</th>';
+        $inner .= '<th class="px-4 py-3 text-left text-xs font-semibold text-on-tertiary-container uppercase tracking-wider">To</th>';
+        $inner .= '<th class="px-4 py-3 text-left text-xs font-semibold text-on-tertiary-container uppercase tracking-wider">Status</th>';
+        $inner .= '<th class="px-4 py-3 text-left text-xs font-semibold text-on-tertiary-container uppercase tracking-wider">Hits</th>';
+        $inner .= '</tr></thead><tbody>';
         foreach ($redirects as $r) {
-            $html .= '<div class="bg-surface border border-out rounded p-3 text-sm">';
-            $html .= '<span class="text-sec">' . htmlspecialchars($r['from_url']) . '</span> → <span class="text-dim">' . htmlspecialchars($r['to_url']) . '</span>';
-            $html .= '</div>';
+            $inner .= '<tr class="border-t border-outline-variant hover:bg-surface-container-high/50">';
+            $inner .= '<td class="px-4 py-3 text-sm text-secondary">' . htmlspecialchars($r['from_url'] ?? '') . '</td>';
+            $inner .= '<td class="px-4 py-3 text-sm text-on-surface">' . htmlspecialchars($r['to_url'] ?? '') . '</td>';
+            $inner .= '<td class="px-4 py-3 text-sm text-on-tertiary-container">' . ($r['status_code'] ?? 301) . '</td>';
+            $inner .= '<td class="px-4 py-3 text-sm text-on-tertiary-container">' . ($r['hits'] ?? 0) . '</td>';
+            $inner .= '</tr>';
         }
-        $html .= '</div>';
+        $inner .= '</tbody></table></div>';
     }
-    $html .= '</div></body></html>';
-    return (new \Tavp\Core\Http\Response())->setContent($html);
+
+    return $renderSeoPage('Redirects', $inner);
 });
 
-$router->get("{$seoPrefix}/seo/analyzer", function () use ($seoPrefix) {
+$router->get("{$seoPrefix}/seo/analyzer", function () use ($seoPrefix, $renderSeoPage) {
     if (session_status() === PHP_SESSION_NONE) session_start();
     if (empty($_SESSION['cms_admin'])) {
         header('Location: ' . $seoPrefix . '/login'); http_response_code(302); exit;
     }
-    $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>SEO Analyzer</title>';
-    $html .= '<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">';
-    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"bg":"#0d131f","surface":"#1a202c","high":"#242a36","text":"#dde2f3","sec":"#e6c446","out":"#45474c","dim":"#95a0b5"}}}}</script>';
-    $html .= '</head><body class="bg-bg text-text"><div class="max-w-3xl mx-auto px-6 py-8">';
-    $html .= '<a href="' . $seoPrefix . '/seo" class="text-dim hover:text-sec mb-4 inline-block">← Back to SEO</a>';
-    $html .= '<h1 class="text-2xl font-bold text-sec mb-6">SEO Analyzer</h1>';
-    $html .= '<p class="text-dim">SEO content analyzer will check your pages for optimization opportunities.</p>';
-    $html .= '</div></body></html>';
-    return (new \Tavp\Core\Http\Response())->setContent($html);
+
+    $inner = '<div class="mb-8"><a href="' . $seoPrefix . '/seo" class="text-on-tertiary-container hover:text-secondary transition-colors flex items-center gap-2 text-sm mb-4"><span class="material-symbols-outlined text-sm">arrow_back</span> Back to SEO</a>';
+    $inner .= '<h2 class="text-2xl font-bold text-on-surface">SEO Analyzer</h2><p class="text-sm text-on-tertiary-container mt-1">Check your pages for optimization opportunities</p></div>';
+    $inner .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-12 text-center"><span class="material-symbols-outlined text-4xl text-on-tertiary-container/30 mb-4">analytics</span>';
+    $inner .= '<p class="text-on-tertiary-container">SEO Analyzer coming soon. Will check content for keyword density, meta tags, readability, and more.</p></div>';
+
+    return $renderSeoPage('SEO Analyzer', $inner);
 });
 
 $router->post("{$seoPrefix}/seo/ping", function () use ($seoPrefix) {
