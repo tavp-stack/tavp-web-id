@@ -401,25 +401,20 @@ $router->post("{$msgPrefix}/messages/{id}/read", function (array $params) {
 $router->get('/blog', function () {
     $posts = app()->getService(BreadManager::class)->browse('post', ['status' => 'published']);
 
-    // Resolve author names from users table
+    // Resolve author names from users table via author_id
     $db = app('db');
-    $authors = [];
+    $userMap = [];
     try {
-        $rows = $db->fetchAll('SELECT id, name, email FROM users', PDO::FETCH_ASSOC);
+        $rows = $db->fetchAll('SELECT id, name FROM users', PDO::FETCH_ASSOC);
         foreach ($rows as $r) {
-            $authors[$r['email']] = $r['name'];
-            $authors[$r['id']] = $r['name'];
+            $userMap[(int)$r['id']] = $r['name'];
         }
     } catch (\Throwable) {}
 
     foreach ($posts as &$post) {
-        $authorEmail = $post['author_email'] ?? '';
-        $authorName = $post['author'] ?? '';
-        // Try to resolve from users table
-        if ($authorEmail && isset($authors[$authorEmail])) {
-            $post['author'] = $authors[$authorEmail];
-        } elseif ($authorName && isset($authors[$authorName])) {
-            $post['author'] = $authors[$authorName];
+        $aid = (int)($post['author_id'] ?? 0);
+        if ($aid && isset($userMap[$aid])) {
+            $post['author'] = $userMap[$aid];
         }
     }
     unset($post);
@@ -503,16 +498,12 @@ $router->get('/blog/{slug}', function (array $params) {
         return view('404', []);
     }
 
-    // Resolve author name from users table
+    // Resolve author name from users table via author_id
     $db = app('db');
-    $authorEmail = $post['author_email'] ?? '';
-    $authorName = $post['author'] ?? '';
+    $authorId = $post['author_id'] ?? null;
     try {
-        if ($authorEmail) {
-            $rows = $db->fetchAll('SELECT name FROM users WHERE email = :email LIMIT 1', PDO::FETCH_ASSOC, ['email' => $authorEmail]);
-            if (!empty($rows[0]['name'])) $post['author'] = $rows[0]['name'];
-        } elseif ($authorName) {
-            $rows = $db->fetchAll('SELECT name FROM users WHERE email = :email OR name = :name LIMIT 1', PDO::FETCH_ASSOC, ['email' => $authorName, 'name' => $authorName]);
+        if ($authorId) {
+            $rows = $db->fetchAll('SELECT name FROM users WHERE id = :id LIMIT 1', PDO::FETCH_ASSOC, ['id' => (int)$authorId]);
             if (!empty($rows[0]['name'])) $post['author'] = $rows[0]['name'];
         }
     } catch (\Throwable) {}
