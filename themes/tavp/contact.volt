@@ -63,6 +63,7 @@
         </div>
       {% endif %}
       <form class="space-y-6" action="/contact" method="POST">
+        <?php echo \App\Support\Csrf::field(); ?>
         <div>
           <label class="block font-label-caps text-label-caps text-on-tertiary-container mb-2">NAME</label>
           <input type="text" name="name" required class="w-full bg-surface-container-low border border-outline-variant rounded px-4 py-3 text-on-surface focus:border-secondary focus:outline-none transition-colors" placeholder="Your name">

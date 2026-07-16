@@ -2,13 +2,17 @@
 
 declare(strict_types=1);
 
-error_log('WEB.PHP LOADED: ' . ($_SERVER['REQUEST_URI'] ?? 'CLI'));
-
+use App\Support\Csrf;
+use App\Support\RateLimiter;
+use App\Support\SecurityHeaders;
 use Tavp\Analytics\AnalyticsManager;
 use Tavp\Cms\Admin\AdminModule;
 use Tavp\Cms\Api\ApiModule;
 use Tavp\Cms\Bread\BreadManager;
 use Tavp\Cms\Seo\SitemapController;
+
+// Send security headers on every request
+SecurityHeaders::send();
 
 /**
  * tavp.web.id routes.
@@ -135,6 +139,30 @@ $router->post('/contact', function () {
     session_start();
     $contactRecords = app()->getService(BreadManager::class)->browse('contact');
     $contactContent = $contactRecords[0] ?? [];
+
+    // Rate limiting — max 5 submissions per IP per 15 minutes
+    $limiter = new RateLimiter();
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    if (!$limiter->attempt('contact:' . $ip, 5, 900)) {
+        return view('contact', [
+            'content' => $contactContent,
+            'success' => false,
+            'error' => 'Too many submissions. Please try again later.',
+            'captcha_question' => $_SESSION['captcha_question'] ?? '',
+            'captcha_hash' => '',
+        ]);
+    }
+
+    // CSRF verification
+    if (!Csrf::verify()) {
+        return view('contact', [
+            'content' => $contactContent,
+            'success' => false,
+            'error' => 'Invalid form submission. Please refresh and try again.',
+            'captcha_question' => $_SESSION['captcha_question'] ?? '',
+            'captcha_hash' => '',
+        ]);
+    }
 
     // Sanitize input
     $name = htmlspecialchars(trim((string) ($_POST['name'] ?? '')), ENT_QUOTES, 'UTF-8');
