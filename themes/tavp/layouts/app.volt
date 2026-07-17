@@ -8,9 +8,12 @@ $copyright = ($v = $settings?->get('footer.copyright')) !== '' && $v !== null ? 
 $logoUrl = ($v = $settings?->get('site.logo_url')) !== '' && $v !== null ? $v : '/assets/logo.png';
 ?>
 <?php
-$layoutBread = app()->getService(\Tavp\Cms\Bread\BreadManager::class) ?? null;
-$layoutRecords = $layoutBread ? $layoutBread->browse('site_layout') : [];
-$layout = $layoutRecords[0] ?? [];
+$layout = [];
+try {
+    $layoutBread = app()->getService(\Tavp\Cms\Bread\BreadManager::class) ?? null;
+    $layoutRecords = $layoutBread ? $layoutBread->browse('site_layout') : [];
+    $layout = $layoutRecords[0] ?? [];
+} catch (\Throwable) {}
 ?>
 <!DOCTYPE html>
 <html class="dark" lang="id">
