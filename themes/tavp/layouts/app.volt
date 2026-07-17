@@ -49,6 +49,14 @@ $ogUrl = env('APP_URL', 'https://tavp.web.id') . ($_SERVER['REQUEST_URI'] ?? '/'
 <script defer src="/js/alpine.min.js"></script>
 <script>window.tavpAnalyticsConfig={endpoint:'/api/analytics',sessionRecording:false};</script>
 <script src="/js/tracker.js" defer></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LTCMDNNHSB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-LTCMDNNHSB');
+</script>
 {% block head %}{% endblock %}
 </head>
 <body class="bg-background text-on-background font-body-md selection:bg-secondary selection:text-on-secondary" x-data="{ mobileMenu: false }">
