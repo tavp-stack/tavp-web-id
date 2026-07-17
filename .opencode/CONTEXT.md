@@ -1,4 +1,4 @@
-# tavp.web.id — AI Context Cheat Sheet
+﻿# tavp.web.id - AI Context Cheat Sheet
 
 > BACA FILE INI DI AWAL SETIAP SESSION. Berisi semua info yang dibutuhkan AI untuk manage project ini.
 
@@ -186,7 +186,7 @@ SELECT * FROM settings WHERE key='tagline';       -- tagline
 2. Ada perubahan schema? Update Architecture
 3. Bug baru? Update Known-Issues
 4. Keputusan baru? Update Decision-Log
-5. Jangan rewrite total — cukup tambah/edit section yang berubah
+5. Jangan rewrite total - cukup tambah/edit section yang berubah
 
 ---
 
@@ -218,12 +218,12 @@ SELECT * FROM settings WHERE key='tagline';       -- tagline
 
 - **PowerShell backticks:** Jangan pakai backtick di dalam string yang sudah pakai backtick
 - **JSON labels:** Labels harus array of integers (ID), bukan strings
-- **Wiki API:** Gitea v1.26.4 wiki API bermasalah — pakai web form POST
+- **Wiki API:** Gitea v1.26.4 wiki API bermasalah - pakai web form POST
 - **Database:** User=tavp, Pass=tavp, DB=tavp (di container)
 - **app.volt:** PHP block harus SEBELUM `<head>` untuk define $defaultTitle
-- **site_layout:** Content type belum ada — pakai try-catch fallback
-- **Vendor:** Tidak bisa composer install di VPS — harus SCP dari local
-- **Email:** Custom MailService broken — pakai PHPMailer
+- **site_layout:** Content type belum ada - pakai try-catch fallback
+- **Vendor:** Tidak bisa composer install di VPS - harus SCP dari local
+- **Email:** Custom MailService broken - pakai PHPMailer
 
 ---
 
