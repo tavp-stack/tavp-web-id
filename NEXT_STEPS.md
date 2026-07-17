@@ -1,4 +1,4 @@
-# NEXT_STEPS.md — tavp.web.id
+﻿# NEXT_STEPS.md - tavp.web.id
 
 **Last updated:** 2026-07-18 (session close)
 **Branch:** `main`
@@ -26,11 +26,11 @@
 
 | File | Change | Status |
 |------|--------|--------|
-| `themes/tavp/layouts/app.volt` | Restored production version with full features; added try-catch for `site_layout` | ✅ Committed (`82a10c1`) |
-| `.gitignore` | Updated to exclude temp files, backups, IDE config, public deployment artifacts | ✅ Committed (`1d62968`) |
-| `CHANGELOG.md` | Created with Unreleased entries | ✅ Committed (`f031dce`) |
+| `themes/tavp/layouts/app.volt` | Restored production version with full features; added try-catch for `site_layout` | [x] Committed (`82a10c1`) |
+| `.gitignore` | Updated to exclude temp files, backups, IDE config, public deployment artifacts | [x] Committed (`1d62968`) |
+| `CHANGELOG.md` | Created with Unreleased entries | [x] Committed (`f031dce`) |
 
-##20 Modified Files (NOT committed — DIVERGENT from git HEAD)
+##20 Modified Files (NOT committed - DIVERGENT from git HEAD)
 
 These files in working directory differ significantly from git HEAD. They were simplified during production debugging sessions (hardcoded URLs, removed CMS-driven content). **Do NOT commit without reconciliation.**
 
@@ -54,7 +54,7 @@ These files in working directory differ significantly from git HEAD. They were s
 | `public/index.php` | Entry point changes |
 | `.tavpbox.yml` | TavpBox config changes |
 | `package.json` / `package-lock.json` | Dependency changes |
-| `public/assets/logo.png` | Logo update (28KB →5KB) |
+| `public/assets/logo.png` | Logo update (28KB ->5KB) |
 
 ---
 
@@ -67,16 +67,16 @@ These files in working directory differ significantly from git HEAD. They were s
 ## TODO Prioritas (Next Session)
 
 ### HIGH
-1. **Reconcile20 divergent files** (Issue #1) — Decide: revert to git HEAD and port fixes, or commit working directory as-is
-2. **Create `site_layout` content type** (Issue #2) — Add to `config/cms.php`, create migration/seed, remove try-catch fallback
+1. **Reconcile20 divergent files** (Issue #1) - Decide: revert to git HEAD and port fixes, or commit working directory as-is
+2. **Create `site_layout` content type** (Issue #2) - Add to `config/cms.php`, create migration/seed, remove try-catch fallback
 
 ### MEDIUM
-3. **Investigate custom MailService SMTP** — Why does it say "SENT OK" but emails never arrive? PHPMailer works fine.
-4. **Enable Gitea Wiki** — Wiki API returns405/500, needs admin enable
+3. **Investigate custom MailService SMTP** - Why does it say "SENT OK" but emails never arrive? PHPMailer works fine.
+4. **Enable Gitea Wiki** - Wiki API returns405/500, needs admin enable
 
 ### LOW
-5. **Clean up `feat/database-connection` branch** — No commits ahead of main, can be deleted
-6. **Update production nginx template** — Phalcon template created but not properly applied (currently using default proxy template)
+5. **Clean up `feat/database-connection` branch** - No commits ahead of main, can be deleted
+6. **Update production nginx template** - Phalcon template created but not properly applied (currently using default proxy template)
 
 ---
 
@@ -92,5 +92,5 @@ These files in working directory differ significantly from git HEAD. They were s
 | Hash | Message |
 |------|---------|
 | `82a10c1` | fix: restore production app.volt + graceful fallback for site_layout |
-| `1d62968` | chore: update .gitignore — exclude temp files, backups, IDE config, public deployment artifacts |
+| `1d62968` | chore: update .gitignore - exclude temp files, backups, IDE config, public deployment artifacts |
 | `f031dce` | docs: add CHANGELOG.md with Unreleased entries |

@@ -1,10 +1,10 @@
-# SESSION_LOG.md — tavp.web.id
+﻿# SESSION_LOG.md - tavp.web.id
 
 Histori permanen tiap sesi. Entri baru di paling atas (reverse-chronological).
 
 ---
 
-## 2026-07-18 — Post-TavpBox Update Audit & App.volt Restoration
+## 2026-07-18 - Post-TavpBox Update Audit & App.volt Restoration
 
 **Closing:** 2026-07-18 ~23:00 WIB
 **Session focus:** Audit setelah TavpBox update, restore production app.volt, fixing divergent templates
@@ -19,7 +19,7 @@ Histori permanen tiap sesi. Entri baru di paling atas (reverse-chronological).
 
 ### Commits
 - `82a10c1` fix: restore production app.volt + graceful fallback for site_layout
-- `1d62968` chore: update .gitignore — exclude temp files, backups, IDE config, public deployment artifacts
+- `1d62968` chore: update .gitignore - exclude temp files, backups, IDE config, public deployment artifacts
 - `f031dce` docs: add CHANGELOG.md with Unreleased entries
 - `ff316d5` docs: add NEXT_STEPS.md with session state and TODO
 
@@ -45,7 +45,7 @@ Histori permanen tiap sesi. Entri baru di paling atas (reverse-chronological).
 | 404 | 404 (correct) |
 
 ### Wiki
-- Gitea Wiki tidak tersedia (API405, git clone 500) — perlu admin enable
+- Gitea Wiki tidak tersedia (API405, git clone 500) - perlu admin enable
 
 ### Release
 - Tidak ada rilis (bukan milestone besar)
