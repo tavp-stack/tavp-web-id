@@ -1,10 +1,11 @@
 /vendor/
 /node_modules/
 /public/uploads/
-/storage/
 /public/storage/
 /public/vendor/
-bootstrap/cache/
+/bootstrap/cache/
+/storage/
+storage
 .env
 composer.lock
 *.log
@@ -23,10 +24,21 @@ Thumbs.db
 # Temp / leftover files
 0
 index.nginx-debian.html
-pma
+pma/
 run_migrations.php
 _temp_content.txt
+backup_*.sql
+
+# Public deployment artifacts (copies of source in public dir)
+/public/app
+/public/bootstrap
+/public/config
+/public/public/
+/public/routes
+/public/storage
+/public/test.php
+/public/themes
 
 # Design source (mockups/exports) — kept local, not shipped in the repo.
 /docs/*/
-/docs/*.zip
+docs/*.zip
