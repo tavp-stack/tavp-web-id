@@ -29,20 +29,23 @@ $body = @{ tag_name = "v0.1.0"; name = "v0.1.0 - Judul"; body = "changelog" } | 
 Invoke-RestMethod -Uri "https://git.glotama.com/api/v1/repos/tavp-stack/tavp-web-id/releases" -Method Post -Headers $h -Body $body
 ```
 
-**Wiki endpoints (Gitea v1.26.4 — API bermasalah, pakai web form):**
+**Wiki endpoints (Gitea v1.26.4):**
 ```powershell
-# Wiki via web form (bukan API)
-$session = $null
-$loginPage = Invoke-WebRequest -Uri "https://git.glotama.com/user/login" -SessionVariable session -UseBasicParsing
-$loginBody = @{ user_name = "jtdoank"; password = "0e6b86795bb32063035b69a49784a2a438b93e96" }
-Invoke-WebRequest -Uri "https://git.glotama.com/user/login" -Method Post -Body $loginBody -WebSession $session -UseBasicParsing
+$h = @{Authorization = "Basic " + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("jtdoank:0e6b86795bb32063035b69a49784a2a438b93e96")); "Content-Type" = "application/json"}
 
-# Create/update wiki page
-$wikiNew = Invoke-WebRequest -Uri "https://git.glotama.com/tavp-stack/tavp-web-id/wiki/_new" -WebSession $session -UseBasicParsing
-$csrf = ""; if ($wikiNew.Content -match 'name="_csrf" content="([^"]+)"') { $csrf = $matches[1] }
-$wikiBody = @{ _csrf = $csrf; title = "Page-Title"; content = "content here"; message = "Create page" }
-Invoke-WebRequest -Uri "https://git.glotama.com/tavp-stack/tavp-web-id/wiki/_new" -Method Post -Body $wikiBody -WebSession $session -UseBasicParsing
+# Create wiki page (content_base64, tanpa message)
+$contentBase64 = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("# Page content"))
+$body = @{ title = "Page-Title"; content_base64 = $contentBase64 } | ConvertTo-Json -Depth 3
+Invoke-RestMethod -Uri "https://git.glotama.com/api/v1/repos/tavp-stack/tavp-web-id/wiki/new" -Method Post -Headers $h -Body $body
+
+# Update wiki page (PATCH, bukan PUT)
+Invoke-RestMethod -Uri "https://git.glotama.com/api/v1/repos/tavp-stack/tavp-web-id/wiki/page/Page-Title" -Method Patch -Headers $h -Body $body
+
+# List pages
+Invoke-RestMethod -Uri "https://git.glotama.com/api/v1/repos/tavp-stack/tavp-web-id/wiki/pages" -Headers $h
 ```
+
+**Known Issue:** Gitea v1.26.4 wiki API mengembalikan success tapi content tidak tersimpan (0 chars). Pages tercreate tapi kosong. Perlu investigasi lebih lanjut.
 
 **Label IDs:**
 - bug=35, feature=36, enhancement=37, priority-high=38, blocked=39, docs=40, devops=41, tavpbox=42
