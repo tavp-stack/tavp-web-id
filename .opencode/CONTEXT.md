@@ -9,7 +9,8 @@ Informasi akses repo, wiki, issues, database, dan container untuk AI yang menger
 
 ## Gitea API Access
 - Base URL: `https://git.glotama.com/api/v1`
-- Token: `0e6b86795bb32063035b69a49784a2a438b93e96` (username: `jtdoank`)
+- Token: `665e546ef503e2b84287527ae133cef1d4c4d5bf` (username: `jtdoank`)
+- Token lama `0e6b8679...` SUDAH MATI (401) — jangan pakai.
 - Header: `Authorization: token <TOKEN>`
 - Contoh list open PR:
   `GET /repos/tavp-stack/tavp-web-id/pulls?state=open`
