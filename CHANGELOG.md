@@ -19,5 +19,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 - Update `.gitignore` - exclude temp files, backups, IDE config, public deployment artifacts
 
+### Fixed
+- Reconciled 20 divergent working-directory files back to git HEAD (Issue #1): restored debug-simplified templates, `config/cms.php` (148 content-type fields), `bootstrap/app.php` (DatabaseManager), `AppServiceProvider` (tavpid OtpService), `package.json`, `logo.png`, `public/index.php`. Working dir now matches HEAD.
+
 ### Known Issues
-- 20 modified files in working directory diverge from git HEAD - templates were simplified during production debugging (hardcoded URLs instead of CMS-driven). Needs reconciliation before next release. See NEXT_STEPS.md.
+- None outstanding from the divergent-files debugging session (reconciled in this release).
