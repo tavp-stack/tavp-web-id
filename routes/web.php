@@ -2,17 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Support\Csrf;
-use App\Support\RateLimiter;
-use App\Support\SecurityHeaders;
 use Tavp\Analytics\AnalyticsManager;
 use Tavp\Cms\Admin\AdminModule;
 use Tavp\Cms\Api\ApiModule;
 use Tavp\Cms\Bread\BreadManager;
 use Tavp\Cms\Seo\SitemapController;
-
-// Send security headers on every request
-SecurityHeaders::send();
 
 /**
  * tavp.web.id routes.
@@ -31,55 +25,10 @@ if (config('cms.api.enabled', true)) {
     ApiModule::routes($router);
 }
 
-// --- SEO: sitemap.xml, robots.txt, feed -----------------------------------
+// --- SEO: sitemap.xml ----------------------------------------------------
 $router->get('/sitemap.xml', function () {
     $sitemap = new SitemapController(app()->getService(BreadManager::class));
     return $sitemap();
-});
-
-$router->get('/robots.txt', function () {
-    $adminPrefix = config('cms.admin.route_prefix', 'admin');
-    $siteUrl = env('APP_URL', 'https://tavp.web.id');
-    $lines = [
-        'User-agent: *',
-        'Allow: /',
-        'Disallow: /' . $adminPrefix,
-        'Disallow: /api',
-        '',
-        'Sitemap: ' . $siteUrl . '/sitemap.xml',
-    ];
-    return response(implode("\n", $lines), 200, ['Content-Type' => 'text/plain']);
-});
-
-$router->get('/feed', function () {
-    $bread = app()->getService(BreadManager::class);
-    $posts = $bread->browse('post', ['status' => 'published']);
-    $siteName = config('general.site_name', 'TAVP Stack');
-    $siteUrl = env('APP_URL', 'https://tavp.web.id');
-    
-    $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-    $xml .= '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">' . "\n";
-    $xml .= '<channel>' . "\n";
-    $xml .= '  <title>' . htmlspecialchars($siteName) . ' Blog</title>' . "\n";
-    $xml .= '  <link>' . $siteUrl . '</link>' . "\n";
-    $xml .= '  <description>Latest posts from ' . htmlspecialchars($siteName) . '</description>' . "\n";
-    $xml .= '  <atom:link href="' . $siteUrl . '/feed" rel="self" type="application/rss+xml"/>' . "\n";
-    
-    foreach (array_slice($posts, 0, 20) as $post) {
-        $pubDate = strtotime($post['published_at'] ?? $post['created_at'] ?? 'now') ?: time();
-        $xml .= '  <item>' . "\n";
-        $xml .= '    <title>' . htmlspecialchars($post['title'] ?? '') . '</title>' . "\n";
-        $xml .= '    <link>' . $siteUrl . '/blog/' . htmlspecialchars($post['slug'] ?? '') . '</link>' . "\n";
-        $xml .= '    <description>' . htmlspecialchars($post['excerpt'] ?? '') . '</description>' . "\n";
-        $xml .= '    <pubDate>' . date(DATE_RSS, $pubDate) . '</pubDate>' . "\n";
-        $xml .= '    <guid>' . $siteUrl . '/blog/' . htmlspecialchars($post['slug'] ?? '') . '</guid>' . "\n";
-        $xml .= '  </item>' . "\n";
-    }
-    
-    $xml .= '</channel>' . "\n";
-    $xml .= '</rss>';
-    
-    return response($xml, 200, ['Content-Type' => 'application/rss+xml']);
 });
 
 // --- Analytics Dashboard -------------------------------------------------
@@ -91,13 +40,7 @@ $router->get('/analytics', function () {
 
 // Home — content-driven landing template
 $router->get('/', function () {
-    $bread = app()->getService(BreadManager::class);
-    $home = $bread->readBySlug('home', 'home');
-    if (!$home) {
-        // Fallback: get first home record regardless of slug
-        $records = $bread->browse('home');
-        $home = $records[0] ?? null;
-    }
+    $home = app()->getService(BreadManager::class)->readBySlug('home', 'home');
 
     return view('home', ['content' => $home ?? []]);
 });
@@ -122,7 +65,6 @@ $router->get('/contact', function () {
     $a = random_int(1, 10);
     $b = random_int(1, 10);
     $_SESSION['captcha_answer'] = $a + $b;
-    $_SESSION['captcha_question'] = "What is {$a} + {$b}?";
     $hash = hash('sha256', (string) ($a + $b));
 
     $records = app()->getService(BreadManager::class)->browse('contact');
@@ -139,61 +81,13 @@ $router->post('/contact', function () {
     session_start();
     $contactRecords = app()->getService(BreadManager::class)->browse('contact');
     $contactContent = $contactRecords[0] ?? [];
-
-    // Rate limiting — max 5 submissions per IP per 15 minutes
-    $limiter = new RateLimiter();
-    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-    if (!$limiter->attempt('contact:' . $ip, 5, 900)) {
-        return view('contact', [
-            'content' => $contactContent,
-            'success' => false,
-            'error' => 'Too many submissions. Please try again later.',
-            'captcha_question' => $_SESSION['captcha_question'] ?? '',
-            'captcha_hash' => '',
-        ]);
-    }
-
-    // CSRF verification
-    if (!Csrf::verify()) {
-        return view('contact', [
-            'content' => $contactContent,
-            'success' => false,
-            'error' => 'Invalid form submission. Please refresh and try again.',
-            'captcha_question' => $_SESSION['captcha_question'] ?? '',
-            'captcha_hash' => '',
-        ]);
-    }
-
-    // Sanitize input
-    $name = htmlspecialchars(trim((string) ($_POST['name'] ?? '')), ENT_QUOTES, 'UTF-8');
-    $email = strtolower(trim((string) ($_POST['email'] ?? '')));
-    $subject = htmlspecialchars(trim((string) ($_POST['subject'] ?? '')), ENT_QUOTES, 'UTF-8');
-    $message = htmlspecialchars(trim((string) ($_POST['message'] ?? '')), ENT_QUOTES, 'UTF-8');
-    $captcha = trim((string) ($_POST['captcha'] ?? ''));
-    $captchaHash = trim((string) ($_POST['captcha_hash'] ?? ''));
-    $website = trim((string) ($_POST['website'] ?? ''));
-
-    // Validate required fields
-    if ($name === '' || $email === '' || $message === '') {
-        return view('contact', [
-            'content' => $contactContent,
-            'success' => false,
-            'error' => 'Name, email, and message are required.',
-            'captcha_question' => $_SESSION['captcha_question'] ?? '',
-            'captcha_hash' => $captchaHash,
-        ]);
-    }
-
-    // Validate email
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        return view('contact', [
-            'content' => $contactContent,
-            'success' => false,
-            'error' => 'Please enter a valid email address.',
-            'captcha_question' => $_SESSION['captcha_question'] ?? '',
-            'captcha_hash' => $captchaHash,
-        ]);
-    }
+    $name = $_POST['name'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $subject = $_POST['subject'] ?? '';
+    $message = $_POST['message'] ?? '';
+    $captcha = $_POST['captcha'] ?? '';
+    $captchaHash = $_POST['captcha_hash'] ?? '';
+    $website = $_POST['website'] ?? '';
 
     // Honeypot check
     if ($website !== '') {
@@ -201,12 +95,11 @@ $router->post('/contact', function () {
     }
 
     // Captcha check
-    $expectedHash = hash('sha256', (string) ($_SESSION['captcha_answer'] ?? ''));
-    if ($captchaHash !== $expectedHash || (string) $captcha !== (string) ($_SESSION['captcha_answer'] ?? '')) {
+    $expectedHash = hash('sha256', (string) $_SESSION['captcha_answer'] ?? '');
+    if ($captchaHash !== $expectedHash || (string) $captcha !== (string) $_SESSION['captcha_answer']) {
         $a = random_int(1, 10);
         $b = random_int(1, 10);
         $_SESSION['captcha_answer'] = $a + $b;
-        $_SESSION['captcha_question'] = "What is {$a} + {$b}?";
         $hash = hash('sha256', (string) ($a + $b));
 
         return view('contact', [
@@ -218,49 +111,23 @@ $router->post('/contact', function () {
         ]);
     }
 
-    // Save to database
+    // Save the message to the database (admin inbox)
     try {
-        $db = app('db');
-        $db->execute(
-            'INSERT INTO contact_messages (name, email, subject, message, ip_address, created_at) VALUES (:name, :email, :subject, :message, :ip, NOW())',
-            [
-                'name' => $name,
-                'email' => $email,
-                'subject' => $subject,
-                'message' => $message,
-                'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
-            ]
-        );
-
-        // Send notification email to admin
-        $adminEmail = config('contact.email', '') ?: config('cms.mail.from', 'noreply@tavp.web.id');
-        $siteName = config('general.site_name', 'TAVP');
-        if ($adminEmail) {
-            $mailSubject = "[{$siteName}] New Contact: " . ($subject ?: 'No Subject');
-            $mailBody = "New contact message received:\n\n";
-            $mailBody .= "Name: {$name}\n";
-            $mailBody .= "Email: {$email}\n";
-            $mailBody .= "Subject: {$subject}\n";
-            $mailBody .= "Message:\n{$message}\n\n";
-            $mailBody .= "IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'unknown') . "\n";
-            $mailBody .= "Date: " . date('Y-m-d H:i:s') . "\n\n";
-            $mailBody .= "View in admin: " . (env('APP_URL', 'https://tavp.web.id')) . "/" . config('cms.admin.route_prefix', 'admin') . "\n";
-
-            $headers = "From: " . config('cms.mail.from', 'noreply@tavp.web.id') . "\r\n";
-            $headers .= "Reply-To: {$email}\r\n";
-            $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
-
-            @mail($adminEmail, $mailSubject, $mailBody, $headers);
-        }
+        app('db')->insert('messages', [
+            'name' => $name,
+            'email' => $email,
+            'subject' => $subject,
+            'body' => $message,
+            'status' => 'unread',
+            'created_at' => date('Y-m-d H:i:s'),
+        ]);
     } catch (\Throwable $e) {
-        error_log('Contact form error: ' . $e->getMessage());
+        error_log('[contact] failed to save message: ' . $e->getMessage());
     }
 
-    // Generate new captcha
     $a = random_int(1, 10);
     $b = random_int(1, 10);
     $_SESSION['captcha_answer'] = $a + $b;
-    $_SESSION['captcha_question'] = "What is {$a} + {$b}?";
     $hash = hash('sha256', (string) ($a + $b));
 
     return view('contact', [
@@ -272,152 +139,9 @@ $router->post('/contact', function () {
     ]);
 });
 
-// --- Contact Messages Admin ------------------------------------------------
-$msgPrefix = '/';
-try {
-    $s = app()->getService(\Tavp\Cms\Settings\Settings::class);
-    $p = $s?->get('admin.route_prefix');
-    if ($p) $msgPrefix = '/' . trim($p, '/');
-} catch (\Throwable) {}
-
-$router->get("{$msgPrefix}/messages", function () use ($msgPrefix) {
-    if (session_status() === PHP_SESSION_NONE) session_start();
-    if (empty($_SESSION['cms_admin'])) {
-        header('Location: ' . $msgPrefix . '/login');
-        http_response_code(302);
-        exit;
-    }
-
-    $db = app('db');
-    $messages = $db->fetchAll('SELECT * FROM contact_messages ORDER BY created_at DESC', PDO::FETCH_ASSOC);
-    $unread = 0;
-    foreach ($messages as $m) { if (!($m['is_read'] ?? 0)) $unread++; }
-
-    // Variables for sidebar
-    $adminPrefix = $msgPrefix;
-    $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
-    $__brand = config('cms.admin.brand', 'TAVP');
-    $__auth_email = $_SESSION['cms_admin'] ?? '';
-
-    $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>Messages — TAVP Admin</title>';
-    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
-    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#0d131f","on-background":"#dde2f3","surface":"#0d131f","surface-container-lowest":"#080e1a","surface-container-low":"#161c27","surface-container":"#1a202c","surface-container-high":"#242a36","surface-container-highest":"#2f3542","on-surface":"#dde2f3","on-surface-variant":"#c5c6cd","primary":"#bdc7dc","on-primary":"#273141","primary-container":"#2d3748","secondary":"#e6c446","on-secondary":"#3b2f00","secondary-container":"#ac8e0a","tertiary":"#bcc7dd","on-tertiary-container":"#95a0b5","outline":"#8f9097","outline-variant":"#45474c","error":"#ffb4ab"}}}}</script>';
-    $html .= '<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"/>';
-    $html .= '<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>';
-    $html .= '<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>';
-    $html .= '<style>.material-symbols-outlined{font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;} [x-cloak]{display:none!important} ::-webkit-scrollbar{width:6px} ::-webkit-scrollbar-track{background:#1a202c} ::-webkit-scrollbar-thumb{background:#4a5568;border-radius:3px} ::-webkit-scrollbar-thumb:hover{background:#e6c446} .hard-step-shadow{box-shadow:2px 2px 0 0 #000} .msg-card{transition:all .15s} .msg-card:hover{border-color:#e6c446} .msg-card.active{background:#242a36;border-color:#e6c446}</style>';
-    $html .= '</head><body class="bg-background text-on-background overflow-x-hidden">';
-
-    // Include sidebar
-    ob_start();
-    include dirname(__DIR__) . '/vendor/tavp/cms/resources/admin/_sidebar.php';
-    $html .= ob_get_clean();
-
-    // Main content
-    $html .= '<main class="min-h-screen bg-background transition-all duration-300" x-data="{ sidebarCollapsed: false }" :class="sidebarCollapsed ? \'ml-[68px]\' : \'ml-64\'">';
-    $html .= '<div class="max-w-[1280px] mx-auto px-10 py-8">';
-
-    // Messages header
-    $html .= '<div class="flex justify-between items-center mb-8"><div><h2 class="text-2xl font-bold text-on-surface">Messages</h2><p class="text-sm text-on-tertiary-container mt-1">' . count($messages) . ' contact messages</p></div>';
-    $html .= '<span x-show="unreadCount > 0" class="text-xs px-3 py-1 rounded-full bg-error/20 text-error font-bold" x-text="unreadCount + \' unread\'"></span>';
-    $html .= '</div>';
-
-    if (empty($messages)) {
-        $html .= '<div class="text-center py-24"><span class="material-symbols-outlined text-6xl text-on-tertiary-container/30 mb-4">mail</span><p class="text-on-tertiary-container text-lg">No messages yet.</p></div>';
-    } else {
-        // Build messages JSON for Alpine
-        $msgsJson = json_encode(array_map(function ($m) {
-            return [
-                'id' => (int)$m['id'],
-                'name' => $m['name'],
-                'email' => $m['email'],
-                'subject' => $m['subject'] ?? '',
-                'message' => $m['message'],
-                'ip' => $m['ip_address'] ?? 'unknown',
-                'date' => date('M j, g:ia', strtotime($m['created_at'])),
-                'read' => (bool)($m['is_read'] ?? false),
-            ];
-        }, $messages));
-
-        $html .= '<div x-data="{
-            messages: ' . htmlspecialchars($msgsJson, ENT_QUOTES, 'UTF-8') . ',
-            selected: 0,
-            unreadCount: ' . $unread . ',
-            readTimers: {},
-            selectMessage(i) {
-                this.selected = i;
-                const msg = this.messages[i];
-                if (!msg.read && !this.readTimers[msg.id]) {
-                    this.readTimers[msg.id] = setTimeout(() => {
-                        fetch(\'' . $msgPrefix . '/messages/\' + msg.id + \'/read\', {method:\'POST\'});
-                        msg.read = true;
-                        this.unreadCount = Math.max(0, this.unreadCount - 1);
-                    }, 3000);
-                }
-            }
-        }" class="grid grid-cols-1 lg:grid-cols-12 gap-6">';
-        $html .= '<div class="lg:col-span-4 space-y-1 overflow-y-auto pr-2" style="max-height:calc(100vh - 12rem)">';
-        foreach ($messages as $i => $msg) {
-            $html .= '<div class="msg-card p-4 rounded-lg border cursor-pointer" :class="selected === ' . $i . ' ? \'active border-secondary bg-surface-container-high\' : \'border-outline-variant bg-surface-container\'" @click="selectMessage(' . $i . ')">';
-            $html .= '<div class="flex items-center gap-3 mb-2"><div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0" :class="messages[' . $i . '].read ? \'bg-surface-container-high\' : \'bg-secondary/20\'"><span class="text-sm font-bold" :class="messages[' . $i . '].read ? \'text-on-tertiary-container\' : \'text-secondary\'">' . strtoupper(substr(htmlspecialchars($msg['name']), 0, 1)) . '</span></div>';
-            $html .= '<div class="flex-1 min-w-0"><span class="font-bold text-sm truncate block" :class="messages[' . $i . '].read ? \'text-on-tertiary-container\' : \'text-on-surface\'">' . htmlspecialchars($msg['name']) . '</span>';
-            $html .= '<span class="text-xs text-on-tertiary-container">' . date('M j, g:ia', strtotime($msg['created_at'])) . '</span></div>';
-            $html .= '<span x-show="!messages[' . $i . '].read" class="w-2 h-2 rounded-full bg-secondary shrink-0"></span></div>';
-            $html .= '<p class="text-xs text-on-tertiary-container truncate ml-11">' . htmlspecialchars($msg['subject'] ?: substr($msg['message'], 0, 50)) . '</p></div>';
-        }
-        $html .= '</div>';
-        $html .= '<div class="lg:col-span-8">';
-        $html .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-8">';
-        $html .= '<div class="flex items-start justify-between mb-6"><div class="flex items-center gap-4">';
-        $html .= '<div class="w-12 h-12 rounded-full bg-secondary/20 flex items-center justify-center"><span class="text-lg font-bold text-secondary" x-text="messages[selected]?.name?.charAt(0)?.toUpperCase()"></span></div>';
-        $html .= '<div><h3 class="text-lg font-bold text-on-surface" x-text="messages[selected]?.name"></h3><p class="text-sm text-on-tertiary-container" x-text="messages[selected]?.email"></p></div></div>';
-        $html .= '<span class="text-xs text-on-tertiary-container" x-text="messages[selected]?.date"></span></div>';
-        $html .= '<div x-show="messages[selected]?.subject" class="mb-4"><span class="text-[10px] font-semibold uppercase tracking-wider text-on-tertiary-container">Subject</span><p class="text-on-surface font-semibold mt-1" x-text="messages[selected]?.subject"></p></div>';
-        $html .= '<div class="bg-surface-container-low border border-outline-variant rounded-lg p-6 mb-4"><p class="text-on-surface leading-relaxed whitespace-pre-wrap" x-text="messages[selected]?.message"></p></div>';
-        $html .= '<div class="flex items-center gap-4 text-xs text-on-tertiary-container"><span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">language</span>IP: <span x-text="messages[selected]?.ip || \'unknown\'"></span></span></div>';
-        $html .= '</div></div></div>';
-    }
-
-    $html .= '</div></main></body></html>';
-    return (new \Tavp\Core\Http\Response())->setContent($html);
-});
-
-// Mark message as read
-$router->post("{$msgPrefix}/messages/{id}/read", function (array $params) {
-    if (session_status() === PHP_SESSION_NONE) session_start();
-    if (empty($_SESSION['cms_admin'])) {
-        return (new \Tavp\Core\Http\Response())->setContent(json_encode(['ok' => false]));
-    }
-    try {
-        $db = app('db');
-        $db->execute('UPDATE contact_messages SET is_read = 1 WHERE id = :id', ['id' => (int) $params['id']]);
-        return (new \Tavp\Core\Http\Response())->setContent(json_encode(['ok' => true]));
-    } catch (\Throwable $e) {
-        return (new \Tavp\Core\Http\Response())->setContent(json_encode(['ok' => false, 'error' => $e->getMessage()]));
-    }
-});
-
 // Blog index
 $router->get('/blog', function () {
     $posts = app()->getService(BreadManager::class)->browse('post', ['status' => 'published']);
-
-    // Resolve author names from users table via author_id
-    $db = app('db');
-    $userMap = [];
-    try {
-        $rows = $db->fetchAll('SELECT id, name FROM users', PDO::FETCH_ASSOC);
-        foreach ($rows as $r) {
-            $userMap[(int)$r['id']] = $r['name'];
-        }
-    } catch (\Throwable) {}
-
-    foreach ($posts as &$post) {
-        $aid = (int)($post['author_id'] ?? 0);
-        if ($aid && isset($userMap[$aid])) {
-            $post['author'] = $userMap[$aid];
-        }
-    }
-    unset($post);
 
     return view('blog', ['posts' => $posts]);
 });
@@ -498,222 +222,16 @@ $router->get('/blog/{slug}', function (array $params) {
         return view('404', []);
     }
 
-    // Resolve author name from users table via author_id
-    $db = app('db');
-    $authorId = $post['author_id'] ?? null;
-    try {
-        if ($authorId) {
-            $rows = $db->fetchAll('SELECT name FROM users WHERE id = :id LIMIT 1', PDO::FETCH_ASSOC, ['id' => (int)$authorId]);
-            if (!empty($rows[0]['name'])) $post['author'] = $rows[0]['name'];
-        }
-    } catch (\Throwable) {}
-
     $body = $post['body'] ?? '';
-    // Always convert markdown to HTML (EasyMDE outputs markdown)
-    $post['body'] = \App\Support\Markdown::toHtml($body);
+    // If content already contains HTML tags (from WYSIWYG editor), use as-is.
+    // Only convert Markdown if no HTML tags detected.
+    if (preg_match('/<[a-z][a-z0-9]*[\s>]/i', $body)) {
+        $post['body'] = $body;
+    } else {
+        $post['body'] = \App\Support\Markdown::toHtml($body);
+    }
 
     return view('post', ['content' => $post]);
-});
-
-// --- SEO Admin Routes ---------------------------------------------------
-$seoPrefix = '/';
-try {
-    $s = app()->getService(\Tavp\Cms\Settings\Settings::class);
-    $p = $s?->get('admin.route_prefix');
-    if ($p) $seoPrefix = '/' . trim($p, '/');
-} catch (\Throwable $e) { error_log('SEO PREFIX ERROR: ' . $e->getMessage()); }
-error_log('SEO PREFIX: ' . $seoPrefix);
-
-$router->get("{$seoPrefix}/seo", function () use ($seoPrefix) {
-    if (session_status() === PHP_SESSION_NONE) session_start();
-    if (empty($_SESSION['cms_admin'])) {
-        header('Location: ' . $seoPrefix . '/login');
-        http_response_code(302);
-        exit;
-    }
-
-    $db = app('db');
-    $pageCount = $db->fetchAll("SELECT COUNT(*) as cnt FROM contents WHERE status='published'", PDO::FETCH_ASSOC);
-    $postCount = $db->fetchAll("SELECT COUNT(*) as cnt FROM contents WHERE type='post' AND status='published'", PDO::FETCH_ASSOC);
-    $contactCount = $db->fetchAll("SELECT COUNT(*) as cnt FROM contact_messages", PDO::FETCH_ASSOC);
-
-    // Variables for sidebar
-    $adminPrefix = $seoPrefix;
-    $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
-    $__brand = config('cms.admin.brand', 'TAVP');
-    $__auth_email = $_SESSION['cms_admin'] ?? '';
-
-    $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>SEO Dashboard — TAVP Admin</title>';
-    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
-    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#0d131f","on-background":"#dde2f3","surface":"#0d131f","surface-container-lowest":"#080e1a","surface-container-low":"#161c27","surface-container":"#1a202c","surface-container-high":"#242a36","surface-container-highest":"#2f3542","on-surface":"#dde2f3","on-surface-variant":"#c5c6cd","primary":"#bdc7dc","on-primary":"#273141","primary-container":"#2d3748","secondary":"#e6c446","on-secondary":"#3b2f00","secondary-container":"#ac8e0a","tertiary":"#bcc7dd","on-tertiary-container":"#95a0b5","outline":"#8f9097","outline-variant":"#45474c","error":"#ffb4ab"}}}}</script>';
-    $html .= '<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"/>';
-    $html .= '<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>';
-    $html .= '<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>';
-    $html .= '<style>.material-symbols-outlined{font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;} ::-webkit-scrollbar{width:6px} ::-webkit-scrollbar-track{background:#1a202c} ::-webkit-scrollbar-thumb{background:#4a5568;border-radius:3px} ::-webkit-scrollbar-thumb:hover{background:#e6c446} .hard-step-shadow{box-shadow:2px 2px 0 0 #000} .seo-card{transition:all .15s} .seo-card:hover{border-color:#e6c446;transform:translateY(-2px)}</style>';
-    $html .= '</head><body class="bg-background text-on-background overflow-x-hidden">';
-
-    // Include sidebar
-    ob_start();
-    include dirname(__DIR__) . '/vendor/tavp/cms/resources/admin/_sidebar.php';
-    $html .= ob_get_clean();
-
-    // Main content
-    $html .= '<main class="min-h-screen bg-background transition-all duration-300" x-data="{ sidebarCollapsed: false }" :class="sidebarCollapsed ? \'ml-[68px]\' : \'ml-64\'">';
-    $html .= '<div class="max-w-[1280px] mx-auto px-10 py-8">';
-
-    $html .= '<div class="mb-8"><h2 class="text-2xl font-bold text-on-surface">SEO Dashboard</h2><p class="text-sm text-on-tertiary-container mt-1">Search engine optimization overview</p></div>';
-
-    $html .= '<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">';
-    $html .= '<div class="seo-card bg-surface-container border border-outline-variant rounded-xl p-6"><div class="flex items-center gap-3 mb-3"><span class="material-symbols-outlined text-secondary text-2xl">description</span><p class="text-on-tertiary-container text-sm">Pages</p></div><p class="text-3xl font-bold text-secondary">' . ($pageCount[0]['cnt'] ?? 0) . '</p></div>';
-    $html .= '<div class="seo-card bg-surface-container border border-outline-variant rounded-xl p-6"><div class="flex items-center gap-3 mb-3"><span class="material-symbols-outlined text-secondary text-2xl">article</span><p class="text-on-tertiary-container text-sm">Posts</p></div><p class="text-3xl font-bold text-secondary">' . ($postCount[0]['cnt'] ?? 0) . '</p></div>';
-    $html .= '<div class="seo-card bg-surface-container border border-outline-variant rounded-xl p-6"><div class="flex items-center gap-3 mb-3"><span class="material-symbols-outlined text-secondary text-2xl">mail</span><p class="text-on-tertiary-container text-sm">Messages</p></div><p class="text-3xl font-bold text-secondary">' . ($contactCount[0]['cnt'] ?? 0) . '</p></div>';
-    $html .= '<div class="seo-card bg-surface-container border border-outline-variant rounded-xl p-6"><div class="flex items-center gap-3 mb-3"><span class="material-symbols-outlined text-secondary text-2xl">folder_open</span><p class="text-on-tertiary-container text-sm">Sitemap</p></div><a href="/sitemap.xml" target="_blank" class="text-secondary hover:underline text-sm">View →</a></div>';
-    $html .= '</div>';
-
-    $html .= '<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">';
-    $html .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6"><h3 class="text-lg font-bold mb-4">Quick Links</h3><div class="space-y-3">';
-    $html .= '<a href="' . $seoPrefix . '/seo/settings" class="seo-card flex items-center gap-4 p-4 bg-surface-container-low border border-outline-variant rounded-lg"><span class="material-symbols-outlined text-secondary text-xl">settings</span><div><p class="font-bold text-on-surface text-sm">SEO Settings</p><p class="text-xs text-on-tertiary-container">Meta tags, OG, Twitter</p></div></a>';
-    $html .= '<a href="' . $seoPrefix . '/seo/redirects" class="seo-card flex items-center gap-4 p-4 bg-surface-container-low border border-outline-variant rounded-lg"><span class="material-symbols-outlined text-secondary text-xl">forward</span><div><p class="font-bold text-on-surface text-sm">Redirects</p><p class="text-xs text-on-tertiary-container">301/302 redirects</p></div></a>';
-    $html .= '<a href="' . $seoPrefix . '/seo/analyzer" class="seo-card flex items-center gap-4 p-4 bg-surface-container-low border border-outline-variant rounded-lg"><span class="material-symbols-outlined text-secondary text-xl">analytics</span><div><p class="font-bold text-on-surface text-sm">Analyzer</p><p class="text-xs text-on-tertiary-container">SEO scores</p></div></a>';
-    $html .= '</div></div>';
-
-    $html .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6"><h3 class="text-lg font-bold mb-4">External Tools</h3><div class="space-y-3">';
-    $html .= '<a href="/sitemap.xml" target="_blank" rel="noopener" class="seo-card flex items-center gap-4 p-4 bg-surface-container-low border border-outline-variant rounded-lg"><span class="material-symbols-outlined text-secondary text-xl">folder_open</span><div><p class="font-bold text-on-surface text-sm">XML Sitemap</p><p class="text-xs text-on-tertiary-container">For search engines</p></div></a>';
-    $html .= '<a href="/robots.txt" target="_blank" rel="noopener" class="seo-card flex items-center gap-4 p-4 bg-surface-container-low border border-outline-variant rounded-lg"><span class="material-symbols-outlined text-secondary text-xl">smart_toy</span><div><p class="font-bold text-on-surface text-sm">Robots.txt</p><p class="text-xs text-on-tertiary-container">Crawler instructions</p></div></a>';
-    $html .= '<a href="/feed" target="_blank" rel="noopener" class="seo-card flex items-center gap-4 p-4 bg-surface-container-low border border-outline-variant rounded-lg"><span class="material-symbols-outlined text-secondary text-xl">rss_feed</span><div><p class="font-bold text-on-surface text-sm">RSS Feed</p><p class="text-xs text-on-tertiary-container">Blog feed</p></div></a>';
-    $html .= '</div></div></div>';
-
-    $html .= '</div></main></body></html>';
-    return (new \Tavp\Core\Http\Response())->setContent($html);
-});
-
-// SEO sub-routes (settings, redirects, analyzer, ping)
-$router->get("{$seoPrefix}/seo/test123", function () {
-    return (new \Tavp\Core\Http\Response())->setContent('SEO Test123 Works!');
-});
-
-// Helper: render SEO sub-page with sidebar
-$renderSeoPage = function (string $title, string $innerHtml) use ($seoPrefix) {
-    $adminPrefix = $seoPrefix;
-    $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
-    $__brand = config('cms.admin.brand', 'TAVP');
-    $__auth_email = $_SESSION['cms_admin'] ?? '';
-
-    $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>' . htmlspecialchars($title) . ' — TAVP Admin</title>';
-    $html .= '<script src="https://cdn.tailwindcss.com"></script>';
-    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#0d131f","on-background":"#dde2f3","surface":"#0d131f","surface-container-lowest":"#080e1a","surface-container-low":"#161c27","surface-container":"#1a202c","surface-container-high":"#242a36","surface-container-highest":"#2f3542","on-surface":"#dde2f3","on-surface-variant":"#c5c6cd","primary":"#bdc7dc","on-primary":"#273141","primary-container":"#2d3748","secondary":"#e6c446","on-secondary":"#3b2f00","secondary-container":"#ac8e0a","tertiary":"#bcc7dd","on-tertiary-container":"#95a0b5","outline":"#8f9097","outline-variant":"#45474c","error":"#ffb4ab"}}}}</script>';
-    $html .= '<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"/>';
-    $html .= '<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>';
-    $html .= '<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>';
-    $html .= '<style>.material-symbols-outlined{font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24;} [x-cloak]{display:none!important} ::-webkit-scrollbar{width:6px} ::-webkit-scrollbar-track{background:#1a202c} ::-webkit-scrollbar-thumb{background:#4a5568;border-radius:3px} ::-webkit-scrollbar-thumb:hover{background:#e6c446} .hard-step-shadow{box-shadow:2px 2px 0 0 #000}</style>';
-    $html .= '</head><body class="bg-background text-on-background overflow-x-hidden">';
-
-    ob_start();
-    include dirname(__DIR__) . '/vendor/tavp/cms/resources/admin/_sidebar.php';
-    $html .= ob_get_clean();
-
-    $html .= '<main class="min-h-screen bg-background transition-all duration-300" x-data="{ sidebarCollapsed: false }" :class="sidebarCollapsed ? \'ml-[68px]\' : \'ml-64\'">';
-    $html .= '<div class="max-w-[1280px] mx-auto px-10 py-8">';
-    $html .= $innerHtml;
-    $html .= '</div></main></body></html>';
-    return (new \Tavp\Core\Http\Response())->setContent($html);
-};
-
-$router->get("{$seoPrefix}/seo/settings", function () use ($seoPrefix, $renderSeoPage) {
-    if (session_status() === PHP_SESSION_NONE) session_start();
-    if (empty($_SESSION['cms_admin'])) {
-        header('Location: ' . $seoPrefix . '/login'); http_response_code(302); exit;
-    }
-
-    $inner = '<div class="mb-8"><a href="' . $seoPrefix . '/seo" class="text-on-tertiary-container hover:text-secondary transition-colors flex items-center gap-2 text-sm mb-4"><span class="material-symbols-outlined text-sm">arrow_back</span> Back to SEO</a>';
-    $inner .= '<h2 class="text-2xl font-bold text-on-surface">SEO Settings</h2><p class="text-sm text-on-tertiary-container mt-1">Configure meta tags, Open Graph, Twitter Cards</p></div>';
-    $inner .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-6">';
-    $inner .= '<p class="text-on-tertiary-container">SEO settings are configured via <code class="bg-surface-container-high px-2 py-0.5 rounded text-secondary">config/seo.php</code>. Full admin UI coming soon.</p>';
-    $inner .= '</div>';
-
-    return $renderSeoPage('SEO Settings', $inner);
-});
-
-$router->get("{$seoPrefix}/seo/redirects", function () use ($seoPrefix, $renderSeoPage) {
-    if (session_status() === PHP_SESSION_NONE) session_start();
-    if (empty($_SESSION['cms_admin'])) {
-        header('Location: ' . $seoPrefix . '/login'); http_response_code(302); exit;
-    }
-
-    $db = app('db');
-    $redirects = $db->fetchAll('SELECT * FROM redirects ORDER BY created_at DESC', PDO::FETCH_ASSOC);
-
-    $inner = '<div class="mb-8"><a href="' . $seoPrefix . '/seo" class="text-on-tertiary-container hover:text-secondary transition-colors flex items-center gap-2 text-sm mb-4"><span class="material-symbols-outlined text-sm">arrow_back</span> Back to SEO</a>';
-    $inner .= '<h2 class="text-2xl font-bold text-on-surface">Redirects</h2><p class="text-sm text-on-tertiary-container mt-1">' . count($redirects) . ' redirects configured</p></div>';
-
-    if (empty($redirects)) {
-        $inner .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-12 text-center"><span class="material-symbols-outlined text-4xl text-on-tertiary-container/30 mb-4">forward</span><p class="text-on-tertiary-container">No redirects configured yet.</p></div>';
-    } else {
-        $inner .= '<div class="bg-surface-container border border-outline-variant rounded-xl overflow-hidden">';
-        $inner .= '<table class="w-full"><thead class="bg-surface-container-high"><tr>';
-        $inner .= '<th class="px-4 py-3 text-left text-xs font-semibold text-on-tertiary-container uppercase tracking-wider">From</th>';
-        $inner .= '<th class="px-4 py-3 text-left text-xs font-semibold text-on-tertiary-container uppercase tracking-wider">To</th>';
-        $inner .= '<th class="px-4 py-3 text-left text-xs font-semibold text-on-tertiary-container uppercase tracking-wider">Status</th>';
-        $inner .= '<th class="px-4 py-3 text-left text-xs font-semibold text-on-tertiary-container uppercase tracking-wider">Hits</th>';
-        $inner .= '</tr></thead><tbody>';
-        foreach ($redirects as $r) {
-            $inner .= '<tr class="border-t border-outline-variant hover:bg-surface-container-high/50">';
-            $inner .= '<td class="px-4 py-3 text-sm text-secondary">' . htmlspecialchars($r['from_url'] ?? '') . '</td>';
-            $inner .= '<td class="px-4 py-3 text-sm text-on-surface">' . htmlspecialchars($r['to_url'] ?? '') . '</td>';
-            $inner .= '<td class="px-4 py-3 text-sm text-on-tertiary-container">' . ($r['status_code'] ?? 301) . '</td>';
-            $inner .= '<td class="px-4 py-3 text-sm text-on-tertiary-container">' . ($r['hits'] ?? 0) . '</td>';
-            $inner .= '</tr>';
-        }
-        $inner .= '</tbody></table></div>';
-    }
-
-    return $renderSeoPage('Redirects', $inner);
-});
-
-$router->get("{$seoPrefix}/seo/analyzer", function () use ($seoPrefix, $renderSeoPage) {
-    if (session_status() === PHP_SESSION_NONE) session_start();
-    if (empty($_SESSION['cms_admin'])) {
-        header('Location: ' . $seoPrefix . '/login'); http_response_code(302); exit;
-    }
-
-    $inner = '<div class="mb-8"><a href="' . $seoPrefix . '/seo" class="text-on-tertiary-container hover:text-secondary transition-colors flex items-center gap-2 text-sm mb-4"><span class="material-symbols-outlined text-sm">arrow_back</span> Back to SEO</a>';
-    $inner .= '<h2 class="text-2xl font-bold text-on-surface">SEO Analyzer</h2><p class="text-sm text-on-tertiary-container mt-1">Check your pages for optimization opportunities</p></div>';
-    $inner .= '<div class="bg-surface-container border border-outline-variant rounded-xl p-12 text-center"><span class="material-symbols-outlined text-4xl text-on-tertiary-container/30 mb-4">analytics</span>';
-    $inner .= '<p class="text-on-tertiary-container">SEO Analyzer coming soon. Will check content for keyword density, meta tags, readability, and more.</p></div>';
-
-    return $renderSeoPage('SEO Analyzer', $inner);
-});
-
-$router->post("{$seoPrefix}/seo/ping", function () use ($seoPrefix) {
-    if (session_status() === PHP_SESSION_NONE) session_start();
-    if (empty($_SESSION['cms_admin'])) {
-        return (new \Tavp\Core\Http\Response())->setContent('Unauthorized');
-    }
-    $siteUrl = env('APP_URL', 'https://tavp.web.id');
-    $sitemapUrl = $siteUrl . '/sitemap.xml';
-    $results = [];
-    
-    // Ping Google
-    $google = @file_get_contents("https://www.google.com/ping?sitemap=" . urlencode($sitemapUrl));
-    $results[] = 'Google: ' . ($google !== false ? 'OK' : 'Failed');
-    
-    // Ping Bing
-    $bing = @file_get_contents("https://www.bing.com/indexnow?url=" . urlencode($siteUrl) . "&key=none");
-    $results[] = 'Bing: ' . ($bing !== false ? 'OK' : 'Failed');
-    
-    $html = '<!DOCTYPE html><html class="dark" lang="id"><head><meta charset="utf-8"><title>Ping Result</title>';
-    $html .= '<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">';
-    $html .= '<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"bg":"#0d131f","surface":"#1a202c","high":"#242a36","text":"#dde2f3","sec":"#e6c446","out":"#45474c","dim":"#95a0b5"}}}}</script>';
-    $html .= '</head><body class="bg-bg text-text"><div class="max-w-3xl mx-auto px-6 py-8">';
-    $html .= '<a href="' . $seoPrefix . '/seo" class="text-dim hover:text-sec mb-4 inline-block">← Back to SEO</a>';
-    $html .= '<h1 class="text-2xl font-bold text-sec mb-6">Sitemap Ping Result</h1>';
-    $html .= '<div class="space-y-2">';
-    foreach ($results as $r) {
-        $html .= '<p class="text-dim">' . $r . '</p>';
-    }
-    $html .= '</div>';
-    $html .= '</div></body></html>';
-    return (new \Tavp\Core\Http\Response())->setContent($html);
 });
 
 // Page catch-all (keep last)
