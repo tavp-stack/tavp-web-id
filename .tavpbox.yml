@@ -1,6 +1,5 @@
 name: tavp-web-id
 recipe: tavp
-image: ghcr.io/tavp-stack/tavpbox-php:latest
 webroot: .
 services:
   mariadb:
@@ -17,18 +16,22 @@ env:
   DB_DATABASE: tavp
   DB_USERNAME: tavp
   DB_PASSWORD: tavp
-events:
-  post-start:
-    - bash /var/www/html/bin/setup.sh
+  TZ: Asia/Jakarta
 tooling:
-  setup:
-    cmd: bash /var/www/html/bin/setup.sh
-    description: Full setup (DB + nginx + symlinks + seed)
   tavp:
     cmd: php /var/www/html/vendor/bin/tavp
   migrate:
     cmd: php /var/www/html/vendor/bin/tavp migrate
   seed:
     cmd: mysql --skip-ssl -h localhost -u app -papp app < /var/www/html/seed_data.sql
+
+events:                    # ← TAMBAH DI SINI
+  post-start:
+    - mkdir -p /var/www/html/storage/{logs,cache,compiled/volt}
+    - chmod -R 777 /var/www/html/storage
+    - sed -i 's|root /var/www/html;|root /var/www/html/public;|' /etc/nginx/sites-available/default
+    - nginx -s reload
+    - mariadb -u root -e "CREATE USER IF NOT EXISTS 'tavp'@'localhost' IDENTIFIED BY 'tavp'; GRANT ALL ON db.* TO 'tavp'@'localhost'; FLUSH PRIVILEGES;"
+
 ram: 512MB
 cpu: 1
