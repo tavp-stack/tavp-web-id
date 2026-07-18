@@ -28,8 +28,22 @@ tooling:
 
 events:
   post-start:
-    - mkdir -p /var/www/html/storage/{logs,cache,compiled/volt}
+    - mkdir -p /var/www/html/storage/logs /var/www/html/storage/cache /var/www/html/storage/compiled/volt
     - chmod -R 777 /var/www/html/storage
+    - cp /var/www/html/index.php /var/www/html/public/index.php 2>/dev/null || true
+    - cp /var/www/html/.htaccess /var/www/html/public/.htaccess 2>/dev/null || true
+    - cp -rn /var/www/html/assets /var/www/html/public/assets 2>/dev/null || true
+    - cp -rn /var/www/html/fonts /var/www/html/public/fonts 2>/dev/null || true
+    - cp -rn /var/www/html/js /var/www/html/public/js 2>/dev/null || true
+    - cp -n /var/www/html/favicon.png /var/www/html/public/favicon.png 2>/dev/null || true
+    - ln -sf /var/www/html/vendor /var/www/html/public/vendor 2>/dev/null || true
+    - ln -sf /var/www/html/bootstrap /var/www/html/public/bootstrap 2>/dev/null || true
+    - ln -sf /var/www/html/app /var/www/html/public/app 2>/dev/null || true
+    - ln -sf /var/www/html/config /var/www/html/public/config 2>/dev/null || true
+    - ln -sf /var/www/html/routes /var/www/html/public/routes 2>/dev/null || true
+    - ln -sf /var/www/html/storage /var/www/html/public/storage 2>/dev/null || true
+    - ln -sf /var/www/html/themes /var/www/html/public/themes 2>/dev/null || true
+    - ln -sf /var/www/html/content /var/www/html/public/content 2>/dev/null || true
     - sed -i 's|root /var/www/html;|root /var/www/html/public;|' /etc/nginx/sites-available/default
     - nginx -s reload
     - mariadb -u root -e "CREATE USER IF NOT EXISTS 'tavp'@'localhost' IDENTIFIED BY 'tavp'; GRANT ALL ON db.* TO 'tavp'@'localhost'; FLUSH PRIVILEGES;"
