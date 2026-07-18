@@ -5,8 +5,19 @@ declare(strict_types=1);
 // Public entry point for tavp.web.id.
 // Every web request is routed through this file.
 
-require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../bootstrap/app.php';
+// Resolve vendor/autoload.php — works whether index.php is in a public/
+// subdirectory (local dev) or at the project root (TavpBox container).
+$autoload = __DIR__ . '/../vendor/autoload.php';
+if (!file_exists($autoload)) {
+    $autoload = __DIR__ . '/vendor/autoload.php';
+}
+require_once $autoload;
+
+$bootstrap = __DIR__ . '/../bootstrap/app.php';
+if (!file_exists($bootstrap)) {
+    $bootstrap = __DIR__ . '/bootstrap/app.php';
+}
+require_once $bootstrap;
 
 use App\AppServiceProvider;
 use Tavp\Cms\CmsServiceProvider;
@@ -35,7 +46,11 @@ $app->bind('Tavp\Cms\Bread\BreadManager', function () use ($app) {
 });
 
 // 3. TaxonomyManager
-require_once __DIR__ . '/../vendor/tavp/cms/src/Taxonomy/DatabaseTaxonomyFactory.php';
+$taxonomyFactory = __DIR__ . '/../vendor/tavp/cms/src/Taxonomy/DatabaseTaxonomyFactory.php';
+if (!file_exists($taxonomyFactory)) {
+    $taxonomyFactory = __DIR__ . '/vendor/tavp/cms/src/Taxonomy/DatabaseTaxonomyFactory.php';
+}
+require_once $taxonomyFactory;
 $app->bind('Tavp\Cms\Taxonomy\TaxonomyManager', function () use ($app) {
     return \Tavp\Cms\Taxonomy\buildDatabaseTaxonomy($app->getService('db'));
 });
