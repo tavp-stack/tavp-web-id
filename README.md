@@ -69,6 +69,16 @@ DEPLOY_PATH=/home/user/web/tavp.web.id
 lando ssh -c "php bin/tavp deploy"
 ```
 
+## Status Terkini
+
+- **Versi:** `v1.1.0` (2026-07-18)
+- **Status:** Production live di `tavp.web.id` (HestiaCP VPS). Admin prefix: `admin`.
+- **Fitur krusial:**
+  - CMS-driven frontend (Phalcon + Volt + Tailwind + Alpine.js)
+  - Admin panel: OTP login via e-mail, Messages inbox (contact-form submissions), SEO management (dashboard/settings/redirects/analyzer/ping)
+  - Kinetic Developer Logic design system (dark-mode, high-contrast accents)
+- **Known issues:** None outstanding.
+
 ## License
 
 MIT
