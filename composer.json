@@ -4,9 +4,13 @@
     "type": "project",
     "license": "MIT",
     "repositories": [
-        { "type": "path", "url": "../tavp-stack/tavp-cms", "options": { "symlink": false } },
-        { "type": "path", "url": "../tavp-stack/tavp-cli", "options": { "symlink": false } },
-        { "type": "path", "url": "../tavp-stack/tavp-analytics", "options": { "symlink": false } }
+        { "type": "vcs", "url": "https://git.glotama.com/tavp-stack/tavp-core.git" },
+        { "type": "vcs", "url": "https://git.glotama.com/tavp-stack/tavp-cms.git" },
+        { "type": "vcs", "url": "https://git.glotama.com/tavp-stack/tavpid.git" },
+        { "type": "vcs", "url": "https://git.glotama.com/tavp-stack/tavphub.git" },
+        { "type": "vcs", "url": "https://git.glotama.com/tavp-stack/tavpblocks.git" },
+        { "type": "vcs", "url": "https://git.glotama.com/tavp-stack/tavp-analytics.git" },
+        { "type": "vcs", "url": "https://git.glotama.com/tavp-stack/tavp-cli.git" }
     ],
     "require": {
         "php": ">=8.3",
