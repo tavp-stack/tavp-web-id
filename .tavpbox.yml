@@ -19,7 +19,9 @@ env:
   DB_USERNAME: tavp
   DB_PASSWORD: tavp
   TZ: Asia/Jakarta
-  CAPTCHA_TYPE: puzzle
+  CAPTCHA_TYPE: slider
+  SESSION_SECURE_COOKIE: "false"
+  SESSION_DRIVER: redis
 tooling:
   tavp:
     cmd: php /var/www/html/vendor/bin/tavp
@@ -30,6 +32,9 @@ tooling:
 
 events:
   post-start:
+    - pecl install redis && echo "extension=redis.so" > /usr/local/etc/php/conf.d/redis.ini 2>/dev/null || true
+    - echo "session.save_handler = redis" > /usr/local/etc/php/conf.d/session.ini
+    - echo "session.save_path = tcp://127.0.0.1:6379" >> /usr/local/etc/php/conf.d/session.ini
     - rm -f /var/www/html/storage
     - mkdir -p /var/www/html/storage/compiled/volt /var/www/html/storage/logs /var/www/html/storage/cache /var/www/html/storage/framework/{cache,sessions,views}
     - chmod -R 777 /var/www/html/storage
