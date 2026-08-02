@@ -1,34 +1,54 @@
 {
-    "name": "tavp/web-id",
-    "description": "tavp.web.id — the official TAVP website, built on TAVP CMS (dogfooding).",
-    "type": "project",
-    "license": "MIT",
-    "repositories": [
-        { "type": "path", "url": "../tavp-stack/tavp-cms", "options": { "symlink": false } },
-        { "type": "path", "url": "../tavp-stack/tavp-cli", "options": { "symlink": false } },
-        { "type": "path", "url": "../tavp-stack/tavp-analytics", "options": { "symlink": false } }
-    ],
-    "require": {
-        "php": ">=8.3",
-        "tavp/core": "dev-main",
-        "tavp/cms": "dev-main",
-        "tavp/analytics": "dev-main",
-        "tavp/tavpid": "dev-main",
-        "tavp/tavphub": "dev-main",
-        "league/commonmark": "^2.8",
-        "tavp/tavpblocks": "dev-main"
-    },
-    "require-dev": {
-        "tavp/cli": "@dev"
-    },
-    "autoload": {
-        "psr-4": {
-            "App\\": "app/"
-        }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "config": {
-        "allow-plugins": {}
-    }
+    "name":  "tavp/web-id",
+    "description":  "tavp.web.id — the official TAVP website, built on TAVP CMS (dogfooding).",
+    "type":  "project",
+    "license":  "MIT",
+    "repositories":  [
+                         {
+                             "type":  "path",
+                             "url":  "../tavp-stack/tavp-cms",
+                             "options":  {
+                                             "symlink":  false
+                                         }
+                         },
+                         {
+                             "type":  "path",
+                             "url":  "../tavp-stack/tavp-cli",
+                             "options":  {
+                                             "symlink":  false
+                                         }
+                         },
+                         {
+                             "type":  "path",
+                             "url":  "../tavp-stack/tavp-analytics",
+                             "options":  {
+                                             "symlink":  false
+                                         }
+                         }
+                     ],
+    "require":  {
+                    "php":  "\u003e=8.3",
+                    "tavp/core":  "dev-main",
+                    "tavp/cms":  "^0.5",
+                    "tavp/analytics":  "dev-main",
+                    "tavp/tavpid":  "dev-main",
+                    "tavp/tavphub":  "dev-main",
+                    "league/commonmark":  "^2.8",
+                    "tavp/tavpblocks":  "dev-main"
+                },
+    "require-dev":  {
+                        "tavp/cli":  "@dev"
+                    },
+    "autoload":  {
+                     "psr-4":  {
+                                   "App\\":  "app/"
+                               }
+                 },
+    "minimum-stability":  "dev",
+    "prefer-stable":  true,
+    "config":  {
+                   "allow-plugins":  {
+
+                                     }
+               }
 }
