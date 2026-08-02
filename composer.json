@@ -14,13 +14,13 @@
     ],
     "require": {
         "php": ">=8.3",
-        "tavp/core": "^1.1",
-        "tavp/cms": "@dev",
-        "tavp/analytics": "@dev",
-        "tavp/tavpid": "^1.0",
-        "tavp/tavphub": "^1.1",
+        "tavp/core": "^1.1.5",
+        "tavp/cms": "^0.4",
+        "tavp/analytics": "^1.0.1",
+        "tavp/tavpid": "^1.0.1",
+        "tavp/tavphub": "^1.1.1",
         "league/commonmark": "^2.8",
-        "tavp/tavpblocks": "1.0"
+        "tavp/tavpblocks": "^1.0.1"
     },
     "require-dev": {
         "tavp/cli": "@dev"
