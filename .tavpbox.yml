@@ -1,5 +1,6 @@
 name: tavp-web-id
 recipe: tavp
+webroot: public
 services:
   mariadb:
     enabled: true
@@ -18,6 +19,7 @@ env:
   DB_USERNAME: tavp
   DB_PASSWORD: tavp
   TZ: Asia/Jakarta
+  CAPTCHA_TYPE: puzzle
 tooling:
   tavp:
     cmd: php /var/www/html/vendor/bin/tavp
@@ -28,8 +30,10 @@ tooling:
 
 events:
   post-start:
-    - mkdir -p /var/www/html/storage/logs /var/www/html/storage/cache /var/www/html/storage/compiled/volt
+    - rm -f /var/www/html/storage
+    - mkdir -p /var/www/html/storage/compiled/volt /var/www/html/storage/logs /var/www/html/storage/cache /var/www/html/storage/framework/{cache,sessions,views}
     - chmod -R 777 /var/www/html/storage
+    - composer dump-autoload --working-dir=/var/www/html 2>/dev/null || true
     - cp /var/www/html/index.php /var/www/html/public/index.php 2>/dev/null || true
     - cp /var/www/html/.htaccess /var/www/html/public/.htaccess 2>/dev/null || true
     - cp -rn /var/www/html/assets /var/www/html/public/assets 2>/dev/null || true
