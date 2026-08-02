@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'type' => env('CAPTCHA_TYPE', 'slider'),
+    'type' => env('CAPTCHA_TYPE', 'math'),
 ];
