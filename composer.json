@@ -4,23 +4,19 @@
     "type": "project",
     "license": "MIT",
     "repositories": [
-        { "type": "vcs", "url": "https://git.glotama.com/tavp-stack/tavp-core.git" },
-        { "type": "vcs", "url": "https://git.glotama.com/tavp-stack/tavp-cms.git" },
-        { "type": "vcs", "url": "https://git.glotama.com/tavp-stack/tavpid.git" },
-        { "type": "vcs", "url": "https://git.glotama.com/tavp-stack/tavphub.git" },
-        { "type": "vcs", "url": "https://git.glotama.com/tavp-stack/tavpblocks.git" },
-        { "type": "vcs", "url": "https://git.glotama.com/tavp-stack/tavp-analytics.git" },
-        { "type": "vcs", "url": "https://git.glotama.com/tavp-stack/tavp-cli.git" }
+        { "type": "path", "url": "../tavp-stack/tavp-cms", "options": { "symlink": false } },
+        { "type": "path", "url": "../tavp-stack/tavp-cli", "options": { "symlink": false } },
+        { "type": "path", "url": "../tavp-stack/tavp-analytics", "options": { "symlink": false } }
     ],
     "require": {
         "php": ">=8.3",
-        "tavp/core": "^1.1.5",
-        "tavp/cms": "^0.4",
-        "tavp/analytics": "^1.0.1",
-        "tavp/tavpid": "^1.0.1",
-        "tavp/tavphub": "^1.1.1",
+        "tavp/core": "dev-main",
+        "tavp/cms": "dev-main",
+        "tavp/analytics": "dev-main",
+        "tavp/tavpid": "dev-main",
+        "tavp/tavphub": "dev-main",
         "league/commonmark": "^2.8",
-        "tavp/tavpblocks": "^1.0.1"
+        "tavp/tavpblocks": "dev-main"
     },
     "require-dev": {
         "tavp/cli": "@dev"
