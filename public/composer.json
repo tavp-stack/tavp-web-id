@@ -3,6 +3,15 @@
     "description": "tavp.web.id — the official TAVP website, built on TAVP CMS (dogfooding).",
     "type": "project",
     "license": "MIT",
+    "repositories": [
+        { "type": "vcs", "url": "https://git.glotama.com/tavp-stack/tavp-core.git" },
+        { "type": "vcs", "url": "https://git.glotama.com/tavp-stack/tavp-cms.git" },
+        { "type": "vcs", "url": "https://git.glotama.com/tavp-stack/tavpid.git" },
+        { "type": "vcs", "url": "https://git.glotama.com/tavp-stack/tavphub.git" },
+        { "type": "vcs", "url": "https://git.glotama.com/tavp-stack/tavpblocks.git" },
+        { "type": "vcs", "url": "https://git.glotama.com/tavp-stack/tavp-analytics.git" },
+        { "type": "vcs", "url": "https://git.glotama.com/tavp-stack/tavp-cli.git" }
+    ],
     "require": {
         "php": ">=8.3",
         "tavp/core": "^0.1",
