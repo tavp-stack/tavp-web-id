@@ -28,6 +28,10 @@ pma/
 run_migrations.php
 _temp_content.txt
 backup_*.sql
+seed_data.sql
+*.rdb
+NUL
+.lando*.bak
 
 # Public deployment artifacts (copies of source in public dir)
 /public/app
@@ -42,6 +46,3 @@ backup_*.sql
 # Design source (mockups/exports) — kept local, not shipped in the repo.
 /docs/*/
 docs/*.zip
-
-# AI context (contains sensitive tokens)
-.opencode/
