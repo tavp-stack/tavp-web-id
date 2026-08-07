@@ -46,3 +46,7 @@ NUL
 # Design source (mockups/exports) — kept local, not shipped in the repo.
 /docs/*/
 docs/*.zip
+
+# AI agent state (never committed)
+.opencode/
+
