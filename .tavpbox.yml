@@ -16,7 +16,6 @@ env:
   DB_DATABASE: tavp
   DB_USERNAME: tavp
   DB_PASSWORD: tavp
-  CAPTCHA_TYPE: math
 tooling:
   tavp:
     cmd: php /var/www/html/vendor/bin/tavp

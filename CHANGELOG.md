@@ -4,20 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [v1.1.0] - 2026-07-18
-
-### Added
-- Admin Messages inbox: contact-form messages with 2-column layout (list + preview), unread/read/archive/delete, filter tabs, `messages` table migration. Contact form now persists submissions to DB. Refs #4.
-- Admin SEO management: registered missing `/admin/seo*` routes (dashboard/settings/redirects/analyzer/ping) and redesigned all SEO templates to the Kinetic Developer Logic design system. Refs #5.
+## [Unreleased]
 
 ### Fixed
-- Restore production `app.volt` with full features (OG tags, critical CSS, self-hosted assets, Google Analytics, CMS-driven nav/footer).
-- Graceful fallback for `site_layout` content type in `app.volt` - try-catch prevents 500 error when content type doesn't exist in DB.
-- Admin OTP login dead-end: "Use a different e-mail" on `/admin/verify` changed from POST form (empty email) to a GET link to `/login`, preventing a broken login form (missing `adminPrefix`) that made "Send code" unresponsive. Hardened `AuthController::sendOtp()` to redirect to login when email is empty and pass `adminPrefix` to the error partial. Fix shipped via `tavp/cms`. Refs #3.
-- Admin Messages & SEO pages returned 404 because their routes were dropped during the dynamic admin-prefix refactor. Routes re-registered in `AdminModule`. Refs #4, #5.
-- Reconciled 20 divergent working-directory files back to git HEAD (Issue #1): restored debug-simplified templates, `config/cms.php` (148 content-type fields), `bootstrap/app.php` (DatabaseManager), `AppServiceProvider` (tavpid OtpService), `package.json`, `logo.png`, `public/index.php`. Working dir now matches HEAD.
+- Restore production `app.volt` with full features (OG tags, critical CSS, self-hosted assets, Google Analytics, CMS-driven nav/footer)
+- Graceful fallback for `site_layout` content type in `app.volt` - try-catch prevents500 error when content type doesn't exist in DB
 
 ### Changed
-- Update `.gitignore` - exclude temp files, backups, IDE config, public deployment artifacts.
+- Update `.gitignore` - exclude temp files, backups, IDE config, public deployment artifacts
 
-[v1.1.0]: https://git.glotama.com/tavp-stack/tavp-web-id/releases/tag/v1.1.0
+### Reconciled (Issue #1)
+- Committed the 20 divergent working-directory files as-is (templates simplified during production debugging, `config/cms.php`, `bootstrap/app.php` DB adapter, `public/index.php`, `routes/web.php`, README, logo). Decision: working dir IS the live production state.
