@@ -1,96 +1,57 @@
 ﻿# NEXT_STEPS.md - tavp.web.id
 
-**Last updated:** 2026-07-18 (session close)
-**Branch:** `main`
+**Last updated:** 2026-08-08
+**Branch:** `main` (HEAD: `c1d4979`)
+
+**ATURAN WAJIB:** Setiap pembuatan issue Gitea WAJIB langsung apply label (POST `/issues/{n}/labels` dengan ID). Jangan pernah shared tanpa label.
 
 ---
 
-## Current State
-
-### Production (tavp.web.id)
+## Production (tavp.web.id)
 - **URL:** https://tavp.web.id
-- **Admin:** https://tavp.web.id/admin (prefix: `admin`)
-- **VPS:**4 CPU,8GB RAM,400GB SSD, HestiaCP 1.9.6
+- **Admin:** https://tavp.web.id/admin
+- **Deploy:** `git pull origin main` di VPS `~/web/tavp.web.id/private` + hapus `storage/cms/cache`. `public/themes` = symlink ke `themes`.
 - **DB:** `jtdoank_idtavpweb` / `jtdoank_userwebtavpid`
-- **Email:** PHPMailer workaround (custom MailService SMTP broken)
+- **Email:** PHPMailer workaround (MailService SMTP broken, masih investigasi)
 
-### Local Dev (TavpBox)
-- **Container:** `tavp-tavp-web-id` (Podman)
-- **PHP:** 8.3.32
-- **DB:** `tavp` / `tavp` / `tavp`
-- **Admin prefix:** `admin`
+## Local Dev (TavpBox)
+- **Container:** `tavp-tavp-web-id` (Podman), PHP 8.3.32, DB `tavp`/`tavp`/`tavp`, admin prefix `admin`
 
 ---
 
-## Files Changed This Session
+## Status Milestone (Gitea)
+- **v1.2.0** (id=5): semua 6 issue closed (#1, #2, #3, #4, #5, #6) — siap rilis
+- **v1.3.0** (id=6): kosong — tempat untuk fitur berikutnya
 
-| File | Change | Status |
-|------|--------|--------|
-| `themes/tavp/layouts/app.volt` | Restored production version with full features; added try-catch for `site_layout` | [x] Committed (`82a10c1`) |
-| `.gitignore` | Updated to exclude temp files, backups, IDE config, public deployment artifacts | [x] Committed (`1d62968`) |
-| `CHANGELOG.md` | Created with Unreleased entries | [x] Committed (`f031dce`) |
-
-##20 Modified Files (NOT committed - DIVERGENT from git HEAD)
-
-These files in working directory differ significantly from git HEAD. They were simplified during production debugging sessions (hardcoded URLs, removed CMS-driven content). **Do NOT commit without reconciliation.**
-
-| File | Divergence |
-|------|------------|
-| `themes/tavp/home.volt` | Removed dynamic hero logo, CTA URLs, feature icons |
-| `themes/tavp/blog.volt` | Simplified author display |
-| `themes/tavp/post.volt` | Medium-style header changes |
-| `themes/tavp/contact.volt` | Removed dynamic content |
-| `themes/tavp/documentation.volt` | Simplified |
-| `themes/tavp/get-started.volt` | Simplified |
-| `themes/tavp/performance.volt` | Simplified |
-| `themes/tavp/page.volt` | Simplified |
-| `themes/tavp/404.volt` | Simplified |
-| `themes/tavp/500.volt` | Simplified |
-| `themes/tavp/taxonomy.volt` | Simplified |
-| `routes/web.php` | Removed531 lines of routes |
-| `config/cms.php` | Removed148 lines of content types |
-| `bootstrap/app.php` | Significant changes |
-| `app/AppServiceProvider.php` | Minor change |
-| `public/index.php` | Entry point changes |
-| `.tavpbox.yml` | TavpBox config changes |
-| `package.json` / `package-lock.json` | Dependency changes |
-| `public/assets/logo.png` | Logo update (28KB ->5KB) |
-
----
-
-## Blocker
-
-**No active blockers.** All pages return200 OK with zero warnings/errors.
+## Issue Tracker
+- **Closed:** #1, #2, #3, #4, #5, #6, #13
+- **Open:** #12 (web installer — perlu diskusi dengan owner)
+- #6 = bug milik repo `tavpbox` (telah diberi label `blocked`, perlu dipindah ke repo sana)
 
 ---
 
 ## TODO Prioritas (Next Session)
 
 ### HIGH
-1. **Reconcile20 divergent files** (Issue #1) - Decide: revert to git HEAD and port fixes, or commit working directory as-is
-2. **Create `site_layout` content type** (Issue #2) - Add to `config/cms.php`, create migration/seed, remove try-catch fallback
+1. **Deploy `c1d4979` ke VPS** — pull + `rm -rf storage/cms/cache`. 
+2. **Seed/isi `site_layout` di production** — buat record via admin agar nav/footer dinamis aktif (fallback masih jalan jika kosong).
 
 ### MEDIUM
-3. **Investigate custom MailService SMTP** - Why does it say "SENT OK" but emails never arrive? PHPMailer works fine.
-4. **Enable Gitea Wiki** - Wiki API returns405/500, needs admin enable
+3. **Atasi Issue #12** — web installer: putuskan scope dengan owner.
+4. **Pindahkan Issue #6 ke repo `tavpbox`** — bug nginx root /var/www/html/public.
+5. **Investigate custom MailService SMTP** — sukses "SENT OK" tapi email tidak terkirim.
 
 ### LOW
-5. **Clean up `feat/database-connection` branch** - No commits ahead of main, can be deleted
-6. **Update production nginx template** - Phalcon template created but not properly applied (currently using default proxy template)
+6. **RSS `/feed` mati** — `public/index.php` tidak memanggil `$cms->loadRoutes()` → 404.
+7. **Clean up branch `feat/database-connection`** — tidak ada commit di depan main, bisa dihapus.
+8. **Update production nginx template** — Phalcon template belum diterapkan (masih default proxy).
 
 ---
 
-## Relevant Issues/PRs
-
-- **Issue #1:** Reconcile20 divergent template files between working directory and git HEAD
-- **Issue #2:** Create `site_layout` content type for dynamic nav/footer/logo
-
----
-
-## Commits This Session
+## Commits Sesi Ini
 
 | Hash | Message |
 |------|---------|
-| `82a10c1` | fix: restore production app.volt + graceful fallback for site_layout |
-| `1d62968` | chore: update .gitignore - exclude temp files, backups, IDE config, public deployment artifacts |
-| `f031dce` | docs: add CHANGELOG.md with Unreleased entries |
+| `c1d4979` | fix(cms): add site_layout content type + restore contact messages persistence |
+
+**Sesi sebelumnya (relevan):** `dcd08f9` (fix blog post meta fallback), `ce9c9fa` (reconcile 20 divergen, Issue #1), `82a10c1` (restore app.volt), `1d62968` (.gitignore), `f031dce` (CHANGELOG).
