@@ -49,6 +49,9 @@ $ogUrl = env('APP_URL', 'https://tavp.web.id') . ($_SERVER['REQUEST_URI'] ?? '/'
 <link rel="preload" as="font" type="font/woff2" href="/fonts/geist-latin-ext.woff2" crossorigin/>
 <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-latin.woff2" crossorigin/>
 <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-latin-ext.woff2" crossorigin/>
+<link rel="preload" as="font" type="font/woff2" href="/fonts/jetbrains-mono-latin.woff2" crossorigin/>
+<link rel="preload" as="font" type="font/woff2" href="/fonts/jetbrains-mono-latin-ext.woff2" crossorigin/>
+<link rel="preload" as="font" type="font/woff2" href="/fonts/material-symbols-outlined.woff2" crossorigin/>
 <link rel="stylesheet" href="/assets/fonts.css"/>
 <link rel="stylesheet" href="/assets/app.css"/>
 <script defer src="/js/prism-bundle.js"></script>
