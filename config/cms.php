@@ -44,7 +44,7 @@ return [
     'mail' => [
         'driver' => env('MAIL_DRIVER', 'smtp'),
         'host' => env('MAIL_HOST', '127.0.0.1'),
-        'port' => (int) env('MAIL_PORT', 1025),
+        'port' => (int) env('MAIL_PORT', 465),
         'username' => env('MAIL_USERNAME', ''),
         'password' => env('MAIL_PASSWORD', ''),
         'from' => env('MAIL_FROM', 'noreply@tavp.web.id'),
