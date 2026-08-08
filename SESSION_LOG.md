@@ -32,11 +32,16 @@ Histori permanen tiap sesi. Entri baru di paling atas (reverse-chronological).
 - CATATAN: setelah pull, hapus `storage/cms/cache`; seed `site_layout` perlu dibuat/data di-edit via admin (fallback masih jalan jika belum ada record)
 
 ### Milestones
-- `v1.2.0` (id=5): open_issues=0, closed_issues=6 - semua issue akhir terkumpul
-- `v1.3.0` (id=6): masih kosong
+- `v1.2.0` (id=5): CLOSED - 6/6 issue; tag+release `v1.2.0`
+- `v1.3.0` (id=6): CLOSED - 7/7 issue (#7-#13 direassign dari tanpa-milestone); #12 web installer ditutup (tidak diperlukan, deploy via git pull); tag+release `v1.3.0`
+- Open issue di repo: 0
+
+### Release
+- `v1.2.0` tag di gitea+github, release gitea id=174
+- `v1.3.0` tag di gitea+github, release gitea id=175
 
 ### Status
-- **Selesai:** #2 & #4 difix & closed; milestone v1.2.0 lengkap
+- **Selesai:** #2 & #4 difix & closed; milestone v1.2.0 lengkap; milestone v1.3.0 lengkap; semua issue closed
 - **Masih berjalan:** Issue #12 (web installer) - perlu diskusi dengan owner
 - **Blocker:** Tidak ada
 
