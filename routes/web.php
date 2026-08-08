@@ -111,8 +111,19 @@ $router->post('/contact', function () {
         ]);
     }
 
-    // Here you would send the email or save to database
-    // For now, just show success message
+    // Persist the message to the database (admin inbox)
+    try {
+        app('db')->insert('messages', [
+            'name' => $name,
+            'email' => $email,
+            'subject' => $subject,
+            'body' => $message,
+            'status' => 'unread',
+            'created_at' => date('Y-m-d H:i:s'),
+        ]);
+    } catch (\Throwable $e) {
+        error_log('[contact] failed to save message: ' . $e->getMessage());
+    }
 
     $a = random_int(1, 10);
     $b = random_int(1, 10);
