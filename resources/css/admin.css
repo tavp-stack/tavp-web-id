@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  .hard-step-shadow {
+    box-shadow: 2px 2px 0px 0px #000000;
+  }
+  .performance-card {
+    border-top: 2px solid #e6c446;
+  }
+  body {
+    background-color: #0d131f;
+    color: #dde2f3;
+    font-family: 'Inter', sans-serif;
+  }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #1a202c; }
+  ::-webkit-scrollbar-thumb { background: #4a5568; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #e6c446; }
+  .sidebar-collapsed .nav-label, .sidebar-collapsed .nav-section,
+  .sidebar-collapsed .sidebar-header-text, .sidebar-collapsed .sidebar-bottom-text { display: none; }
+  .sidebar-collapsed { width: 64px; }
+  .sidebar-collapsed + main { margin-left: 64px; }
+  .dropdown-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+  .dropdown-content.open { max-height: 500px; }
+  /* EasyMDE dark theme overrides */
+  .EasyMDEContainer .CodeMirror { background: #161c27 !important; color: #dde2f3 !important; border-color: #45474c !important; }
+  .EasyMDEContainer .CodeMirror-cursor { border-left-color: #e6c446 !important; }
+  .EasyMDEContainer .CodeMirror-selected { background: #2d3748 !important; }
+  .EasyMDEContainer .editor-toolbar { background: #1a202c !important; border-color: #45474c !important; }
+  .EasyMDEContainer .editor-toolbar button { color: #95a0b5 !important; }
+  .EasyMDEContainer .editor-toolbar button:hover { color: #e6c446 !important; background: #242a36 !important; }
+  .EasyMDEContainer .editor-toolbar button.active { color: #e6c446 !important; background: #2d3748 !important; }
+  .EasyMDEContainer .editor-preview { background: #0d131f !important; color: #dde2f3 !important; }
+  .EasyMDEContainer .editor-preview-side { background: #0d131f !important; color: #dde2f3 !important; border-color: #45474c !important; }
+  .EasyMDEContainer .editor-statusbar { color: #95a0b5 !important; }
+  .floating-save-bar { background: #0d131f; backdrop-filter: blur(12px); }
+}
